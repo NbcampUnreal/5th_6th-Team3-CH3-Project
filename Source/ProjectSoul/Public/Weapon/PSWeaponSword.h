@@ -9,5 +9,16 @@ UCLASS()
 class PROJECTSOUL_API APSWeaponSword : public APSWeaponBase
 {
 	GENERATED_BODY()
+
+public:
+	APSWeaponSword();
+
+	FTimerHandle AttackTimerHandle;
+
+	virtual void Attack(AActor* Target)override;
+	virtual void EnableWeaponCollision()override;
+	virtual void DisableWeaponCollision()override;
+
+
 	
 };

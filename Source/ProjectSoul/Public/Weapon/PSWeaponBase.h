@@ -4,6 +4,9 @@
 #include "GameFramework/Actor.h"
 #include "PSWeaponBase.generated.h"
 
+
+class USphereComponent;
+
 UCLASS()
 class PROJECTSOUL_API APSWeaponBase : public AActor
 {
@@ -14,9 +17,18 @@ public:
 	APSWeaponBase();
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+    FName ItemType;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Component")
+    USceneComponent* Scene;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Component")
+    USphereComponent* WeaponCollision;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Component")
+    UStaticMeshComponent* StaticMesh;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
     float AttackPower;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
     float AttackRange;
+    
 
     UFUNCTION()
     virtual void OnWeaponOverlap(
@@ -27,10 +39,6 @@ public:
         bool bFromSweep,
         const FHitResult& SweepResult);
 
-    virtual void EnableWeaponCollision();
-    virtual void DisableWeaponCollision();
-
-    // 데미지 전달 함수
     static float ApplyDamage(
         AActor* DamagedActor,
         float BaseDamage,
@@ -39,6 +47,10 @@ public:
         TSubclassOf<UDamageType> DamageTypeClass);
 
 	virtual void Tick(float DeltaTime) override;
+    virtual void Attack(AActor* Target);
+    virtual void EnableWeaponCollision();
+    virtual void DisableWeaponCollision();
+
 
 protected:
 
