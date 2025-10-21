@@ -18,7 +18,9 @@ protected:
 	virtual void NativeOnInitialized() override;
 
 private:
+	UFUNCTION()
 	void StartButtonClick();
+	UFUNCTION()
 	void EndButtonClick();
 
 public:

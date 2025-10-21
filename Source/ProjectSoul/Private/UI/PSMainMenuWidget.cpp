@@ -17,6 +17,7 @@ void UPSMainMenuWidget::NativeOnInitialized()
 void UPSMainMenuWidget::StartButtonClick()
 {
 	UGameplayStatics::OpenLevel(GetWorld(), "MainLevel");
+	RemoveFromParent();
 }
 
 void UPSMainMenuWidget::EndButtonClick()
