@@ -1,4 +1,6 @@
 #include "State/PlayerStateBase.h"
+#include "StateMachine/PlayerStateMachine.h"
+#include "Character/PSCharacter.h"
 
 void UPlayerStateBase::OnEnter()
 {
@@ -46,4 +48,19 @@ void UPlayerStateBase::Lock()
 
 void UPlayerStateBase::Unlock()
 {
+}
+
+UPlayerStateMachine* UPlayerStateBase::GetPlayerStateMachine() const
+{
+	return Cast<UPlayerStateMachine>(StateMachine);
+}
+
+APSCharacter* UPlayerStateBase::GetPlayerCharacter() const
+{
+	if (UPlayerStateMachine* PlayerStateMachine = GetPlayerStateMachine())
+	{
+		return PlayerStateMachine->GetOwnerCharacter();
+	}
+
+	return nullptr;
 }
