@@ -35,11 +35,11 @@ void UPlayerFreeLookState::Move(const FVector2D& Value)
 {
 	if (APSCharacter* Character = GetPlayerCharacter())
 	{
-		FRotator ControlRot = Character->GetControlRotation();
-		FRotator YawRot(0.f, ControlRot.Yaw, 0.f);
+		FRotator ControlRotation = Character->GetControlRotation();
+		FRotator YawRotation(0.f, ControlRotation.Yaw, 0.f);
 
-		FVector Forward = FRotationMatrix(YawRot).GetUnitAxis(EAxis::X);
-		FVector Right = FRotationMatrix(YawRot).GetUnitAxis(EAxis::Y);
+		FVector Forward = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+		FVector Right = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
 		Character->AddMovementInput(Forward, Value.X);
 		Character->AddMovementInput(Right, Value.Y);
