@@ -6,7 +6,6 @@
 
 void UPSMainMenuWidget::NativeOnInitialized()
 {
-	TitleText = Cast<UTextBlock>(GetWidgetFromName(TEXT("TitleText")));
 	StartButton = Cast<UButton>(GetWidgetFromName(TEXT("StartButton")));
 	EndButton = Cast<UButton>(GetWidgetFromName(TEXT("EndButton")));
 
