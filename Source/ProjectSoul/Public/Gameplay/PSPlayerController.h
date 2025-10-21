@@ -18,7 +18,15 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+private:
+	void ShowMainMenu();
+
 public:
+	UPROPERTY(EditAnywhere, Category = "MainMenuWidget")
+	TSubclassOf<UUserWidget> MainMenuWidgetClass;
+	UPROPERTY(VisibleAnywhere, Category = "MainMenuWidget")
+	UUserWidget* MainMenuWidgetInstance;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	TObjectPtr<UInputMappingContext> InputMappingContext;
 
@@ -39,4 +47,5 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	TObjectPtr<UInputAction> UnlockAction;
+
 };
