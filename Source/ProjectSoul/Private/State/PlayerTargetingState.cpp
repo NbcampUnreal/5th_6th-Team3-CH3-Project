@@ -1,15 +1,18 @@
 #include "State/PlayerTargetingState.h"
+#include "State/PlayerFreeLookState.h"
+#include "State/PlayerDodgeState.h"
+#include "State/PlayerAttackState.h"
+#include "StateMachine/PlayerStateMachine.h"
 #include "Character/PSCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Gameplay/PSPlayerController.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "StateMachine/PlayerStateMachine.h"
-#include "State/PlayerFreeLookState.h"
 
 void UPlayerTargetingState::OnEnter()
 {
 	if (APSCharacter* Character = GetPlayerCharacter())
 	{
+		Character->SetIsTargeting(true);
 		Character->GetCharacterMovement()->MaxWalkSpeed = Character->GetTargetingWalkSpeed();
 		Character->GetCharacterMovement()->bOrientRotationToMovement = false;
 		Character->bUseControllerRotationYaw = true;
@@ -83,6 +86,11 @@ void UPlayerTargetingState::StopJump()
 
 void UPlayerTargetingState::Attack()
 {
+	if (UPlayerStateMachine* PSM = GetPlayerStateMachine())
+	{
+		PSM->SetPrevState(this);
+		PSM->ChangeState(PSM->GetAttackState());
+	}
 }
 
 void UPlayerTargetingState::Unlock()
@@ -93,6 +101,18 @@ void UPlayerTargetingState::Unlock()
 		{
 			Character->SetIsTargeting(false);
 			PSM->ChangeState(PSM->GetFreeLookState());
+		}
+	}
+}
+
+void UPlayerTargetingState::Dodge()
+{
+	if (APSCharacter* Character = GetPlayerCharacter())
+	{
+		if (UPlayerStateMachine* PSM = GetPlayerStateMachine())
+		{
+			PSM->SetPrevState(this);
+			PSM->ChangeState(PSM->GetDodgeState());
 		}
 	}
 }

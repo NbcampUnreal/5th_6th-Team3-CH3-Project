@@ -108,6 +108,16 @@ void APSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 				{
 					EnhancedInput->BindAction(PlayerController->UnlockAction, ETriggerEvent::Triggered, this, &APSCharacter::Unlock);
 				}
+
+				if (PlayerController->DodgeAction)
+				{
+					EnhancedInput->BindAction(PlayerController->DodgeAction, ETriggerEvent::Triggered, this, &APSCharacter::Dodge);
+				}
+
+				if (PlayerController->AttackAction)
+				{
+					EnhancedInput->BindAction(PlayerController->AttackAction, ETriggerEvent::Triggered, this, &APSCharacter::Attack);
+				}
 			}
 		}
 	}
@@ -224,6 +234,34 @@ void APSCharacter::Unlock(const FInputActionValue& Value)
 	}
 }
 
+void APSCharacter::Dodge(const FInputActionValue& Value)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Dodge input received."));
+
+	if (!Controller)
+	{
+		return;
+	}
+
+	if (StateMachine)
+	{
+		StateMachine->GetCurrentState()->Dodge();
+	}
+}
+
+void APSCharacter::Attack(const FInputActionValue& Value)
+{
+	if (!Controller)
+	{
+		return;
+	}
+
+	if (StateMachine)
+	{
+		StateMachine->GetCurrentState()->Attack();
+	}
+}
+
 void APSCharacter::FindTargetActor()
 {
 	if (!Scanner)
@@ -306,3 +344,12 @@ bool APSCharacter::GetIsTargeting() const
 	return bIsTargeting;
 }
 
+UAnimMontage* APSCharacter::GetDodgeMontage() const
+{
+	return DodgeMontage;
+}
+
+UAnimMontage* APSCharacter::GetAttackMontage() const
+{
+	return AttackMontage;
+}

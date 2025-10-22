@@ -1,5 +1,7 @@
 #include "State/PlayerFreeLookState.h"
 #include "State/PlayerTargetingState.h"
+#include "State/PlayerDodgeState.h"
+#include "State/PlayerAttackState.h"
 #include "Character/PSCharacter.h"
 #include "StateMachine/PlayerStateMachine.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -89,6 +91,11 @@ void UPlayerFreeLookState::StopJump()
 
 void UPlayerFreeLookState::Attack()
 {
+	if (UPlayerStateMachine* PSM = GetPlayerStateMachine())
+	{
+		PSM->SetPrevState(this);
+		PSM->ChangeState(PSM->GetAttackState());
+	}
 }
 
 void UPlayerFreeLookState::Lock()
@@ -99,6 +106,18 @@ void UPlayerFreeLookState::Lock()
 		{
 			Character->SetIsTargeting(true);
 			PSM->ChangeState(PSM->GetTargetingState());
+		}
+	}
+}
+
+void UPlayerFreeLookState::Dodge()
+{
+	if (APSCharacter* Character = GetPlayerCharacter())
+	{
+		if (UPlayerStateMachine* PSM = GetPlayerStateMachine())
+		{
+			PSM->SetPrevState(this);
+			PSM->ChangeState(PSM->GetDodgeState());
 		}
 	}
 }

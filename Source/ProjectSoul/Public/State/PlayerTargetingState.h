@@ -32,6 +32,8 @@ public:
 
 	virtual void Unlock() override;
 
+	virtual void Dodge() override;
+
 private:
 	void CalculateTargetRotation(float DeltaTime);
 

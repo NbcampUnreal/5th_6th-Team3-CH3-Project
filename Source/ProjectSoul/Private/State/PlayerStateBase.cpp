@@ -50,6 +50,10 @@ void UPlayerStateBase::Unlock()
 {
 }
 
+void UPlayerStateBase::Dodge()
+{
+}
+
 UPlayerStateMachine* UPlayerStateBase::GetPlayerStateMachine() const
 {
 	return Cast<UPlayerStateMachine>(StateMachine);

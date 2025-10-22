@@ -37,6 +37,8 @@ public:
 
 	virtual void Unlock();
 
+	virtual void Dodge();
+
 protected:
 	UPlayerStateMachine* GetPlayerStateMachine() const;
 
