@@ -1,6 +1,7 @@
 #include "Weapon/PSWeaponBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/SphereComponent.h"
+#include "Components/BoxComponent.h"
 
 APSWeaponBase::APSWeaponBase()
 {
@@ -9,7 +10,7 @@ APSWeaponBase::APSWeaponBase()
     Scene = CreateDefaultSubobject<USceneComponent>(TEXT("Scene"));
     SetRootComponent(Scene);
 
-    WeaponCollision = CreateDefaultSubobject<USphereComponent>(TEXT("WeaponCollision"));
+    WeaponCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("WeaponCollision"));
     WeaponCollision->SetupAttachment(Scene);
     WeaponCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision); //콜리전 기본 상태 : 꺼짐
     WeaponCollision->SetCollisionResponseToAllChannels(ECR_Ignore); // 모든 충돌 무시
@@ -44,11 +45,26 @@ void APSWeaponBase::OnWeaponOverlap(
     bool bFromSweep,
     const FHitResult& SweepResult)
 {
-    if (OtherActor && OtherActor != GetOwner())
+    if (!OtherActor || OtherActor == GetOwner()) //유효한 액터가 아니라면 무시
     {
-        ApplyDamage(OtherActor, AttackPower, GetOwner()->GetInstigatorController(), this, UDamageType::StaticClass());
-        DisableWeaponCollision(); //한번만 실행
+        return;
     }
+
+    if (DamagedActors.Contains(OtherActor)) //이미 맞은 적 무시 
+    {
+        return;
+    }
+
+    DamagedActors.Add(OtherActor); // 처음 맞은적 데미지 처리
+    ApplyDamage(
+        OtherActor,
+        AttackPower,
+        GetOwner()->GetInstigatorController(),
+        this,
+        UDamageType::StaticClass()
+    );
+
+    UE_LOG(LogTemp, Log, TEXT("%s hit %s"), *GetName(), *OtherActor->GetName());
 }
 
 // 타겟에게 데미지 전달
@@ -70,6 +86,7 @@ void APSWeaponBase::EnableWeaponCollision()
 void APSWeaponBase::DisableWeaponCollision()
 {
     WeaponCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    DamagedActors.Empty(); // 공격후 맞은적 초기화
 
 }
 

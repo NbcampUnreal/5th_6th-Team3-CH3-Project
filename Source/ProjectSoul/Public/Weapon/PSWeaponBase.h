@@ -5,7 +5,8 @@
 #include "PSWeaponBase.generated.h"
 
 
-class USphereComponent;
+//class USphereComponent;
+class UBoxComponent;
 
 UCLASS()
 class PROJECTSOUL_API APSWeaponBase : public AActor
@@ -16,19 +17,11 @@ public:
 
 	APSWeaponBase();
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
-    FName ItemType;
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Component")
-    USceneComponent* Scene;
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Component")
-    USphereComponent* WeaponCollision;
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Component")
-    UStaticMeshComponent* StaticMesh;
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
-    float AttackPower;
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
-    float AttackRange;
-    
+    virtual void Tick(float DeltaTime) override;
+    virtual void Attack(AActor* Target);
+    virtual void EnableWeaponCollision();
+    virtual void DisableWeaponCollision();
+    virtual void BeginPlay() override;
 
     UFUNCTION()
     virtual void OnWeaponOverlap(
@@ -46,15 +39,26 @@ public:
         AActor* DamageCauser,
         TSubclassOf<UDamageType> DamageTypeClass);
 
-	virtual void Tick(float DeltaTime) override;
-    virtual void Attack(AActor* Target);
-    virtual void EnableWeaponCollision();
-    virtual void DisableWeaponCollision();
-
-
 protected:
 
-	virtual void BeginPlay() override;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Component")
+    USceneComponent* Scene;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Component")
+    UBoxComponent* WeaponCollision;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Component")
+    UStaticMeshComponent* StaticMesh;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+    FName ItemType;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+    float AttackPower;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+    float AttackRange;
+    UPROPERTY()
+    TSet<AActor*> DamagedActors; //데미지 입힌 적 저장
+
+
+
+
 
 
 	
