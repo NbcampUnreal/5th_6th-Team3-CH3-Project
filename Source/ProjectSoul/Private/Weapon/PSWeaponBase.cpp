@@ -12,12 +12,13 @@ APSWeaponBase::APSWeaponBase()
 
     WeaponCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("WeaponCollision"));
     WeaponCollision->SetupAttachment(Scene);
-    WeaponCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision); //콜리전 기본 상태 : 꺼짐
+    WeaponCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly); //콜리전 기본 상태 : 물리X
     WeaponCollision->SetCollisionResponseToAllChannels(ECR_Ignore); // 모든 충돌 무시
     WeaponCollision->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap); // 캐릭터 ( Pawn과는 오버랩 허용 )
 
     StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComp"));
     StaticMesh->SetupAttachment(WeaponCollision);
+    StaticMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision); // 스태틱 메시 충돌 X
 
     AttackRange = 90.0f;
     AttackPower = 10.0f;
@@ -56,6 +57,7 @@ void APSWeaponBase::OnWeaponOverlap(
     }
 
     DamagedActors.Add(OtherActor); // 처음 맞은적 데미지 처리
+
     ApplyDamage(
         OtherActor,
         AttackPower,
@@ -94,4 +96,6 @@ void APSWeaponBase::Attack(AActor* Target)
 {
     //자식클래스 구현
 }
+
+//캐릭터클래스에 TakeDamage() , 무기공격 있어야함
 
