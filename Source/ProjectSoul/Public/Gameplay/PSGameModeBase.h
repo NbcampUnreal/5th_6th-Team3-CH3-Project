@@ -31,4 +31,3 @@ protected:
     UPROPERTY(EditAnywhere, Category = "Game")
     float RestartDelay = 3.0f;
 };
-
