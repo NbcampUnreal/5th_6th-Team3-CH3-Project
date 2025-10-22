@@ -4,8 +4,6 @@
 #include "GameFramework/Actor.h"
 #include "PSWeaponBase.generated.h"
 
-
-//class USphereComponent;
 class UBoxComponent;
 
 UCLASS()
@@ -54,7 +52,7 @@ protected:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
     float AttackRange;
     UPROPERTY()
-    TSet<AActor*> DamagedActors; //데미지 입힌 적 저장
+    TSet<AActor*> DamagedActors;
 
 
 

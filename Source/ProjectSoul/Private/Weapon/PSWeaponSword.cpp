@@ -10,7 +10,6 @@ APSWeaponSword::APSWeaponSword()
 
 void APSWeaponSword::Attack(AActor* Target)
 {
-	//콜리전 활성화 함수
 	Super::Attack(Target);
 
 	UE_LOG(LogTemp, Log, TEXT("Sword swing at %s"), *Target->GetName());

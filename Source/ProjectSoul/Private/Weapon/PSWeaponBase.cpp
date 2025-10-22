@@ -12,13 +12,13 @@ APSWeaponBase::APSWeaponBase()
 
     WeaponCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("WeaponCollision"));
     WeaponCollision->SetupAttachment(Scene);
-    WeaponCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly); //콜리전 기본 상태 : 물리X
-    WeaponCollision->SetCollisionResponseToAllChannels(ECR_Ignore); // 모든 충돌 무시
-    WeaponCollision->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap); // 캐릭터 ( Pawn과는 오버랩 허용 )
+    WeaponCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+    WeaponCollision->SetCollisionResponseToAllChannels(ECR_Ignore); 
+    WeaponCollision->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 
     StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComp"));
     StaticMesh->SetupAttachment(WeaponCollision);
-    StaticMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision); // 스태틱 메시 충돌 X
+    StaticMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision); 
 
     AttackRange = 90.0f;
     AttackPower = 10.0f;
@@ -28,7 +28,7 @@ APSWeaponBase::APSWeaponBase()
 void APSWeaponBase::BeginPlay()
 {
 	Super::BeginPlay();
-    WeaponCollision->OnComponentBeginOverlap.AddDynamic(this, &APSWeaponBase::OnWeaponOverlap); // 오버랩시 함수 실행
+    WeaponCollision->OnComponentBeginOverlap.AddDynamic(this, &APSWeaponBase::OnWeaponOverlap);
 	
 }
 
@@ -46,17 +46,17 @@ void APSWeaponBase::OnWeaponOverlap(
     bool bFromSweep,
     const FHitResult& SweepResult)
 {
-    if (!OtherActor || OtherActor == GetOwner()) //유효한 액터가 아니라면 무시
+    if (!OtherActor || OtherActor == GetOwner()) 
     {
         return;
     }
 
-    if (DamagedActors.Contains(OtherActor)) //이미 맞은 적 무시 
+    if (DamagedActors.Contains(OtherActor)) 
     {
         return;
     }
 
-    DamagedActors.Add(OtherActor); // 처음 맞은적 데미지 처리
+    DamagedActors.Add(OtherActor); 
 
     ApplyDamage(
         OtherActor,
@@ -69,7 +69,7 @@ void APSWeaponBase::OnWeaponOverlap(
     UE_LOG(LogTemp, Log, TEXT("%s hit %s"), *GetName(), *OtherActor->GetName());
 }
 
-// 타겟에게 데미지 전달
+// Deliver damage to target
 float APSWeaponBase::ApplyDamage(
     AActor* DamagedActor,
     float BaseDamage,
@@ -82,20 +82,20 @@ float APSWeaponBase::ApplyDamage(
 
 void APSWeaponBase::EnableWeaponCollision()
 {
-    WeaponCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly); //오버랩 여부 감지
+    WeaponCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly); 
 }
 
 void APSWeaponBase::DisableWeaponCollision()
 {
     WeaponCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-    DamagedActors.Empty(); // 공격후 맞은적 초기화
+    DamagedActors.Empty(); // Initialize the list
 
 }
 
 void APSWeaponBase::Attack(AActor* Target)
 {
-    //자식클래스 구현
+    
 }
 
-//캐릭터클래스에 TakeDamage() , 무기공격 있어야함
+
 
