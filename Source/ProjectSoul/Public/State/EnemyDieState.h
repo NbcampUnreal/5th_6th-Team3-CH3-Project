@@ -1,0 +1,12 @@
+#pragma once
+
+#include "CoreMinimal.h"
+#include "State/EnemyStateBase.h"
+#include "EnemyDieState.generated.h"
+
+UCLASS()
+class PROJECTSOUL_API UEnemyDieState : public UEnemyStateBase
+{
+	GENERATED_BODY()
+	
+};

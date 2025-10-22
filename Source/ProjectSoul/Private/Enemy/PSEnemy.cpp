@@ -1,6 +1,8 @@
 #include "Enemy/PSEnemy.h"
 #include "Enemy/PSEnemyAIController.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "StateMachine/EnemyStateMachine.h"
+#include "State/EnemyStateBase.h"
 APSEnemy::APSEnemy()
 	: HP(100), 
 	Attack(20), 
@@ -13,13 +15,12 @@ APSEnemy::APSEnemy()
 	UCharacterMovementComponent* EnemyMovement = GetCharacterMovement();
 	EnemyMovement->MaxWalkSpeed = WalkSpeed;
 	EnemyMovement->bOrientRotationToMovement = true;
-	EnemyMovement->RotationRate = FRotator(0.0f, 540.0f, 0.0f);
 }
 
 void APSEnemy::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
 void APSEnemy::SetMovementSpeed(float NewSpeed)
 {
