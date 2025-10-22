@@ -4,6 +4,9 @@
 #include "State/StateBase.h"
 #include "PlayerStateBase.generated.h"
 
+class UPlayerStateMachine;
+class APSCharacter;
+
 UCLASS()
 class PROJECTSOUL_API UPlayerStateBase : public UStateBase
 {
@@ -33,4 +36,9 @@ public:
 	virtual void Lock();
 
 	virtual void Unlock();
+
+protected:
+	UPlayerStateMachine* GetPlayerStateMachine() const;
+
+	APSCharacter* GetPlayerCharacter() const;
 };

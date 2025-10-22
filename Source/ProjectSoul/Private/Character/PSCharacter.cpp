@@ -226,6 +226,44 @@ void APSCharacter::Unlock(const FInputActionValue& Value)
 
 void APSCharacter::FindTargetActor()
 {
+	if (!Scanner)
+	{
+		return;
+	}
+
+	TArray<AActor*> OverlappingActors;
+	Scanner->GetOverlappingActors(OverlappingActors);
+
+	AActor* ClosestActor = nullptr;
+	float ClosestDist = TNumericLimits<float>::Max();
+
+	for (AActor* Actor : OverlappingActors)
+	{
+		if (!Actor || Actor == this)
+		{
+			continue;
+		}
+
+		if (Actor->ActorHasTag(TEXT("Enemy")))
+		{
+			float Dist = FVector::Distance(Actor->GetActorLocation(), GetActorLocation());
+			if (Dist < ClosestDist)
+			{
+				ClosestDist = Dist;
+				ClosestActor = Actor;
+			}
+		}
+	}
+
+	if (!ClosestActor)
+	{
+		CurrentTarget = nullptr;
+		UE_LOG(LogTemp, Warning, TEXT("Not found enemy."));
+		return;
+	}
+
+	CurrentTarget = ClosestActor;
+	UE_LOG(LogTemp, Warning, TEXT("Found enemy: %s"), *CurrentTarget->GetName());
 }
 
 float APSCharacter::GetNormalWalkSpeed() const

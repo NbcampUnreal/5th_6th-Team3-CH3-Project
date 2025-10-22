@@ -1,2 +1,104 @@
 #include "State/PlayerFreeLookState.h"
+#include "State/PlayerTargetingState.h"
+#include "Character/PSCharacter.h"
+#include "StateMachine/PlayerStateMachine.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
+void UPlayerFreeLookState::OnEnter()
+{
+	if (APSCharacter* Character = GetPlayerCharacter())
+	{
+		Character->GetCharacterMovement()->MaxWalkSpeed = Character->GetNormalWalkSpeed();
+		Character->GetCharacterMovement()->bOrientRotationToMovement = true;
+		Character->bUseControllerRotationYaw = false;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Enter Free Look State"));
+}
+
+void UPlayerFreeLookState::OnUpdate(float DeltaTime)
+{
+}
+
+void UPlayerFreeLookState::OnExit()
+{
+	if (APSCharacter* Character = GetPlayerCharacter())
+	{
+		Character->GetCharacterMovement()->bOrientRotationToMovement = false;
+		Character->bUseControllerRotationYaw = true;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Exit Free Look State"));
+}
+
+void UPlayerFreeLookState::Move(const FVector2D& Value)
+{
+	if (APSCharacter* Character = GetPlayerCharacter())
+	{
+		FRotator ControlRotation = Character->GetControlRotation();
+		FRotator YawRotation(0.f, ControlRotation.Yaw, 0.f);
+
+		FVector Forward = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+		FVector Right = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+
+		Character->AddMovementInput(Forward, Value.X);
+		Character->AddMovementInput(Right, Value.Y);
+	}
+}
+
+void UPlayerFreeLookState::Look(const FVector2D& Value)
+{
+	if (APSCharacter* Character = GetPlayerCharacter())
+	{
+		Character->AddControllerPitchInput(Value.Y);
+		Character->AddControllerYawInput(Value.X);
+	}
+}
+
+void UPlayerFreeLookState::StartSprint()
+{
+	if (APSCharacter* Character = GetPlayerCharacter())
+	{
+		Character->GetCharacterMovement()->MaxWalkSpeed = Character->GetSprintWalkSpeed();
+	}
+}
+
+void UPlayerFreeLookState::StopSprint()
+{
+	if (APSCharacter* Character = GetPlayerCharacter())
+	{
+		Character->GetCharacterMovement()->MaxWalkSpeed = Character->GetNormalWalkSpeed();
+	}
+}
+
+void UPlayerFreeLookState::StartJump()
+{
+	if (APSCharacter* Character = GetPlayerCharacter())
+	{
+		Character->Jump();
+	}
+}
+
+void UPlayerFreeLookState::StopJump()
+{
+	if (APSCharacter* Character = GetPlayerCharacter())
+	{
+		Character->StopJumping();
+	}
+}
+
+void UPlayerFreeLookState::Attack()
+{
+}
+
+void UPlayerFreeLookState::Lock()
+{
+	if (APSCharacter* Character = GetPlayerCharacter())
+	{
+		if (UPlayerStateMachine* PSM = GetPlayerStateMachine())
+		{
+			Character->SetIsTargeting(true);
+			PSM->ChangeState(PSM->GetTargetingState());
+		}
+	}
+}
