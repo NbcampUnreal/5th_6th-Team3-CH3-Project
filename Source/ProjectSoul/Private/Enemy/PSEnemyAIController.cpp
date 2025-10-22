@@ -1,0 +1,97 @@
+#include "Enemy/PSEnemyAIController.h"
+#include "NavigationSystem.h"
+#include "TimerManager.h"
+#include "Enemy/PSEnemy.h"
+#include "Perception/AIPerceptionComponent.h"
+#include "Perception/AISenseConfig_Sight.h"
+#include "Kismet/GameplayStatics.h"
+
+APSEnemyAIController::APSEnemyAIController()
+{
+	AIPerception = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AIPerception"));
+	SetPerceptionComponent(*AIPerception);
+
+	SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("SightConfig"));
+	SightConfig->SightRadius = 600.0f;
+	SightConfig->LoseSightRadius = 1000.0f;
+	SightConfig->PeripheralVisionAngleDegrees = 90.0f;
+	SightConfig->SetMaxAge(1.0f);
+	SightConfig->AutoSuccessRangeFromLastSeenLocation = 0.0f;
+	SightConfig->DetectionByAffiliation.bDetectEnemies = true;
+	SightConfig->DetectionByAffiliation.bDetectNeutrals = true;
+	SightConfig->DetectionByAffiliation.bDetectFriendlies = true;
+
+	AIPerception->ConfigureSense(*SightConfig);
+	AIPerception->SetDominantSense(SightConfig->GetSenseImplementation());
+
+	BlackboardComp = CreateDefaultSubobject<UBlackboardComponent>(TEXT("Blackboard"));
+}
+
+void APSEnemyAIController::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (BlackboardComp)
+	{
+		BlackboardComp->SetValueAsBool(TEXT("bCanSeeTarget"), false);
+		BlackboardComp->SetValueAsBool(TEXT("bIsInvestigating"), false);
+
+		APawn* ControlledPawn = GetPawn();
+		if (ControlledPawn)
+		{
+			FVector SpawnLocation = ControlledPawn->GetActorLocation();
+			BlackboardComp->SetValueAsVector(TEXT("SpawnPointLocation"), ControlledPawn->GetActorLocation());
+		}
+
+		StartBehaviorTree();
+	}
+
+	if (AIPerception)
+	{
+		AIPerception->OnTargetPerceptionUpdated.AddDynamic(
+			this,
+			&APSEnemyAIController::OnPerceptionUpdated
+		);
+	}
+}
+
+void APSEnemyAIController::OnPossess(APawn* InPawn)
+{
+	Super::OnPossess(InPawn);
+
+}
+
+void APSEnemyAIController::OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)//캐릭터 State구현 방법을 보고 State로 변경예정
+{
+	APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+	if (Actor != PlayerPawn || !BlackboardComp)
+	{
+		return;
+	}
+	if (Stimulus.WasSuccessfullySensed())//캐릭터 발견
+	{
+		BlackboardComp->SetValueAsObject(TEXT("TargetActor"), Actor);
+		BlackboardComp->SetValueAsBool(TEXT("bCanSeeTarget"), true);
+		BlackboardComp->SetValueAsBool(TEXT("bIsInvestigating"), false);
+	}
+	else//캐릭터 놓침
+	{
+		BlackboardComp->SetValueAsBool(TEXT("bCanSeeTarget"), false);
+		BlackboardComp->SetValueAsBool(TEXT("bIsInvestigating"), true);
+		BlackboardComp->SetValueAsVector(TEXT("TargetLastKnownLocation"), Actor->GetActorLocation());
+		BlackboardComp->ClearValue(TEXT("TargetActor"));
+	}
+}
+
+UBlackboardComponent* APSEnemyAIController::GetBlackboardComp() const
+{
+	return BlackboardComp;
+}
+
+void APSEnemyAIController::StartBehaviorTree()
+{
+	if (BehaviorTreeAsset)
+	{
+		RunBehaviorTree(BehaviorTreeAsset);
+	}
+}
