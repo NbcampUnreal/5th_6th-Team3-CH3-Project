@@ -29,13 +29,11 @@ void APSWeaponBase::BeginPlay()
 {
 	Super::BeginPlay();
     WeaponCollision->OnComponentBeginOverlap.AddDynamic(this, &APSWeaponBase::OnWeaponOverlap);
-	
 }
 
 void APSWeaponBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 void APSWeaponBase::OnWeaponOverlap(
@@ -52,6 +50,11 @@ void APSWeaponBase::OnWeaponOverlap(
     }
 
     if (DamagedActors.Contains(OtherActor)) 
+    {
+        return;
+    }
+
+    if (!OtherActor->ActorHasTag("Enemy"))
     {
         return;
     }
@@ -89,7 +92,6 @@ void APSWeaponBase::DisableWeaponCollision()
 {
     WeaponCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     DamagedActors.Empty(); // Initialize the list
-
 }
 
 void APSWeaponBase::Attack(AActor* Target)

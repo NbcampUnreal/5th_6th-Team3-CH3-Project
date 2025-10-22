@@ -16,9 +16,13 @@ public:
 	APSWeaponBase();
 
     virtual void Tick(float DeltaTime) override;
+
     virtual void Attack(AActor* Target);
+
     virtual void EnableWeaponCollision();
+
     virtual void DisableWeaponCollision();
+
     virtual void BeginPlay() override;
 
     UFUNCTION()
@@ -39,18 +43,24 @@ public:
 
 protected:
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Component")
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon|Component")
     USceneComponent* Scene;
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Component")
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon|Component")
     UBoxComponent* WeaponCollision;
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Component")
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon|Component")
     UStaticMeshComponent* StaticMesh;
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon")
     FName ItemType;
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon")
     float AttackPower;
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon")
     float AttackRange;
+
     UPROPERTY()
     TSet<AActor*> DamagedActors;
 

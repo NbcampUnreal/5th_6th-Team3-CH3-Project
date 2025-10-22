@@ -14,7 +14,6 @@ void APSWeaponSword::Attack(AActor* Target)
 
 	UE_LOG(LogTemp, Log, TEXT("Sword swing at %s"), *Target->GetName());
 
-
 	if (Target)
 	{
 		ApplyDamage(Target, AttackPower, nullptr, this, nullptr);
@@ -26,12 +25,10 @@ void APSWeaponSword::EnableWeaponCollision()
 {
 	Super::EnableWeaponCollision();
 	UE_LOG(LogTemp, Log, TEXT("Sword collision enabled"));
-
 }
 
 void APSWeaponSword::DisableWeaponCollision()
 {
 	Super::DisableWeaponCollision();
 	UE_LOG(LogTemp, Log, TEXT("Sword collision disabled"));
-
 }
