@@ -11,18 +11,23 @@ class PROJECTSOUL_API APSEnemy : public ACharacter
 
 public:
 	APSEnemy();
-
-	virtual void Tick(float DeltaTime) override;
-
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	virtual void SetMovementSpeed(float NewSpeed);
 protected:
 	virtual void BeginPlay() override;
 
 public:	
+
 protected:
-private:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stat")
 	int32 HP;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stat")
 	int32 Attack;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stat")
 	int32 Score;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Move")
+	float WalkSpeed;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Move")
+	float RunSpeed;
+private:
 
 };
