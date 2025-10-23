@@ -3,21 +3,22 @@
 
 UPSUIManagerSubsystem::UPSUIManagerSubsystem()
 {
+	MainMenuWidgetClass = nullptr;
+	MainMenuWidgetInstance = nullptr;
+	PlayerHUDWidgetClass = nullptr;
+	PlayerHUDWidgetInstance = nullptr;
 	CurrentWidgetClass = nullptr;
 	CurrentWidgetInstance = nullptr;
-
 
 	static ConstructorHelpers::FClassFinder<UUserWidget> MainMenuWidgetBPClass(TEXT("/Game/Blueprints/UI/WBP_PSMainMenuWidget.WBP_PSMainMenuWidget_C"));
 	if (MainMenuWidgetBPClass.Succeeded())
 	{
 		MainMenuWidgetClass = MainMenuWidgetBPClass.Class;
-		MainMenuWidgetInstance = nullptr;
 	}
-	static ConstructorHelpers::FClassFinder<UUserWidget> PlayerHUDWidgetBPClass(TEXT("/Game/Blueprints/UI/WBP_PSPlayerHUD.WBP_PSPlayerHUD_C"));
+	static ConstructorHelpers::FClassFinder<UUserWidget> PlayerHUDWidgetBPClass(TEXT("/Game/Blueprints/UI/WBP_PSPlayerHUDWidget.WBP_PSPlayerHUDWidget_C"));
 	if (MainMenuWidgetBPClass.Succeeded())
 	{
 		PlayerHUDWidgetClass = PlayerHUDWidgetBPClass.Class;
-		PlayerHUDWidgetInstance = nullptr;
 	}
 }
 
@@ -32,30 +33,23 @@ void UPSUIManagerSubsystem::HideCurrentWidget()
 	CurrentWidgetInstance->RemoveFromParent();
 }
 
-FString UPSUIManagerSubsystem::GetCurretnWidget()
-{
-	return CurrentWidgetInstance->GetName();
-}
-
 void UPSUIManagerSubsystem::SetCurrentWidget()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Function In"));
 	FString CurrentMapName = GetWorld()->GetMapName();
 	if (CurrentMapName.Contains("MenuLevel"))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("MenuLevel In"));
-		CurrentWidgetClass = MainMenuWidgetClass;
+		if (!MainMenuWidgetInstance)
+		{
+			MainMenuWidgetInstance = CreateWidget(GetWorld()->GetFirstPlayerController(), MainMenuWidgetClass);
+		}
+		CurrentWidgetInstance = MainMenuWidgetInstance;
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("BasicLevel In"));
-		CurrentWidgetClass = PlayerHUDWidgetClass;
+		if (!PlayerHUDWidgetInstance)
+		{
+			PlayerHUDWidgetInstance = CreateWidget(GetWorld()->GetFirstPlayerController(), PlayerHUDWidgetClass);
+		}
+		CurrentWidgetInstance = PlayerHUDWidgetInstance;
 	}
-	CurrentWidgetInstance = CreateWidget(GetWorld()->GetFirstPlayerController(), CurrentWidgetClass);
 }
-
-void UPSUIManagerSubsystem::UpdateUI()
-{
-	//CurrentWidget->UpdateCanTick();
-}
-

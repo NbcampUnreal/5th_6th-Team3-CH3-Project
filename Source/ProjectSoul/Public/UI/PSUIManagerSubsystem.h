@@ -14,9 +14,14 @@ public:
 
 	void ShowCurrentWidget();
 	void HideCurrentWidget();
-	FString GetCurretnWidget();
+
+	void HUDUpdate();
+
+
+private:
 	void SetCurrentWidget();
-	void UpdateUI();
+
+	
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Widget")
