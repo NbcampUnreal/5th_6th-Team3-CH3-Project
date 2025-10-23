@@ -268,22 +268,26 @@ void APSCharacter::FindTargetActor()
 	UE_LOG(LogTemp, Warning, TEXT("Found enemy: %s"), *CurrentTarget->GetName());
 }
 
-void APSCharacter::OnAttackEndNotify()
+void APSCharacter::RestoreAllStats()
 {
-	if (StateMachine && StateMachine->GetAttackState())
-	{
-		StateMachine->GetAttackState()->AttackEnd();
-	}
+	PlayerStats.Health.RestoreFull();
+	PlayerStats.Mana.RestoreFull();
+	PlayerStats.Stamina.RestoreFull();
 }
 
-void APSCharacter::OnEnableWeaponCollision()
+float APSCharacter::GetHealthPercent() const
 {
-	EquippedWeapon->EnableWeaponCollision();
+	return PlayerStats.GetHealthPercent();
 }
 
-void APSCharacter::OnDisableWeaponCollision()
+float APSCharacter::GetManaPercent() const
 {
-	EquippedWeapon->DisableWeaponCollision();
+	return PlayerStats.GetManaPercent();
+}
+
+float APSCharacter::GetStaminaPercent() const
+{
+	return PlayerStats.GetStaminaPercent();
 }
 
 float APSCharacter::GetNormalWalkSpeed() const
@@ -306,19 +310,9 @@ AActor* APSCharacter::GetCurrentTarget() const
 	return CurrentTarget;
 }
 
-void APSCharacter::SetCurrentTarget(AActor* NewTarget)
-{
-	CurrentTarget = NewTarget;
-}
-
 float APSCharacter::GetMaxTargetDistance() const
 {
 	return MaxTargetDistance;
-}
-
-void APSCharacter::SetIsTargeting(bool Value)
-{
-	bIsTargeting = Value;
 }
 
 bool APSCharacter::GetIsTargeting() const
@@ -334,4 +328,32 @@ UAnimMontage* APSCharacter::GetDodgeMontage() const
 UAnimMontage* APSCharacter::GetAttackMontage() const
 {
 	return AttackMontage;
+}
+
+void APSCharacter::SetCurrentTarget(AActor* NewTarget)
+{
+	CurrentTarget = NewTarget;
+}
+
+void APSCharacter::SetIsTargeting(bool Value)
+{
+	bIsTargeting = Value;
+}
+
+void APSCharacter::OnAttackEndNotify()
+{
+	if (StateMachine && StateMachine->GetAttackState())
+	{
+		StateMachine->GetAttackState()->AttackEnd();
+	}
+}
+
+void APSCharacter::OnEnableWeaponCollision()
+{
+	EquippedWeapon->EnableWeaponCollision();
+}
+
+void APSCharacter::OnDisableWeaponCollision()
+{
+	EquippedWeapon->DisableWeaponCollision();
 }
