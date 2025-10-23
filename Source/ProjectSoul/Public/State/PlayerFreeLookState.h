@@ -31,4 +31,6 @@ public:
 	virtual void Attack() override;
 
 	virtual void Lock() override;
+
+	virtual void Dodge() override;
 };

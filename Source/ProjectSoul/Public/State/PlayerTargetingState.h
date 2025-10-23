@@ -32,10 +32,14 @@ public:
 
 	virtual void Unlock() override;
 
+	virtual void Dodge() override;
+
 private:
 	void CalculateTargetRotation(float DeltaTime);
 
 	float CalculateTargetDistance();
 
 	bool IsTargetTooFar();
+
+	bool IsTargetValid();
 };

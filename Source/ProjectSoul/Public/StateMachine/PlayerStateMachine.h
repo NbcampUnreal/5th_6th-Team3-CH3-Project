@@ -7,6 +7,8 @@
 class UPlayerStateBase;
 class UPlayerFreeLookState;
 class UPlayerTargetingState;
+class UPlayerAttackState;
+class UPlayerDodgeState;
 class APSCharacter;
 
 UCLASS()
@@ -21,11 +23,19 @@ public:
 
 	UPlayerStateBase* GetCurrentState() const;
 
+	UPlayerStateBase* GetPrevState() const;
+
+	void SetPrevState(UPlayerStateBase* NewPrevState);
+
 	APSCharacter* GetOwnerCharacter() const;
 
 	UPlayerFreeLookState* GetFreeLookState() const;
 
 	UPlayerTargetingState* GetTargetingState() const;
+
+	UPlayerAttackState* GetAttackState() const;
+
+	UPlayerDodgeState* GetDodgeState() const;
 
 protected:
 	UPROPERTY()
@@ -33,4 +43,14 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr <UPlayerTargetingState> TargetingState;
+
+	UPROPERTY()
+	TObjectPtr <UPlayerAttackState> AttackState;
+
+	UPROPERTY()
+	TObjectPtr <UPlayerDodgeState> DodgeState;
+
+private:
+	UPROPERTY()
+	TObjectPtr<UPlayerStateBase> PrevState;
 };
