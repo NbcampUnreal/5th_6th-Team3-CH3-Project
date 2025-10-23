@@ -1,13 +1,13 @@
 #include "Character/PSCharacter.h"
-
-#include "GameFramework/SpringArmComponent.h"
-#include "Camera/CameraComponent.h"
 #include "EnhancedInputComponent.h"
+#include "Camera/CameraComponent.h"
 #include "Components/SphereComponent.h"
 #include "Gameplay/PSPlayerController.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "StateMachine/PlayerStateMachine.h"
 #include "State/PlayerStateBase.h"
+#include "State/PlayerAttackState.h"
 
 APSCharacter::APSCharacter()
 	: NormalWalkSpeed(600.0f),
@@ -303,6 +303,15 @@ void APSCharacter::FindTargetActor()
 	CurrentTarget = ClosestActor;
 	UE_LOG(LogTemp, Warning, TEXT("Found enemy: %s"), *CurrentTarget->GetName());
 }
+
+void APSCharacter::OnAttackEndNotify()
+{
+	if (StateMachine && StateMachine->GetAttackState())
+	{
+		StateMachine->GetAttackState()->AttackEnd();
+	}
+}
+
 
 float APSCharacter::GetNormalWalkSpeed() const
 {

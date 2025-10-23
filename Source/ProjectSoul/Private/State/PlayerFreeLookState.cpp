@@ -24,12 +24,6 @@ void UPlayerFreeLookState::OnUpdate(float DeltaTime)
 
 void UPlayerFreeLookState::OnExit()
 {
-	if (APSCharacter* Character = GetPlayerCharacter())
-	{
-		Character->GetCharacterMovement()->bOrientRotationToMovement = false;
-		Character->bUseControllerRotationYaw = true;
-	}
-
 	UE_LOG(LogTemp, Warning, TEXT("Exit Free Look State"));
 }
 

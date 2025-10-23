@@ -40,12 +40,6 @@ void UPlayerTargetingState::OnUpdate(float DeltaTime)
 
 void UPlayerTargetingState::OnExit()
 {
-	if (APSCharacter* Character = GetPlayerCharacter())
-	{
-		Character->GetCharacterMovement()->bOrientRotationToMovement = true;
-		Character->bUseControllerRotationYaw = false;
-	}
-
 	UE_LOG(LogTemp, Warning, TEXT("Exit Targeting State"));
 }
 
@@ -138,7 +132,7 @@ void UPlayerTargetingState::CalculateTargetRotation(float DeltaTime)
 			LookAtRotation.Pitch = -30.0f;
 			FRotator ControlRotation = PC->GetControlRotation();
 
-			FRotator NewRotation = FMath::RInterpTo(ControlRotation, LookAtRotation, DeltaTime, 10.0f);
+			FRotator NewRotation = FMath::RInterpTo(ControlRotation, LookAtRotation, DeltaTime, 7.0f);
 			PC->SetControlRotation(NewRotation);
 		}
 	}

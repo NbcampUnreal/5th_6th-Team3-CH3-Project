@@ -16,9 +16,8 @@ public:
 
 	virtual void OnExit() override;
 
-private:
-	void AttackEnd();
+	virtual void Look(const FVector2D& Value) override;
 
-private:
-	FTimerHandle TestTimer;
+	UFUNCTION(BlueprintCallable)
+	void AttackEnd();
 };

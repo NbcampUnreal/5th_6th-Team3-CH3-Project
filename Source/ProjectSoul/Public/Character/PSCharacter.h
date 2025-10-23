@@ -26,6 +26,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Targeting")
 	bool GetIsTargeting() const;
 
+	UFUNCTION(BlueprintCallable)
+	void OnAttackEndNotify();
+
 	float GetNormalWalkSpeed() const;
 
 	float GetSprintWalkSpeed() const;
