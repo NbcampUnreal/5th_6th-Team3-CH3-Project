@@ -16,9 +16,13 @@ void APSWeaponSword::Attack(AActor* Target)
 
 	if (Target)
 	{
-		ApplyDamage(Target, AttackPower, nullptr, this, nullptr);
+		UGameplayStatics::ApplyDamage(
+			Target,
+			AttackPower,
+			nullptr,
+			this,
+			nullptr);
 	}
-
 }
 
 void APSWeaponSword::EnableWeaponCollision()

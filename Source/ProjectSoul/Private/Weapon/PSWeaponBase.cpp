@@ -3,37 +3,41 @@
 #include "Components/SphereComponent.h"
 #include "Components/BoxComponent.h"
 
-APSWeaponBase::APSWeaponBase()
+APSWeaponBase::APSWeaponBase() :
+    ItemType("Weapon"),
+    AttackRange(0.0f),
+    AttackPower(0.0f)
 {
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
     Scene = CreateDefaultSubobject<USceneComponent>(TEXT("Scene"));
-    SetRootComponent(Scene);
-
-    WeaponCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("WeaponCollision"));
-    WeaponCollision->SetupAttachment(Scene);
-    WeaponCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-    WeaponCollision->SetCollisionResponseToAllChannels(ECR_Ignore); 
-    WeaponCollision->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+    if (Scene)
+    {
+        SetRootComponent(Scene);
+    }
 
     StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComp"));
-    StaticMesh->SetupAttachment(WeaponCollision);
-    StaticMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision); 
+    if (StaticMesh)
+    {
+        StaticMesh->SetupAttachment(Scene);
+        StaticMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision); 
+    }
 
-    AttackRange = 90.0f;
-    AttackPower = 10.0f;
-
+    WeaponCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("WeaponCollision"));
+    if (WeaponCollision)
+    {
+        WeaponCollision->SetupAttachment(StaticMesh);
+        WeaponCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+        WeaponCollision->SetCollisionResponseToAllChannels(ECR_Ignore); 
+        WeaponCollision->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+    }
 }
 
 void APSWeaponBase::BeginPlay()
 {
 	Super::BeginPlay();
-    WeaponCollision->OnComponentBeginOverlap.AddDynamic(this, &APSWeaponBase::OnWeaponOverlap);
-}
 
-void APSWeaponBase::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
+    WeaponCollision->OnComponentBeginOverlap.AddDynamic(this, &APSWeaponBase::OnWeaponOverlap);
 }
 
 void APSWeaponBase::OnWeaponOverlap(
@@ -61,26 +65,15 @@ void APSWeaponBase::OnWeaponOverlap(
 
     DamagedActors.Add(OtherActor); 
 
-    ApplyDamage(
+    UGameplayStatics::ApplyDamage(
         OtherActor,
         AttackPower,
-        GetOwner()->GetInstigatorController(),
+        nullptr,
         this,
         UDamageType::StaticClass()
     );
 
-    UE_LOG(LogTemp, Log, TEXT("%s hit %s"), *GetName(), *OtherActor->GetName());
-}
-
-// Deliver damage to target
-float APSWeaponBase::ApplyDamage(
-    AActor* DamagedActor,
-    float BaseDamage,
-    AController* EventInstigator,
-    AActor* DamageCauser,
-    TSubclassOf<UDamageType> DamageTypeClass)
-{
-    return UGameplayStatics::ApplyDamage(DamagedActor, BaseDamage, EventInstigator, DamageCauser, DamageTypeClass);
+    UE_LOG(LogTemp, Warning, TEXT("%s Damaged: %f"), *OtherActor->GetName(), AttackPower);
 }
 
 void APSWeaponBase::EnableWeaponCollision()
@@ -96,8 +89,4 @@ void APSWeaponBase::DisableWeaponCollision()
 
 void APSWeaponBase::Attack(AActor* Target)
 {
-    
 }
-
-
-

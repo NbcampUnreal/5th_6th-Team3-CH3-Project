@@ -1,13 +1,14 @@
 #include "Character/PSCharacter.h"
-
-#include "GameFramework/SpringArmComponent.h"
-#include "Camera/CameraComponent.h"
 #include "EnhancedInputComponent.h"
+#include "Camera/CameraComponent.h"
 #include "Components/SphereComponent.h"
 #include "Gameplay/PSPlayerController.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "StateMachine/PlayerStateMachine.h"
 #include "State/PlayerStateBase.h"
+#include "State/PlayerAttackState.h"
+#include "Weapon/PSWeaponBase.h"
 
 APSCharacter::APSCharacter()
 	: NormalWalkSpeed(600.0f),
@@ -40,7 +41,6 @@ APSCharacter::APSCharacter()
 		Scanner->SetSphereRadius(1000.0f);
 	}
 
-	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f);
 }
 
@@ -48,18 +48,35 @@ void APSCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	GetCharacterMovement()->MaxWalkSpeed = NormalWalkSpeed;
-
 	StateMachine = NewObject<UPlayerStateMachine>(this);
 	if (StateMachine)
 	{
 		StateMachine->Initialize(this);
+	}
+
+	if (WeaponClass)
+	{
+		EquippedWeapon = GetWorld()->SpawnActor<APSWeaponBase>(WeaponClass);
+		UE_LOG(LogTemp, Warning, TEXT("Spawning weapon of class: %s"), *WeaponClass->GetName());
+		if (EquippedWeapon)
+		{
+			EquippedWeapon->AttachToComponent(
+				GetMesh(),
+				FAttachmentTransformRules::SnapToTargetIncludingScale,
+				FName("RightWeapon")
+			);
+		}
 	}
 }
 
 void APSCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (!Controller)
+	{
+		return;
+	}
 
 	if (StateMachine)
 	{
@@ -108,6 +125,16 @@ void APSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 				{
 					EnhancedInput->BindAction(PlayerController->UnlockAction, ETriggerEvent::Triggered, this, &APSCharacter::Unlock);
 				}
+
+				if (PlayerController->DodgeAction)
+				{
+					EnhancedInput->BindAction(PlayerController->DodgeAction, ETriggerEvent::Triggered, this, &APSCharacter::Dodge);
+				}
+
+				if (PlayerController->AttackAction)
+				{
+					EnhancedInput->BindAction(PlayerController->AttackAction, ETriggerEvent::Triggered, this, &APSCharacter::Attack);
+				}
 			}
 		}
 	}
@@ -115,11 +142,6 @@ void APSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 void APSCharacter::Move(const FInputActionValue& Value)
 {
-	if (!Controller)
-	{
-		return;
-	}
-
 	if (StateMachine)
 	{
 		FVector2D MoveInput = Value.Get<FVector2D>();
@@ -129,11 +151,6 @@ void APSCharacter::Move(const FInputActionValue& Value)
 
 void APSCharacter::Look(const FInputActionValue& Value)
 {
-	if (!Controller)
-	{
-		return;
-	}
-
 	if (StateMachine)
 	{
 		FVector2D LookInput = Value.Get<FVector2D>();
@@ -143,12 +160,6 @@ void APSCharacter::Look(const FInputActionValue& Value)
 
 void APSCharacter::StartJump(const FInputActionValue& Value)
 {
-	if (!Controller)
-	{
-		return;
-
-	}
-
 	if (StateMachine)
 	{
 		StateMachine->GetCurrentState()->StartJump();
@@ -157,11 +168,6 @@ void APSCharacter::StartJump(const FInputActionValue& Value)
 
 void APSCharacter::StopJump(const FInputActionValue& Value)
 {
-	if (!Controller)
-	{
-		return;
-	}
-
 	if (StateMachine)
 	{
 		StateMachine->GetCurrentState()->StopJump();
@@ -170,11 +176,6 @@ void APSCharacter::StopJump(const FInputActionValue& Value)
 
 void APSCharacter::StartSprint(const FInputActionValue& Value)
 {
-	if (!Controller)
-	{
-		return;
-	}
-
 	if (StateMachine)
 	{
 		StateMachine->GetCurrentState()->StartSprint();
@@ -183,11 +184,6 @@ void APSCharacter::StartSprint(const FInputActionValue& Value)
 
 void APSCharacter::StopSprint(const FInputActionValue& Value)
 {
-	if (!Controller)
-	{
-		return;
-	}
-
 	if (StateMachine)
 	{
 		StateMachine->GetCurrentState()->StopSprint();
@@ -196,11 +192,6 @@ void APSCharacter::StopSprint(const FInputActionValue& Value)
 
 void APSCharacter::Lock(const FInputActionValue& Value)
 {
-	if (!Controller)
-	{
-		return;
-	}
-
 	FindTargetActor();
 
 	if (StateMachine && CurrentTarget)
@@ -211,16 +202,27 @@ void APSCharacter::Lock(const FInputActionValue& Value)
 
 void APSCharacter::Unlock(const FInputActionValue& Value)
 {
-	if (!Controller)
-	{
-		return;
-	}
-
 	CurrentTarget = nullptr;
 
 	if (StateMachine)
 	{
 		StateMachine->GetCurrentState()->Unlock();
+	}
+}
+
+void APSCharacter::Dodge(const FInputActionValue& Value)
+{
+	if (StateMachine)
+	{
+		StateMachine->GetCurrentState()->Dodge();
+	}
+}
+
+void APSCharacter::Attack(const FInputActionValue& Value)
+{
+	if (StateMachine)
+	{
+		StateMachine->GetCurrentState()->Attack();
 	}
 }
 
@@ -266,6 +268,24 @@ void APSCharacter::FindTargetActor()
 	UE_LOG(LogTemp, Warning, TEXT("Found enemy: %s"), *CurrentTarget->GetName());
 }
 
+void APSCharacter::OnAttackEndNotify()
+{
+	if (StateMachine && StateMachine->GetAttackState())
+	{
+		StateMachine->GetAttackState()->AttackEnd();
+	}
+}
+
+void APSCharacter::OnEnableWeaponCollision()
+{
+	EquippedWeapon->EnableWeaponCollision();
+}
+
+void APSCharacter::OnDisableWeaponCollision()
+{
+	EquippedWeapon->DisableWeaponCollision();
+}
+
 float APSCharacter::GetNormalWalkSpeed() const
 {
 	return NormalWalkSpeed;
@@ -306,3 +326,12 @@ bool APSCharacter::GetIsTargeting() const
 	return bIsTargeting;
 }
 
+UAnimMontage* APSCharacter::GetDodgeMontage() const
+{
+	return DodgeMontage;
+}
+
+UAnimMontage* APSCharacter::GetAttackMontage() const
+{
+	return AttackMontage;
+}
