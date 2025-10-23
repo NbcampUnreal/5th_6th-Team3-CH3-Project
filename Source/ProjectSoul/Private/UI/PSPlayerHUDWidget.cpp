@@ -32,9 +32,6 @@ void UPSPlayerHUDWidget::NativeOnInitialized()
 	SetHPPersent(1.0f);
 	SetMPPersent(1.0f);
 	SetStaminaPersent(1.0f);
-
-	//MonsterBar Init
-
 }
 
 void UPSPlayerHUDWidget::UpdateUI()
