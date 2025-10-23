@@ -8,6 +8,7 @@
 #include "StateMachine/PlayerStateMachine.h"
 #include "State/PlayerStateBase.h"
 #include "State/PlayerAttackState.h"
+#include "Weapon/PSWeaponBase.h"
 
 APSCharacter::APSCharacter()
 	: NormalWalkSpeed(600.0f),
@@ -40,7 +41,6 @@ APSCharacter::APSCharacter()
 		Scanner->SetSphereRadius(1000.0f);
 	}
 
-	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f);
 }
 
@@ -48,18 +48,35 @@ void APSCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	GetCharacterMovement()->MaxWalkSpeed = NormalWalkSpeed;
-
 	StateMachine = NewObject<UPlayerStateMachine>(this);
 	if (StateMachine)
 	{
 		StateMachine->Initialize(this);
+	}
+
+	if (WeaponClass)
+	{
+		EquippedWeapon = GetWorld()->SpawnActor<APSWeaponBase>(WeaponClass);
+		UE_LOG(LogTemp, Warning, TEXT("Spawning weapon of class: %s"), *WeaponClass->GetName());
+		if (EquippedWeapon)
+		{
+			EquippedWeapon->AttachToComponent(
+				GetMesh(),
+				FAttachmentTransformRules::SnapToTargetIncludingScale,
+				FName("RightWeapon")
+			);
+		}
 	}
 }
 
 void APSCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (!Controller)
+	{
+		return;
+	}
 
 	if (StateMachine)
 	{
@@ -125,11 +142,6 @@ void APSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 void APSCharacter::Move(const FInputActionValue& Value)
 {
-	if (!Controller)
-	{
-		return;
-	}
-
 	if (StateMachine)
 	{
 		FVector2D MoveInput = Value.Get<FVector2D>();
@@ -139,11 +151,6 @@ void APSCharacter::Move(const FInputActionValue& Value)
 
 void APSCharacter::Look(const FInputActionValue& Value)
 {
-	if (!Controller)
-	{
-		return;
-	}
-
 	if (StateMachine)
 	{
 		FVector2D LookInput = Value.Get<FVector2D>();
@@ -153,12 +160,6 @@ void APSCharacter::Look(const FInputActionValue& Value)
 
 void APSCharacter::StartJump(const FInputActionValue& Value)
 {
-	if (!Controller)
-	{
-		return;
-
-	}
-
 	if (StateMachine)
 	{
 		StateMachine->GetCurrentState()->StartJump();
@@ -167,11 +168,6 @@ void APSCharacter::StartJump(const FInputActionValue& Value)
 
 void APSCharacter::StopJump(const FInputActionValue& Value)
 {
-	if (!Controller)
-	{
-		return;
-	}
-
 	if (StateMachine)
 	{
 		StateMachine->GetCurrentState()->StopJump();
@@ -180,11 +176,6 @@ void APSCharacter::StopJump(const FInputActionValue& Value)
 
 void APSCharacter::StartSprint(const FInputActionValue& Value)
 {
-	if (!Controller)
-	{
-		return;
-	}
-
 	if (StateMachine)
 	{
 		StateMachine->GetCurrentState()->StartSprint();
@@ -193,11 +184,6 @@ void APSCharacter::StartSprint(const FInputActionValue& Value)
 
 void APSCharacter::StopSprint(const FInputActionValue& Value)
 {
-	if (!Controller)
-	{
-		return;
-	}
-
 	if (StateMachine)
 	{
 		StateMachine->GetCurrentState()->StopSprint();
@@ -206,11 +192,6 @@ void APSCharacter::StopSprint(const FInputActionValue& Value)
 
 void APSCharacter::Lock(const FInputActionValue& Value)
 {
-	if (!Controller)
-	{
-		return;
-	}
-
 	FindTargetActor();
 
 	if (StateMachine && CurrentTarget)
@@ -221,11 +202,6 @@ void APSCharacter::Lock(const FInputActionValue& Value)
 
 void APSCharacter::Unlock(const FInputActionValue& Value)
 {
-	if (!Controller)
-	{
-		return;
-	}
-
 	CurrentTarget = nullptr;
 
 	if (StateMachine)
@@ -236,13 +212,6 @@ void APSCharacter::Unlock(const FInputActionValue& Value)
 
 void APSCharacter::Dodge(const FInputActionValue& Value)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Dodge input received."));
-
-	if (!Controller)
-	{
-		return;
-	}
-
 	if (StateMachine)
 	{
 		StateMachine->GetCurrentState()->Dodge();
@@ -251,11 +220,6 @@ void APSCharacter::Dodge(const FInputActionValue& Value)
 
 void APSCharacter::Attack(const FInputActionValue& Value)
 {
-	if (!Controller)
-	{
-		return;
-	}
-
 	if (StateMachine)
 	{
 		StateMachine->GetCurrentState()->Attack();
@@ -312,6 +276,15 @@ void APSCharacter::OnAttackEndNotify()
 	}
 }
 
+void APSCharacter::OnEnableWeaponCollision()
+{
+	EquippedWeapon->EnableWeaponCollision();
+}
+
+void APSCharacter::OnDisableWeaponCollision()
+{
+	EquippedWeapon->DisableWeaponCollision();
+}
 
 float APSCharacter::GetNormalWalkSpeed() const
 {

@@ -9,6 +9,7 @@ class UCameraComponent;
 class UPlayerStateMachine;
 class USphereComponent;
 class UAnimMontage;
+class APSWeaponBase;
 struct FInputActionValue;
 
 UCLASS()
@@ -28,6 +29,12 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void OnAttackEndNotify();
+
+	UFUNCTION(BlueprintCallable)
+	void OnEnableWeaponCollision();
+
+	UFUNCTION(BlueprintCallable)
+	void OnDisableWeaponCollision();
 
 	float GetNormalWalkSpeed() const;
 
@@ -98,6 +105,12 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "Targeting")
 	TObjectPtr<AActor> CurrentTarget;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	TSubclassOf<APSWeaponBase> WeaponClass;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon")
+	TObjectPtr<APSWeaponBase> EquippedWeapon;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	float NormalWalkSpeed;

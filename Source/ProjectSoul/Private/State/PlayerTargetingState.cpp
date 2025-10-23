@@ -23,16 +23,18 @@ void UPlayerTargetingState::OnEnter()
 
 void UPlayerTargetingState::OnUpdate(float DeltaTime)
 {
+	if (!IsTargetValid())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Target is not valid"));
+		Unlock();
+		return;
+	}
+
 	if (IsTargetTooFar())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Target is too far."));
-
-		if (APSCharacter* Character = GetPlayerCharacter())
-		{
-			Character->SetCurrentTarget(nullptr);
-			Unlock();
-			return;
-		}
+		UE_LOG(LogTemp, Warning, TEXT("Target is too far"));
+		Unlock();
+		return;
 	}
 
 	CalculateTargetRotation(DeltaTime);
@@ -94,6 +96,7 @@ void UPlayerTargetingState::Unlock()
 		if (UPlayerStateMachine* PSM = GetPlayerStateMachine())
 		{
 			Character->SetIsTargeting(false);
+			Character->SetCurrentTarget(nullptr);
 			PSM->ChangeState(PSM->GetFreeLookState());
 		}
 	}
@@ -157,6 +160,16 @@ bool UPlayerTargetingState::IsTargetTooFar()
 	if (APSCharacter* Character = GetPlayerCharacter())
 	{
 		return CalculateTargetDistance() > Character->GetMaxTargetDistance();
+	}
+
+	return false;
+}
+
+bool UPlayerTargetingState::IsTargetValid()
+{
+	if (APSCharacter* Character = GetPlayerCharacter())
+	{
+		return IsValid(Character->GetCurrentTarget());
 	}
 
 	return false;

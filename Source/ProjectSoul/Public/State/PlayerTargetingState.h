@@ -40,4 +40,6 @@ private:
 	float CalculateTargetDistance();
 
 	bool IsTargetTooFar();
+
+	bool IsTargetValid();
 };
