@@ -5,7 +5,7 @@
 
 void UPSMonsterWidget::NativeOnInitialized()
 {
-	HPBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("HPBar")));
+	Super::NativeOnInitialized();
 
 	HPBar->SetVisibility(ESlateVisibility::Hidden);
 	bLockOn = false;
@@ -23,13 +23,13 @@ void UPSMonsterWidget::UpdateMonsterHP(float Percent)
 }
 
 //call from monster Find()
-void UPSMonsterWidget::ShowTargetMonsterHP()
+void UPSMonsterWidget::ShowMonsterHP()
 {
 	bLockOn = true;
 	HPBar->SetVisibility(ESlateVisibility::Visible);
 }
 
-void UPSMonsterWidget::HiddenTargetMonsterHP()
+void UPSMonsterWidget::HiddenMonsterHP()
 {
 	bLockOn = false;
 	HPBar->SetVisibility(ESlateVisibility::Hidden);
@@ -65,5 +65,6 @@ APSCharacter* UPSMonsterWidget::GetCharacter()
 			return PSCharacter;
 		}
 	}
+
 	return nullptr;
 }

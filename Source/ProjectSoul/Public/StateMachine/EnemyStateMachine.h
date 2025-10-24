@@ -17,6 +17,7 @@ UCLASS()
 class PROJECTSOUL_API UEnemyStateMachine : public UStateMachineBase
 {
 	GENERATED_BODY()
+
 public:
 	virtual void Initialize(ACharacter* InOwner) override;
 
@@ -34,7 +35,7 @@ public:
 
 	UEnemyIdleState* GetIdleState() const;
 
-	UEnemyInvestigateState* GetInvestigateStateState() const;
+	UEnemyInvestigateState* GetInvestigateState() const;
 
 	UEnemyReturnState* GetReturnState() const;
 

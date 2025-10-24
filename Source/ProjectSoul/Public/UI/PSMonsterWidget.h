@@ -15,19 +15,21 @@ class PROJECTSOUL_API UPSMonsterWidget : public UUserWidget
 	GENERATED_BODY()
 	
 public:
+	virtual void NativeOnInitialized() override;
+
 	void UpdateMonsterHP(float Percent);
 
-	void ShowTargetMonsterHP();
-	void HiddenTargetMonsterHP();
+	void ShowMonsterHP();
+	void HiddenMonsterHP();
 	void ShowHitMonsterHP();
 	void HiddenHitMonsterHP();
 
 private:
-	virtual void NativeOnInitialized() override;
 	APSCharacter* GetCharacter();
 
 private:
-	UProgressBar* HPBar;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UProgressBar> HPBar;
 	FTimerHandle ShowMonsterHPTimer;
 	bool bLockOn;
 

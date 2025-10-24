@@ -7,6 +7,7 @@
 #include "Kismet/GameplayStatics.h"
 
 APSEnemyAIController::APSEnemyAIController()
+	:AttackRange(50.0f)
 {
 	AIPerception = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AIPerception"));
 	SetPerceptionComponent(*AIPerception);
@@ -30,12 +31,12 @@ APSEnemyAIController::APSEnemyAIController()
 void APSEnemyAIController::BeginPlay()
 {
 	Super::BeginPlay();
-
 	if (BlackboardComp)
 	{
 		BlackboardComp->SetValueAsBool(TEXT("bCanSeeTarget"), false);
 		BlackboardComp->SetValueAsBool(TEXT("bIsInvestigating"), false);
-
+		BlackboardComp->SetValueAsBool(TEXT("bInAttackRange"), false);
+		BlackboardComp->SetValueAsBool(TEXT("bIsReturning"), false);
 		APawn* ControlledPawn = GetPawn();
 		if (ControlledPawn)
 		{
@@ -61,20 +62,20 @@ void APSEnemyAIController::OnPossess(APawn* InPawn)
 
 }
 
-void APSEnemyAIController::OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)//캐릭터 State구현 방법을 보고 State로 변경예정
+void APSEnemyAIController::OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 {
 	APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
 	if (Actor != PlayerPawn || !BlackboardComp)
 	{
 		return;
 	}
-	if (Stimulus.WasSuccessfullySensed())//캐릭터 발견
+	if (Stimulus.WasSuccessfullySensed())
 	{
 		BlackboardComp->SetValueAsObject(TEXT("TargetActor"), Actor);
 		BlackboardComp->SetValueAsBool(TEXT("bCanSeeTarget"), true);
 		BlackboardComp->SetValueAsBool(TEXT("bIsInvestigating"), false);
 	}
-	else//캐릭터 놓침
+	else
 	{
 		BlackboardComp->SetValueAsBool(TEXT("bCanSeeTarget"), false);
 		BlackboardComp->SetValueAsBool(TEXT("bIsInvestigating"), true);
@@ -94,4 +95,8 @@ void APSEnemyAIController::StartBehaviorTree()
 	{
 		RunBehaviorTree(BehaviorTreeAsset);
 	}
+}
+float APSEnemyAIController::GetAttackRange()
+{
+	return AttackRange;
 }
