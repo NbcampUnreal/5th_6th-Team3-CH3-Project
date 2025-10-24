@@ -17,11 +17,14 @@ class PROJECTSOUL_API APSEnemyAIController : public AAIController
 	GENERATED_BODY()
 public:
 	APSEnemyAIController();
+
 	void StartBehaviorTree();
+
 	UBlackboardComponent* GetBlackboardComp() const;
 
 protected:
 	virtual void OnPossess(APawn* InPawn) override;
+
 	virtual void BeginPlay() override;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI")
