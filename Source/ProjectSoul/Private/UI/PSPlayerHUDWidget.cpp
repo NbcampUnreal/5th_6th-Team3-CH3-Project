@@ -16,7 +16,7 @@ void UPSPlayerHUDWidget::NativeOnInitialized()
 	HPBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("HPBar")));
 	MPBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("MPBar")));
 	StaminaBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("StaminaBar")));
-	
+	LockOnTarget = nullptr;
 	//USizeBox Init
 	if (APSCharacter* PSCharacter = GetCharacter())
 	{
@@ -36,7 +36,8 @@ void UPSPlayerHUDWidget::NativeOnInitialized()
 	LockOnImage->SetVisibility(ESlateVisibility::Hidden);
 }
 
-void UPSPlayerHUDWidget::UpdatePlayerHUD()
+//called from the player's TakeDamage() ?
+void UPSPlayerHUDWidget::UpdatePlayerHUD(APSCharacter* PSCharacter)
 {
 	if (APSCharacter* PSCharacter = GetCharacter())
 	{
@@ -86,10 +87,13 @@ void UPSPlayerHUDWidget::SetStaminaBarSize(int MaxStamina)
 	StaminaBarContainer->SetWidthOverride(MaxStamina * 2);
 }
 
-
 //player Finde Delegate add
-void UPSPlayerHUDWidget::ShowLockOn()
+void UPSPlayerHUDWidget::ShowLockOn(AActor* LockOnMonster)
 {
+	if (LockOnMonster)
+	{
+		LockOnTarget = LockOnMonster;
+	}
 	LockOnImage->SetVisibility(ESlateVisibility::Visible);
 
 	GetWorld()->GetTimerManager().SetTimer(
@@ -106,16 +110,16 @@ void UPSPlayerHUDWidget::HiddenLockOn()
 	LockOnImage->SetVisibility(ESlateVisibility::Hidden);
 
 	GetWorld()->GetTimerManager().ClearTimer(LockOnPositionHandle);
+	LockOnTarget = nullptr;
 }
 
 void UPSPlayerHUDWidget::UpdateLockOnPosition()
 {
-	if (AActor* Monster = GetCharacter()->GetCurrentTarget())
+	if (LockOnTarget)
 	{
-
 		if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
 		{
-			FVector MonsterWorldLocation = Monster->GetActorLocation();
+			FVector MonsterWorldLocation = LockOnTarget->GetActorLocation();
 			FVector2D MonsterScreenLocation;
 			PC->ProjectWorldLocationToScreen(MonsterWorldLocation, MonsterScreenLocation);
 

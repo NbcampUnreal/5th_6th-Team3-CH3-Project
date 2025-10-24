@@ -4,7 +4,7 @@
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "PSUIManagerSubsystem.generated.h"
 
-//class UPSPlayerHUDWidget;
+class UPSPlayerHUDWidget;
 
 UCLASS()
 class PROJECTSOUL_API UPSUIManagerSubsystem : public UGameInstanceSubsystem
@@ -17,7 +17,12 @@ public:
 	void ShowCurrentWidget();
 	void HideCurrentWidget();
 
-	//UPSPlayerHUDWidget* GetPlayerHUMWidgetInstance();
+	void ShowLockOn(AActor* LockOnMonster);
+	void HiddenLockOn();
+
+	void ShowMainMenuUI();
+	void ShowPlayerHUD();
+	void ShowGameOverUI();
 
 
 private:
@@ -36,11 +41,10 @@ private:
 	UPROPERTY()
 	UUserWidget* PlayerHUDWidgetInstance;
 
-	/*UPROPERTY(EditAnywhere, Category = "Widget")
-	TSubclassOf<UUserWidget> MonsterWidgetClass;
+	UPROPERTY(EditAnywhere, Category = "Widget")
+	TSubclassOf<UUserWidget> GameOverWidgetClass;
 	UPROPERTY()
-	UUserWidget* MonsterWidgetInstance;*/
-
+	UUserWidget* GameOverWidgetInstance;
 
 	UUserWidget* CurrentWidgetInstance;
 };

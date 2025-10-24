@@ -15,14 +15,15 @@ class PROJECTSOUL_API UPSPlayerHUDWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	void UpdatePlayerHUD();
+	void UpdatePlayerHUD(APSCharacter* PSCharacter);
 	
-	void ShowLockOn();
+	void ShowLockOn(AActor* LockOnMonster);
 	void HiddenLockOn();
 
-private:
+protected:
 	virtual void NativeOnInitialized() override;
 
+private:
 	void SetHPPersent(float Amount);
 	void SetMPPersent(float Amount);
 	void SetStaminaPersent(float Amount);
@@ -57,7 +58,7 @@ private:
 	UImage* LockOnImage;
 
 	FTimerHandle LockOnPositionHandle;
-
+	AActor* LockOnTarget;
 
 	//test
 	UPROPERTY(EditAnywhere, Category = "Test Value")
