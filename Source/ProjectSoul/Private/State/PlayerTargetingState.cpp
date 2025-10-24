@@ -13,6 +13,7 @@ void UPlayerTargetingState::OnEnter()
 	if (APSCharacter* Character = GetPlayerCharacter())
 	{
 		Character->SetIsTargeting(true);
+		Character->SetTargetingCamera();
 		Character->GetCharacterMovement()->MaxWalkSpeed = Character->GetTargetingWalkSpeed();
 		Character->GetCharacterMovement()->bOrientRotationToMovement = false;
 		Character->bUseControllerRotationYaw = true;

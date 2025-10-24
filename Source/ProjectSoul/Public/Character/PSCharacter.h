@@ -74,6 +74,8 @@ public:
 
 	void SetIsTargeting(bool Value);
 
+	void SetTargetingCamera();
+
 protected:
 	virtual void BeginPlay() override;
 
