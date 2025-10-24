@@ -9,4 +9,7 @@ class PROJECTSOUL_API UEnemyDieState : public UEnemyStateBase
 {
 	GENERATED_BODY()
 	
+	virtual void OnEnter() override;
+
+	virtual void OnExit() override;
 };

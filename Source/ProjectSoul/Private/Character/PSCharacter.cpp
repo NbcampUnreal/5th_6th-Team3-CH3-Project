@@ -9,6 +9,7 @@
 #include "State/PlayerStateBase.h"
 #include "State/PlayerAttackState.h"
 #include "Weapon/PSWeaponBase.h"
+#include "Enemy/PSEnemy.h"
 
 APSCharacter::APSCharacter()
 	: NormalWalkSpeed(600.0f),
@@ -54,16 +55,28 @@ void APSCharacter::BeginPlay()
 		StateMachine->Initialize(this);
 	}
 
-	if (WeaponClass)
+	if (RightWeaponClass)
 	{
-		EquippedWeapon = GetWorld()->SpawnActor<APSWeaponBase>(WeaponClass);
-		UE_LOG(LogTemp, Warning, TEXT("Spawning weapon of class: %s"), *WeaponClass->GetName());
-		if (EquippedWeapon)
+		EquippedRightWeapon = GetWorld()->SpawnActor<APSWeaponBase>(RightWeaponClass);
+		if (EquippedRightWeapon)
 		{
-			EquippedWeapon->AttachToComponent(
+			EquippedRightWeapon->AttachToComponent(
 				GetMesh(),
 				FAttachmentTransformRules::SnapToTargetIncludingScale,
 				FName("RightWeapon")
+			);
+		}
+	}
+
+	if (LeftWeaponClass)
+	{
+		EquippedLeftWeapon = GetWorld()->SpawnActor<APSWeaponBase>(LeftWeaponClass);
+		if (EquippedLeftWeapon)
+		{
+			EquippedLeftWeapon->AttachToComponent(
+				GetMesh(),
+				FAttachmentTransformRules::SnapToTargetIncludingScale,
+				FName("LeftWeapon")
 			);
 		}
 	}
@@ -202,8 +215,6 @@ void APSCharacter::Lock(const FInputActionValue& Value)
 
 void APSCharacter::Unlock(const FInputActionValue& Value)
 {
-	CurrentTarget = nullptr;
-
 	if (StateMachine)
 	{
 		StateMachine->GetCurrentState()->Unlock();
@@ -258,7 +269,7 @@ void APSCharacter::FindTargetActor()
 	TArray<AActor*> OverlappingActors;
 	Scanner->GetOverlappingActors(OverlappingActors);
 
-	AActor* ClosestActor = nullptr;
+	APSEnemy* ClosestEnemy = nullptr;
 	float ClosestDist = TNumericLimits<float>::Max();
 
 	for (AActor* Actor : OverlappingActors)
@@ -268,25 +279,25 @@ void APSCharacter::FindTargetActor()
 			continue;
 		}
 
-		if (Actor->ActorHasTag(TEXT("Enemy")))
+		if (APSEnemy* Enemy = Cast<APSEnemy>(Actor))
 		{
-			float Dist = FVector::Distance(Actor->GetActorLocation(), GetActorLocation());
+			float Dist = FVector::Distance(Enemy->GetActorLocation(), GetActorLocation());
 			if (Dist < ClosestDist)
 			{
 				ClosestDist = Dist;
-				ClosestActor = Actor;
+				ClosestEnemy = Enemy;
 			}
 		}
 	}
 
-	if (!ClosestActor)
+	if (!ClosestEnemy)
 	{
 		CurrentTarget = nullptr;
 		UE_LOG(LogTemp, Warning, TEXT("Not found enemy."));
 		return;
 	}
 
-	CurrentTarget = ClosestActor;
+	CurrentTarget = ClosestEnemy;
 	UE_LOG(LogTemp, Warning, TEXT("Found enemy: %s"), *CurrentTarget->GetName());
 }
 
@@ -327,7 +338,7 @@ float APSCharacter::GetTargetingWalkSpeed() const
 	return TargetingWalkSpeed;
 }
 
-AActor* APSCharacter::GetCurrentTarget() const
+APSEnemy* APSCharacter::GetCurrentTarget() const
 {
 	return CurrentTarget;
 }
@@ -352,7 +363,7 @@ UAnimMontage* APSCharacter::GetAttackMontage() const
 	return AttackMontage;
 }
 
-void APSCharacter::SetCurrentTarget(AActor* NewTarget)
+void APSCharacter::SetCurrentTarget(APSEnemy* NewTarget)
 {
 	CurrentTarget = NewTarget;
 }
@@ -386,10 +397,10 @@ void APSCharacter::OnAttackEndNotify()
 
 void APSCharacter::OnEnableWeaponCollision()
 {
-	EquippedWeapon->EnableWeaponCollision();
+	EquippedRightWeapon->EnableWeaponCollision();
 }
 
 void APSCharacter::OnDisableWeaponCollision()
 {
-	EquippedWeapon->DisableWeaponCollision();
+	EquippedRightWeapon->DisableWeaponCollision();
 }

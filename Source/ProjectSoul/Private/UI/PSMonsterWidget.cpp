@@ -17,6 +17,7 @@ void UPSMonsterWidget::NativeOnInitialized()
 //call from monster TakeDamege()
 void UPSMonsterWidget::UpdateMonsterHP(float Percent)
 {
+
 	if (Percent >= 0)
 	{
 		HPBar->SetPercent(Percent);
@@ -24,7 +25,7 @@ void UPSMonsterWidget::UpdateMonsterHP(float Percent)
 	}
 }
 
-//call from monster Find()
+//player Finde Delegate add??
 void UPSMonsterWidget::ShowMonsterHP()
 {
 	bLockOn = true;

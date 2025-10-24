@@ -78,6 +78,14 @@ float APSEnemy::TakeDamage(
 	return ActualDamage;
 }
 
+void APSEnemy::ShowHealthWidget(bool bShow)
+{
+	if (HealthWidget)
+	{
+		HealthWidget->SetVisibility(bShow);
+	}
+}
+
 void APSEnemy::UpdateHealthWidget()
 {
 	if (HealthWidget)
