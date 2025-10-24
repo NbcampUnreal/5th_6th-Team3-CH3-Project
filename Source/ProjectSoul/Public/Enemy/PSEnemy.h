@@ -25,6 +25,7 @@ public:
 		AActor* DamageCauser
 	) override;
 
+	UEnemyStateMachine* GetStateMachine();
 protected:
 	virtual void BeginPlay() override;
 	
