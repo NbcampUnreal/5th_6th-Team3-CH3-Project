@@ -44,11 +44,14 @@ protected:
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon")
     FName ItemType;
 
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon")
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon|Sword")
     float AttackPower;
 
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon")
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon|Sword")
     float AttackRange;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon|Shield")
+    float DefensePower;
 
     UPROPERTY()
     TSet<AActor*> DamagedActors;
