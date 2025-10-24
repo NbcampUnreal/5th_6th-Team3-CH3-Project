@@ -22,8 +22,9 @@ public:
 		float DamageAmount,
 		struct FDamageEvent const& DamageEvent,
 		AController* EventInstigator,
-		AActor* DamageCauser
-	) override;
+		AActor* DamageCauser) override;
+
+	void ShowHealthWidget(bool bShow);
 
 protected:
 	virtual void BeginPlay() override;
@@ -52,7 +53,4 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Move")
 	float RunSpeed;
-
-private:
-
 };
