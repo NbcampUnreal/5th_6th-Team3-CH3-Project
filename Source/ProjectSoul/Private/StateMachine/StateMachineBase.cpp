@@ -25,7 +25,7 @@ void UStateMachineBase::ChangeState(UStateBase* NewState)
 
 	if (NewState == CurrentState)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Change to same state."));
+		//UE_LOG(LogTemp, Warning, TEXT("Change to same state."));
 		return;
 	}
 
