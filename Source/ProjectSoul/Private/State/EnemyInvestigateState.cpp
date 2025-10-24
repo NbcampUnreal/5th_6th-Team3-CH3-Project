@@ -3,7 +3,7 @@
 #include "Enemy/PSEnemyAIController.h"
 #include "Navigation/PathFollowingComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
-
+#include "AITypes.h"     
 void UEnemyInvestigateState::OnEnter()
 {
     Super::OnEnter();
@@ -19,22 +19,60 @@ void UEnemyInvestigateState::OnEnter()
     }
 
 
-    AActor* Target = Cast<AActor>(BlackboardComp->GetValueAsObject(TEXT("TargetActor")));
-    if (!Target) return;
+    FVector TargetLastKnownLocation = BlackboardComp->GetValueAsVector(TEXT("TargetLastKnownLocation"));
+    if (TargetLastKnownLocation.IsNearlyZero())
+    {
+        return;
+    }
+    EnemyAIController->SetFocalPoint(TargetLastKnownLocation);
 
-    EnemyAIController->SetFocus(Target);
-
-    EnemyAIController->MoveToActor(
-        Target,
+    EnemyAIController->MoveToLocation(
+        TargetLastKnownLocation,
         100.0f,
         true,
         true,
         true,
-        0,
-        true
+        false
     );
+    if (UPathFollowingComponent* PFC = EnemyAIController->GetPathFollowingComponent())
+    {
+        PFC->OnRequestFinished.AddUObject(this, &UEnemyInvestigateState::HandleMoveFinished);
+    }
 }
+
 void UEnemyInvestigateState::OnExit()
 {
     Super::OnExit();
+    ACharacter* Enemy = GetEnemyCharacter();
+    if (!Enemy) return;
+
+    AAIController* EnemyAIController = Cast<AAIController>(Enemy->GetController());
+    if (!EnemyAIController) return;
+
+    if (UPathFollowingComponent* PFC = EnemyAIController->GetPathFollowingComponent())
+    {
+        PFC->OnRequestFinished.RemoveAll(this);
+    }
+
+    EnemyAIController->StopMovement();
+    EnemyAIController->ClearFocus(EAIFocusPriority::Gameplay);
+}
+
+void UEnemyInvestigateState::HandleMoveFinished(FAIRequestID RequestID, const FPathFollowingResult& Result)
+{
+    if (Result.IsSuccess())
+    {
+        UE_LOG(LogTemp, Warning, TEXT("success Investigate"));
+        ACharacter* Enemy = GetEnemyCharacter();
+        if (!Enemy) return;
+
+        AAIController* EnemyAIController = Cast<AAIController>(Enemy->GetController());
+        if (!EnemyAIController) return;
+
+        UBlackboardComponent* BlackboardComp = EnemyAIController->GetBlackboardComponent();
+        if (!BlackboardComp) return;
+
+        BlackboardComp->SetValueAsBool(TEXT("bIsInvestigating"), false);
+        BlackboardComp->SetValueAsBool(TEXT("bIsReturning"), true);
+    }
 }

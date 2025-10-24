@@ -18,22 +18,27 @@ void UEnemyReturnState::OnEnter()
         return;
     }
 
-    FVector TargetLastKnownLocation = BlackboardComp->GetValueAsVector(TEXT("TargetLastKnownLocation"));
-    if (TargetLastKnownLocation.IsNearlyZero())
+    FVector SpawnPointLocation = BlackboardComp->GetValueAsVector(TEXT("SpawnPointLocation"));
+    if (SpawnPointLocation.IsNearlyZero())
     {
         return;
     }
-    EnemyAIController->SetFocalPoint(TargetLastKnownLocation);
+    EnemyAIController->SetFocalPoint(SpawnPointLocation);
 
     EnemyAIController->MoveToLocation(
-        TargetLastKnownLocation,
+        SpawnPointLocation,
         100.0f,        
         true,          
         true,         
         true,          
         false         
     );
+    if (UPathFollowingComponent* PFC = EnemyAIController->GetPathFollowingComponent())
+    {
+        PFC->OnRequestFinished.AddUObject(this, &UEnemyReturnState::HandleMoveFinished);
+    }
 }
+
 void UEnemyReturnState::OnExit()
 {
     Super::OnExit();
@@ -45,4 +50,28 @@ void UEnemyReturnState::OnExit()
 
     EnemyAIController->StopMovement();
     EnemyAIController->ClearFocus(EAIFocusPriority::Gameplay);
+
+    if (UPathFollowingComponent* PFC = EnemyAIController->GetPathFollowingComponent())
+    {
+        PFC->OnRequestFinished.RemoveAll(this);
+    }
+}
+
+void UEnemyReturnState::HandleMoveFinished(FAIRequestID RequestID, const FPathFollowingResult& Result)
+{
+    if (Result.IsSuccess())
+    {
+        UE_LOG(LogTemp, Warning, TEXT("success Return"));
+        ACharacter* Enemy = GetEnemyCharacter();
+        if (!Enemy) return;
+
+        AAIController* EnemyAIController = Cast<AAIController>(Enemy->GetController());
+        if (!EnemyAIController) return;
+
+        UBlackboardComponent* BlackboardComp = EnemyAIController->GetBlackboardComponent();
+        if (!BlackboardComp) return;
+
+        BlackboardComp->SetValueAsBool(TEXT("bIsReturning"), false);
+
+    }
 }
