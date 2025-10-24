@@ -3,8 +3,9 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "StateMachine/EnemyStateMachine.h"
 #include "State/EnemyStateBase.h"
-#include <Components/WidgetComponent.h>
-#include <Components/TextBlock.h>
+#include "Components/WidgetComponent.h"
+#include "Components/ProgressBar.h"
+#include "UI/PSMonsterWidget.h"
 
 APSEnemy::APSEnemy()
 	: Attack(20), 
@@ -14,6 +15,13 @@ APSEnemy::APSEnemy()
 {
 	AIControllerClass = APSEnemyAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+
+	HealthWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthWidget"));
+	if (HealthWidget)
+	{
+		HealthWidget->SetupAttachment(GetMesh());
+		HealthWidget->SetWidgetSpace(EWidgetSpace::Screen);
+	}
 
 	UCharacterMovementComponent* EnemyMovement = GetCharacterMovement();
 	EnemyMovement->MaxWalkSpeed = WalkSpeed;
@@ -47,6 +55,9 @@ float APSEnemy::TakeDamage(
 	EnemyStats.Health.AdjustValue(-DamageAmount);
 	UpdateHealthWidget();
 
+	UE_LOG(LogTemp, Warning, TEXT("Enemy take damage %.0f from %s"), DamageAmount, *DamageCauser->GetName());
+	UE_LOG(LogTemp, Warning, TEXT("Enemy Remain Health: %.0f / %.0f"), EnemyStats.Health.GetCurrent(), EnemyStats.Health.GetMax());
+
 	if (EnemyStats.Health.IsZero())
 	{
 		Destroy();
@@ -62,10 +73,9 @@ void APSEnemy::UpdateHealthWidget()
 	{
 		if (UUserWidget* Widget = HealthWidget->GetUserWidgetObject())
 		{
-			if (UTextBlock* HealthText = Cast<UTextBlock>(Widget->GetWidgetFromName(TEXT("HealthText"))))
+			if (UPSMonsterWidget* MonsterWidget = Cast<UPSMonsterWidget>(Widget))
 			{
-				FString HealthString = FString::Printf(TEXT("HP: %.0f / %.0f"), EnemyStats.Health.GetCurrent(), EnemyStats.Health.GetMax());
-				HealthText->SetText(FText::FromString(HealthString));
+				MonsterWidget->UpdateMonsterHP(EnemyStats.Health.GetPercent());
 			}
 		}
 	}
