@@ -8,15 +8,13 @@
 void UPSMonsterWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
-
-	HPBar->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UPSMonsterWidget::UpdateMonsterHP(float Percent)
 {
-
+	HPBar->SetPercent(Percent);
 }
-
+  
 //player Finde Delegate add??
 void UPSMonsterWidget::ShowMonsterHP()
 {

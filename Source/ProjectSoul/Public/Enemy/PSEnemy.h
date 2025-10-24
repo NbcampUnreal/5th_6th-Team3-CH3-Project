@@ -22,8 +22,9 @@ public:
 		float DamageAmount,
 		struct FDamageEvent const& DamageEvent,
 		AController* EventInstigator,
-		AActor* DamageCauser
-	) override;
+		AActor* DamageCauser) override;
+
+	void ShowHealthWidget(bool bShow);
 
 	UEnemyStateMachine* GetStateMachine();
 protected:
@@ -53,7 +54,4 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Move")
 	float RunSpeed;
-
-private:
-
 };
