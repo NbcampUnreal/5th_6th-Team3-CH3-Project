@@ -226,6 +226,24 @@ void APSCharacter::Attack(const FInputActionValue& Value)
 	}
 }
 
+float APSCharacter::TakeDamage(
+	float DamageAmount,
+	FDamageEvent const& DamageEvent,
+	AController* EventInstigator,
+	AActor* DamageCauser)
+{
+	float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	PlayerStats.Health.AdjustValue(-DamageAmount);
+
+	if (PlayerStats.Health.IsZero())
+	{
+		// »ç¸Á Ã³¸®
+	}
+
+	return ActualDamage;
+}
+
 void APSCharacter::FindTargetActor()
 {
 	if (!Scanner)

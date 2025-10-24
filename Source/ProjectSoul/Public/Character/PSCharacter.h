@@ -25,6 +25,13 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
+	virtual float TakeDamage(
+		float DamageAmount,
+		struct FDamageEvent const& DamageEvent,
+		AController* EventInstigator,
+		AActor* DamageCauser
+	) override;
+
 	UFUNCTION(BlueprintCallable, Category = "Stats")
 	void RestoreAllStats();
 
