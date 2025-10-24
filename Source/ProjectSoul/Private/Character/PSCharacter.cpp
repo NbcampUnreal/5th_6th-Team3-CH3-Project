@@ -238,7 +238,7 @@ float APSCharacter::TakeDamage(
 
 	if (PlayerStats.Health.IsZero())
 	{
-		// »ç¸Á Ã³¸®
+		// Death
 	}
 
 	return ActualDamage;

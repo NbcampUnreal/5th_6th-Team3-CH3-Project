@@ -17,6 +17,7 @@ UCLASS()
 class PROJECTSOUL_API UEnemyStateMachine : public UStateMachineBase
 {
 	GENERATED_BODY()
+
 public:
 	virtual void Initialize(ACharacter* InOwner) override;
 
