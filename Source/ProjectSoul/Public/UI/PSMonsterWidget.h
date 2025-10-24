@@ -15,14 +15,15 @@ class PROJECTSOUL_API UPSMonsterWidget : public UUserWidget
 	GENERATED_BODY()
 	
 public:
-	virtual void NativeOnInitialized() override;
-
 	void UpdateMonsterHP(float Percent);
 
 	void ShowMonsterHP();
 	void HiddenMonsterHP();
 	void ShowHitMonsterHP();
 	void HiddenHitMonsterHP();
+
+protected:
+	virtual void NativeOnInitialized() override;
 
 private:
 	APSCharacter* GetCharacter();

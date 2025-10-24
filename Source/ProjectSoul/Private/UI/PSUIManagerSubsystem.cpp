@@ -1,5 +1,6 @@
 #include "UI/PSUIManagerSubsystem.h"
 #include "Blueprint/UserWidget.h"
+#include "UI/PSPlayerHUDWidget.h"
 
 UPSUIManagerSubsystem::UPSUIManagerSubsystem()
 {
@@ -7,8 +8,8 @@ UPSUIManagerSubsystem::UPSUIManagerSubsystem()
 	MainMenuWidgetInstance = nullptr;
 	PlayerHUDWidgetClass = nullptr;
 	PlayerHUDWidgetInstance = nullptr;
-	/*MonsterWidgetClass = nullptr;
-	MonsterWidgetInstance = nullptr;*/
+	GameOverWidgetClass = nullptr;
+	GameOverWidgetInstance = nullptr;
 	CurrentWidgetInstance = nullptr;
 
 	static ConstructorHelpers::FClassFinder<UUserWidget> MainMenuWidgetBPClass(TEXT("/Game/Blueprints/UI/WBP_PSMainMenuWidget.WBP_PSMainMenuWidget_C"));
@@ -21,11 +22,11 @@ UPSUIManagerSubsystem::UPSUIManagerSubsystem()
 	{
 		PlayerHUDWidgetClass = PlayerHUDWidgetBPClass.Class;
 	}
-	/*static ConstructorHelpers::FClassFinder<UUserWidget> MonsterHPWidgetBPClass(TEXT("/Game/Blueprints/UI/WBP_PSMonsterWidget.WBP_PSMonsterWidget_C"));
+	static ConstructorHelpers::FClassFinder<UUserWidget> GameOverWidgetBPClass(TEXT("/Game/Blueprints/UI/WBP_PSGameOverWidget.WBP_PSGameOverWidget_C"));
 	if (MainMenuWidgetBPClass.Succeeded())
 	{
-		MonsterWidgetClass = PlayerHUDWidgetBPClass.Class;
-	}*/
+		GameOverWidgetClass = GameOverWidgetBPClass.Class;
+	}
 }
 
 void UPSUIManagerSubsystem::ShowCurrentWidget()
@@ -39,6 +40,20 @@ void UPSUIManagerSubsystem::HideCurrentWidget()
 	CurrentWidgetInstance->RemoveFromParent();
 }
 
+void UPSUIManagerSubsystem::ShowLockOn(AActor* LockOnMonster)
+{
+	GetWorld()->GetFirstPlayerController()->GetOwner();
+
+	UPSPlayerHUDWidget* PlayerHUD = Cast<UPSPlayerHUDWidget>(PlayerHUDWidgetInstance);
+	PlayerHUD->ShowLockOn(LockOnMonster);
+}
+
+void UPSUIManagerSubsystem::HiddenLockOn()
+{
+	UPSPlayerHUDWidget* PlayerHUD = Cast<UPSPlayerHUDWidget>(PlayerHUDWidgetInstance);
+	PlayerHUD->HiddenLockOn();
+}
+
 void UPSUIManagerSubsystem::SetCurrentWidget()
 {
 	FString CurrentMapName = GetWorld()->GetMapName();
@@ -48,14 +63,41 @@ void UPSUIManagerSubsystem::SetCurrentWidget()
 		{
 			MainMenuWidgetInstance = CreateWidget(GetWorld()->GetFirstPlayerController(), MainMenuWidgetClass);
 		}
-		CurrentWidgetInstance = MainMenuWidgetInstance;
+		if (MainMenuWidgetInstance)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("MainMenu Create Success"));
+			CurrentWidgetInstance = MainMenuWidgetInstance;
+		}
 	}
 	else
 	{
 		if (!PlayerHUDWidgetInstance)
 		{
 			PlayerHUDWidgetInstance = CreateWidget(GetWorld()->GetFirstPlayerController(), PlayerHUDWidgetClass);
+			
 		}
-		CurrentWidgetInstance = PlayerHUDWidgetInstance;
+		if (PlayerHUDWidgetInstance)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("PlayerHUD Create Success"));
+			CurrentWidgetInstance = PlayerHUDWidgetInstance;
+		}
 	}
+}
+
+void UPSUIManagerSubsystem::ShowMainMenuUI()
+{
+	MainMenuWidgetInstance = CreateWidget(GetWorld()->GetFirstPlayerController(), MainMenuWidgetClass);
+	MainMenuWidgetInstance->AddToViewport();
+}
+
+void UPSUIManagerSubsystem::ShowPlayerHUD()
+{
+	PlayerHUDWidgetInstance = CreateWidget(GetWorld()->GetFirstPlayerController(), PlayerHUDWidgetClass);
+	PlayerHUDWidgetInstance->AddToViewport();
+}
+
+void UPSUIManagerSubsystem::ShowGameOverUI()
+{
+	GameOverWidgetInstance = CreateWidget(GetWorld()->GetFirstPlayerController(), GameOverWidgetClass);
+	GameOverWidgetInstance->AddToViewport();
 }

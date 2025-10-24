@@ -7,6 +7,8 @@ void UPSMonsterWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 
+	HPBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("HPBar")));
+
 	HPBar->SetVisibility(ESlateVisibility::Hidden);
 	bLockOn = false;
 	TestHP = 1.0f;
