@@ -12,18 +12,15 @@ class PROJECTSOUL_API APSWeaponBase : public AActor
 	GENERATED_BODY()
 	
 public:	
-
 	APSWeaponBase();
 
-    virtual void Tick(float DeltaTime) override;
+    virtual void BeginPlay() override;
 
     virtual void Attack(AActor* Target);
 
     virtual void EnableWeaponCollision();
 
     virtual void DisableWeaponCollision();
-
-    virtual void BeginPlay() override;
 
     UFUNCTION()
     virtual void OnWeaponOverlap(
@@ -34,15 +31,7 @@ public:
         bool bFromSweep,
         const FHitResult& SweepResult);
 
-    static float ApplyDamage(
-        AActor* DamagedActor,
-        float BaseDamage,
-        AController* EventInstigator,
-        AActor* DamageCauser,
-        TSubclassOf<UDamageType> DamageTypeClass);
-
 protected:
-
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon|Component")
     USceneComponent* Scene;
 
@@ -52,23 +41,15 @@ protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon|Component")
     UStaticMeshComponent* StaticMesh;
 
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon")
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon")
     FName ItemType;
 
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon")
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon")
     float AttackPower;
 
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon")
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon")
     float AttackRange;
 
     UPROPERTY()
     TSet<AActor*> DamagedActors;
-
-
-
-
-
-
-	
-
 };
