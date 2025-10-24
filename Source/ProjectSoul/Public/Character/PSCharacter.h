@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Structs/FPlayerStats.h"
 #include "PSCharacter.generated.h"
 
 class USpringArmComponent;
@@ -24,17 +25,36 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
+	virtual float TakeDamage(
+		float DamageAmount,
+		struct FDamageEvent const& DamageEvent,
+		AController* EventInstigator,
+		AActor* DamageCauser
+	) override;
+
+	UFUNCTION(BlueprintCallable, Category = "Stats")
+	void RestoreAllStats();
+
 	UFUNCTION(BlueprintPure, Category = "Targeting")
 	bool GetIsTargeting() const;
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
 	void OnAttackEndNotify();
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
 	void OnEnableWeaponCollision();
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
 	void OnDisableWeaponCollision();
+
+	UFUNCTION(BlueprintPure, Category = "Stats")
+	float GetHealthPercent() const;
+
+	UFUNCTION(BlueprintPure, Category = "Stats")
+	float GetManaPercent() const;
+
+	UFUNCTION(BlueprintPure, Category = "Stats")
+	float GetStaminaPercent() const;
 
 	float GetNormalWalkSpeed() const;
 
@@ -44,15 +64,15 @@ public:
 
 	AActor* GetCurrentTarget() const;
 
-	void SetCurrentTarget(AActor* NewTarget);
-
 	float GetMaxTargetDistance() const;
-
-	void SetIsTargeting(bool Value);
 
 	UAnimMontage* GetDodgeMontage() const;
 
 	UAnimMontage* GetAttackMontage() const;
+
+	void SetCurrentTarget(AActor* NewTarget);
+
+	void SetIsTargeting(bool Value);
 
 protected:
 	virtual void BeginPlay() override;
@@ -111,6 +131,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon")
 	TObjectPtr<APSWeaponBase> EquippedWeapon;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+	FPlayerStats PlayerStats;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	float NormalWalkSpeed;
