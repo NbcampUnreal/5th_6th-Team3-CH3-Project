@@ -7,25 +7,30 @@
 UCLASS()
 class PROJECTSOUL_API APSGameModeBase : public AGameModeBase
 {
-	GENERATED_BODY()
-	
+    GENERATED_BODY()
+
 public:
     APSGameModeBase();
 
     UFUNCTION(BlueprintCallable, Category = "Game")
     void StartGame();
+
     UFUNCTION(BlueprintCallable, Category = "Game")
     void EndGame();
+
     UFUNCTION(BlueprintCallable, Category = "Game")
-	void RestartGame();
+    void RestartGame();
+
+    UFUNCTION(BlueprintCallable, Category = "Game")
+    void AddPlayerScore(int32 Amount);
 
 protected:
     virtual void BeginPlay() override;
 
-    UPROPERTY(VisibleAnywhere, Category = "Game State")
+    UPROPERTY(VisibleAnywhere, Category = "Game")
     bool bIsGamePlaying;
 
-    UPROPERTY(VisibleAnywhere, Category = "Game State")
+    UPROPERTY(VisibleAnywhere, Category = "Game")
     bool bIsGameOver;
 
     UPROPERTY(EditAnywhere, Category = "Game")

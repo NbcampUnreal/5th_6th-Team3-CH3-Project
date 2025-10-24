@@ -1,15 +1,18 @@
 #include "State/PlayerTargetingState.h"
+#include "State/PlayerFreeLookState.h"
+#include "State/PlayerDodgeState.h"
+#include "State/PlayerAttackState.h"
+#include "StateMachine/PlayerStateMachine.h"
 #include "Character/PSCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Gameplay/PSPlayerController.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "StateMachine/PlayerStateMachine.h"
-#include "State/PlayerFreeLookState.h"
 
 void UPlayerTargetingState::OnEnter()
 {
 	if (APSCharacter* Character = GetPlayerCharacter())
 	{
+		Character->SetIsTargeting(true);
 		Character->GetCharacterMovement()->MaxWalkSpeed = Character->GetTargetingWalkSpeed();
 		Character->GetCharacterMovement()->bOrientRotationToMovement = false;
 		Character->bUseControllerRotationYaw = true;
@@ -20,16 +23,18 @@ void UPlayerTargetingState::OnEnter()
 
 void UPlayerTargetingState::OnUpdate(float DeltaTime)
 {
+	if (!IsTargetValid())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Target is not valid"));
+		Unlock();
+		return;
+	}
+
 	if (IsTargetTooFar())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Target is too far."));
-
-		if (APSCharacter* Character = GetPlayerCharacter())
-		{
-			Character->SetCurrentTarget(nullptr);
-			Unlock();
-			return;
-		}
+		UE_LOG(LogTemp, Warning, TEXT("Target is too far"));
+		Unlock();
+		return;
 	}
 
 	CalculateTargetRotation(DeltaTime);
@@ -37,12 +42,6 @@ void UPlayerTargetingState::OnUpdate(float DeltaTime)
 
 void UPlayerTargetingState::OnExit()
 {
-	if (APSCharacter* Character = GetPlayerCharacter())
-	{
-		Character->GetCharacterMovement()->bOrientRotationToMovement = true;
-		Character->bUseControllerRotationYaw = false;
-	}
-
 	UE_LOG(LogTemp, Warning, TEXT("Exit Targeting State"));
 }
 
@@ -83,6 +82,11 @@ void UPlayerTargetingState::StopJump()
 
 void UPlayerTargetingState::Attack()
 {
+	if (UPlayerStateMachine* PSM = GetPlayerStateMachine())
+	{
+		PSM->SetPrevState(this);
+		PSM->ChangeState(PSM->GetAttackState());
+	}
 }
 
 void UPlayerTargetingState::Unlock()
@@ -92,7 +96,20 @@ void UPlayerTargetingState::Unlock()
 		if (UPlayerStateMachine* PSM = GetPlayerStateMachine())
 		{
 			Character->SetIsTargeting(false);
+			Character->SetCurrentTarget(nullptr);
 			PSM->ChangeState(PSM->GetFreeLookState());
+		}
+	}
+}
+
+void UPlayerTargetingState::Dodge()
+{
+	if (APSCharacter* Character = GetPlayerCharacter())
+	{
+		if (UPlayerStateMachine* PSM = GetPlayerStateMachine())
+		{
+			PSM->SetPrevState(this);
+			PSM->ChangeState(PSM->GetDodgeState());
 		}
 	}
 }
@@ -118,7 +135,7 @@ void UPlayerTargetingState::CalculateTargetRotation(float DeltaTime)
 			LookAtRotation.Pitch = -30.0f;
 			FRotator ControlRotation = PC->GetControlRotation();
 
-			FRotator NewRotation = FMath::RInterpTo(ControlRotation, LookAtRotation, DeltaTime, 10.0f);
+			FRotator NewRotation = FMath::RInterpTo(ControlRotation, LookAtRotation, DeltaTime, 7.0f);
 			PC->SetControlRotation(NewRotation);
 		}
 	}
@@ -143,6 +160,16 @@ bool UPlayerTargetingState::IsTargetTooFar()
 	if (APSCharacter* Character = GetPlayerCharacter())
 	{
 		return CalculateTargetDistance() > Character->GetMaxTargetDistance();
+	}
+
+	return false;
+}
+
+bool UPlayerTargetingState::IsTargetValid()
+{
+	if (APSCharacter* Character = GetPlayerCharacter())
+	{
+		return IsValid(Character->GetCurrentTarget());
 	}
 
 	return false;

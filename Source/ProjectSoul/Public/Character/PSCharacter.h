@@ -8,6 +8,8 @@ class USpringArmComponent;
 class UCameraComponent;
 class UPlayerStateMachine;
 class USphereComponent;
+class UAnimMontage;
+class APSWeaponBase;
 struct FInputActionValue;
 
 UCLASS()
@@ -21,6 +23,18 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	virtual void Tick(float DeltaTime) override;
+
+	UFUNCTION(BlueprintPure, Category = "Targeting")
+	bool GetIsTargeting() const;
+
+	UFUNCTION(BlueprintCallable)
+	void OnAttackEndNotify();
+
+	UFUNCTION(BlueprintCallable)
+	void OnEnableWeaponCollision();
+
+	UFUNCTION(BlueprintCallable)
+	void OnDisableWeaponCollision();
 
 	float GetNormalWalkSpeed() const;
 
@@ -36,8 +50,9 @@ public:
 
 	void SetIsTargeting(bool Value);
 
-	UFUNCTION(BlueprintPure, Category = "Targeting")
-	bool GetIsTargeting() const;
+	UAnimMontage* GetDodgeMontage() const;
+
+	UAnimMontage* GetAttackMontage() const;
 
 protected:
 	virtual void BeginPlay() override;
@@ -66,6 +81,12 @@ protected:
 	UFUNCTION()
 	void Unlock(const FInputActionValue& Value);
 
+	UFUNCTION()
+	void Dodge(const FInputActionValue& Value);
+
+	UFUNCTION()
+	void Attack(const FInputActionValue& Value);
+
 private:
 	void FindTargetActor();
 
@@ -85,6 +106,12 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Targeting")
 	TObjectPtr<AActor> CurrentTarget;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	TSubclassOf<APSWeaponBase> WeaponClass;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon")
+	TObjectPtr<APSWeaponBase> EquippedWeapon;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	float NormalWalkSpeed;
 
@@ -99,4 +126,10 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Targeting")
 	bool bIsTargeting;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dodge")
+	TObjectPtr<UAnimMontage> DodgeMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dodge")
+	TObjectPtr<UAnimMontage> AttackMontage;
 };
