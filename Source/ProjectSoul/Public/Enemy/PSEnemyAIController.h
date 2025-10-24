@@ -7,7 +7,6 @@
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "PSEnemyAIController.generated.h"
 
-
 class UAIPerceptionComponent;
 class UAISenseConfig_Sight;
 
@@ -20,13 +19,11 @@ public:
 
 	void StartBehaviorTree();
 
+	float GetAttackRange();
+
 	UBlackboardComponent* GetBlackboardComp() const;
 
 protected:
-	virtual void OnPossess(APawn* InPawn) override;
-
-	virtual void BeginPlay() override;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI")
 	UAIPerceptionComponent* AIPerception;
 
@@ -39,7 +36,16 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
 	UBehaviorTree* BehaviorTreeAsset;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attack")
+	float AttackRange;
+
+
 protected:
+	virtual void OnPossess(APawn* InPawn) override;
+
+	virtual void BeginPlay() override;
+
+
 	UFUNCTION()
 	void OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus);
 };

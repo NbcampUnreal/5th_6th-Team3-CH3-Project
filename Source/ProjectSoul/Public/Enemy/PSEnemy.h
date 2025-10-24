@@ -26,6 +26,7 @@ public:
 
 	void ShowHealthWidget(bool bShow);
 
+	UEnemyStateMachine* GetStateMachine();
 protected:
 	virtual void BeginPlay() override;
 	
