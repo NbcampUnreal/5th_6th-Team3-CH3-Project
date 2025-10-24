@@ -17,9 +17,9 @@ void UBTService_CheckEnemySituation::TickNode(UBehaviorTreeComponent& OwnerComp,
     AActor* Player = UGameplayStatics::GetPlayerPawn(Pawn->GetWorld(), 0);
 
     float Distance = FVector::Dist(Player->GetActorLocation(), Pawn->GetActorLocation());
-    APSEnemyAIController* PSController = Cast<APSEnemyAIController>(AIController);
-    if (!PSController) return;
-    bool bInAttackRange = Distance <= 500.0f;;
+    APSEnemyAIController* EnemyAIController = Cast<APSEnemyAIController>(AIController);
+    if (!EnemyAIController) return;
+    bool bInAttackRange = Distance <= EnemyAIController->GetAttackRange();
 
     OwnerComp.GetBlackboardComponent()->SetValueAsBool(TEXT("bInAttackRange"), bInAttackRange);
 }

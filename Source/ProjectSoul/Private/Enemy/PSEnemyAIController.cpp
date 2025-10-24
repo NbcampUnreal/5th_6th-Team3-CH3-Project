@@ -7,7 +7,7 @@
 #include "Kismet/GameplayStatics.h"
 
 APSEnemyAIController::APSEnemyAIController()
-	:AttackRange(50.0f)
+	:AttackRange(200.0f)
 {
 	AIPerception = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AIPerception"));
 	SetPerceptionComponent(*AIPerception);
@@ -42,6 +42,7 @@ void APSEnemyAIController::BeginPlay()
 		{
 			FVector SpawnLocation = ControlledPawn->GetActorLocation();
 			BlackboardComp->SetValueAsVector(TEXT("SpawnPointLocation"), ControlledPawn->GetActorLocation());
+			BlackboardComp->SetValueAsRotator(TEXT("SpawnRotation"), ControlledPawn->GetActorRotation());
 		}
 
 		StartBehaviorTree();
