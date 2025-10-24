@@ -15,8 +15,10 @@ class PROJECTSOUL_API UPSPlayerHUDWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	void UpdateUI();
+	void UpdatePlayerHUD();
 	
+	void ShowLockOn();
+	void HiddenLockOn();
 
 private:
 	virtual void NativeOnInitialized() override;
@@ -28,11 +30,7 @@ private:
 	void SetMPBarSize(int Amount);
 	void SetStaminaBarSize(int Amount);
 
-
-	void ShowLockOn();
-	void HiddenLockOn();
 	void UpdateLockOnPosition();
-
 
 	APSCharacter* GetCharacter();
 
@@ -55,10 +53,10 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	UProgressBar* StaminaBar;
 
-
 	UPROPERTY(meta = (BindWidget))
 	UImage* LockOnImage;
 
+	FTimerHandle LockOnPositionHandle;
 
 
 	//test
@@ -75,7 +73,4 @@ private:
 	float MPBarContainerXSize;
 	UPROPERTY(EditAnywhere, Category = "Test Value")
 	float StaminaBarContainerXSize;
-
-	
-	FTimerHandle LockOnPositionHandle;
 };

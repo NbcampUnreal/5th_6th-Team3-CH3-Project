@@ -32,9 +32,11 @@ void UPSPlayerHUDWidget::NativeOnInitialized()
 	SetHPPersent(1.0f);
 	SetMPPersent(1.0f);
 	SetStaminaPersent(1.0f);
+
+	LockOnImage->SetVisibility(ESlateVisibility::Hidden);
 }
 
-void UPSPlayerHUDWidget::UpdateUI()
+void UPSPlayerHUDWidget::UpdatePlayerHUD()
 {
 	if (APSCharacter* PSCharacter = GetCharacter())
 	{
@@ -85,7 +87,7 @@ void UPSPlayerHUDWidget::SetStaminaBarSize(int MaxStamina)
 }
 
 
-
+//player Finde Delegate add
 void UPSPlayerHUDWidget::ShowLockOn()
 {
 	LockOnImage->SetVisibility(ESlateVisibility::Visible);

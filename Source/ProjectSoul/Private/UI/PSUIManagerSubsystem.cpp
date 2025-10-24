@@ -7,8 +7,8 @@ UPSUIManagerSubsystem::UPSUIManagerSubsystem()
 	MainMenuWidgetInstance = nullptr;
 	PlayerHUDWidgetClass = nullptr;
 	PlayerHUDWidgetInstance = nullptr;
-	MonsterWidgetClass = nullptr;
-	MonsterWidgetInstance = nullptr;
+	/*MonsterWidgetClass = nullptr;
+	MonsterWidgetInstance = nullptr;*/
 	CurrentWidgetInstance = nullptr;
 
 	static ConstructorHelpers::FClassFinder<UUserWidget> MainMenuWidgetBPClass(TEXT("/Game/Blueprints/UI/WBP_PSMainMenuWidget.WBP_PSMainMenuWidget_C"));
@@ -21,11 +21,11 @@ UPSUIManagerSubsystem::UPSUIManagerSubsystem()
 	{
 		PlayerHUDWidgetClass = PlayerHUDWidgetBPClass.Class;
 	}
-	static ConstructorHelpers::FClassFinder<UUserWidget> MonsterHPWidgetBPClass(TEXT("/Game/Blueprints/UI/WBP_PSMonsterWidget.WBP_PSMonsterWidget_C"));
+	/*static ConstructorHelpers::FClassFinder<UUserWidget> MonsterHPWidgetBPClass(TEXT("/Game/Blueprints/UI/WBP_PSMonsterWidget.WBP_PSMonsterWidget_C"));
 	if (MainMenuWidgetBPClass.Succeeded())
 	{
 		MonsterWidgetClass = PlayerHUDWidgetBPClass.Class;
-	}
+	}*/
 }
 
 void UPSUIManagerSubsystem::ShowCurrentWidget()

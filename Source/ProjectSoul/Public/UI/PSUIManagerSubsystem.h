@@ -36,10 +36,10 @@ private:
 	UPROPERTY()
 	UUserWidget* PlayerHUDWidgetInstance;
 
-	UPROPERTY(EditAnywhere, Category = "Widget")
+	/*UPROPERTY(EditAnywhere, Category = "Widget")
 	TSubclassOf<UUserWidget> MonsterWidgetClass;
 	UPROPERTY()
-	UUserWidget* MonsterWidgetInstance;
+	UUserWidget* MonsterWidgetInstance;*/
 
 
 	UUserWidget* CurrentWidgetInstance;
