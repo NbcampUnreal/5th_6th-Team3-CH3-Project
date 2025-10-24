@@ -9,6 +9,7 @@
 #include "State/PlayerStateBase.h"
 #include "State/PlayerAttackState.h"
 #include "Weapon/PSWeaponBase.h"
+#include "Enemy/PSEnemy.h"
 
 APSCharacter::APSCharacter()
 	: NormalWalkSpeed(600.0f),
@@ -54,16 +55,28 @@ void APSCharacter::BeginPlay()
 		StateMachine->Initialize(this);
 	}
 
-	if (WeaponClass)
+	if (RightWeaponClass)
 	{
-		EquippedWeapon = GetWorld()->SpawnActor<APSWeaponBase>(WeaponClass);
-		UE_LOG(LogTemp, Warning, TEXT("Spawning weapon of class: %s"), *WeaponClass->GetName());
-		if (EquippedWeapon)
+		EquippedRightWeapon = GetWorld()->SpawnActor<APSWeaponBase>(RightWeaponClass);
+		if (EquippedRightWeapon)
 		{
-			EquippedWeapon->AttachToComponent(
+			EquippedRightWeapon->AttachToComponent(
 				GetMesh(),
 				FAttachmentTransformRules::SnapToTargetIncludingScale,
 				FName("RightWeapon")
+			);
+		}
+	}
+
+	if (LeftWeaponClass)
+	{
+		EquippedLeftWeapon = GetWorld()->SpawnActor<APSWeaponBase>(LeftWeaponClass);
+		if (EquippedLeftWeapon)
+		{
+			EquippedLeftWeapon->AttachToComponent(
+				GetMesh(),
+				FAttachmentTransformRules::SnapToTargetIncludingScale,
+				FName("LeftWeapon")
 			);
 		}
 	}
@@ -202,8 +215,6 @@ void APSCharacter::Lock(const FInputActionValue& Value)
 
 void APSCharacter::Unlock(const FInputActionValue& Value)
 {
-	CurrentTarget = nullptr;
-
 	if (StateMachine)
 	{
 		StateMachine->GetCurrentState()->Unlock();
@@ -232,13 +243,17 @@ float APSCharacter::TakeDamage(
 	AController* EventInstigator,
 	AActor* DamageCauser)
 {
+
 	float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
 	PlayerStats.Health.AdjustValue(-DamageAmount);
 
+	UE_LOG(LogTemp, Warning, TEXT("Player take damage %.0f from %s"), DamageAmount, *DamageCauser->GetName());
+	UE_LOG(LogTemp, Warning, TEXT("Player Remain Health: %.0f / %.0f"), PlayerStats.Health.GetCurrent(), PlayerStats.Health.GetMax());
+
 	if (PlayerStats.Health.IsZero())
 	{
-		// »ç¸Á Ã³¸®
+		// Death
 	}
 
 	return ActualDamage;
@@ -254,7 +269,7 @@ void APSCharacter::FindTargetActor()
 	TArray<AActor*> OverlappingActors;
 	Scanner->GetOverlappingActors(OverlappingActors);
 
-	AActor* ClosestActor = nullptr;
+	APSEnemy* ClosestEnemy = nullptr;
 	float ClosestDist = TNumericLimits<float>::Max();
 
 	for (AActor* Actor : OverlappingActors)
@@ -264,25 +279,25 @@ void APSCharacter::FindTargetActor()
 			continue;
 		}
 
-		if (Actor->ActorHasTag(TEXT("Enemy")))
+		if (APSEnemy* Enemy = Cast<APSEnemy>(Actor))
 		{
-			float Dist = FVector::Distance(Actor->GetActorLocation(), GetActorLocation());
+			float Dist = FVector::Distance(Enemy->GetActorLocation(), GetActorLocation());
 			if (Dist < ClosestDist)
 			{
 				ClosestDist = Dist;
-				ClosestActor = Actor;
+				ClosestEnemy = Enemy;
 			}
 		}
 	}
 
-	if (!ClosestActor)
+	if (!ClosestEnemy)
 	{
 		CurrentTarget = nullptr;
 		UE_LOG(LogTemp, Warning, TEXT("Not found enemy."));
 		return;
 	}
 
-	CurrentTarget = ClosestActor;
+	CurrentTarget = ClosestEnemy;
 	UE_LOG(LogTemp, Warning, TEXT("Found enemy: %s"), *CurrentTarget->GetName());
 }
 
@@ -323,7 +338,7 @@ float APSCharacter::GetTargetingWalkSpeed() const
 	return TargetingWalkSpeed;
 }
 
-AActor* APSCharacter::GetCurrentTarget() const
+APSEnemy* APSCharacter::GetCurrentTarget() const
 {
 	return CurrentTarget;
 }
@@ -348,7 +363,7 @@ UAnimMontage* APSCharacter::GetAttackMontage() const
 	return AttackMontage;
 }
 
-void APSCharacter::SetCurrentTarget(AActor* NewTarget)
+void APSCharacter::SetCurrentTarget(APSEnemy* NewTarget)
 {
 	CurrentTarget = NewTarget;
 }
@@ -356,6 +371,20 @@ void APSCharacter::SetCurrentTarget(AActor* NewTarget)
 void APSCharacter::SetIsTargeting(bool Value)
 {
 	bIsTargeting = Value;
+}
+
+void APSCharacter::SetTargetingCamera()
+{
+	if (bIsTargeting)
+	{
+		SpringArmComp->TargetOffset = FVector(0.f, 0.f, 80.f);
+		SpringArmComp->SocketOffset = FVector(0.f, 30.f, 0.f);
+	}
+	else
+	{
+		SpringArmComp->TargetOffset = FVector::ZeroVector;
+		SpringArmComp->SocketOffset = FVector::ZeroVector;
+	}
 }
 
 void APSCharacter::OnAttackEndNotify()
@@ -368,10 +397,10 @@ void APSCharacter::OnAttackEndNotify()
 
 void APSCharacter::OnEnableWeaponCollision()
 {
-	EquippedWeapon->EnableWeaponCollision();
+	EquippedRightWeapon->EnableWeaponCollision();
 }
 
 void APSCharacter::OnDisableWeaponCollision()
 {
-	EquippedWeapon->DisableWeaponCollision();
+	EquippedRightWeapon->DisableWeaponCollision();
 }

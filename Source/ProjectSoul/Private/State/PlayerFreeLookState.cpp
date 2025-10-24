@@ -10,6 +10,7 @@ void UPlayerFreeLookState::OnEnter()
 {
 	if (APSCharacter* Character = GetPlayerCharacter())
 	{
+		Character->SetTargetingCamera();
 		Character->GetCharacterMovement()->MaxWalkSpeed = Character->GetNormalWalkSpeed();
 		Character->GetCharacterMovement()->bOrientRotationToMovement = true;
 		Character->bUseControllerRotationYaw = false;

@@ -7,15 +7,20 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Gameplay/PSPlayerController.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Enemy/PSEnemy.h"
 
 void UPlayerTargetingState::OnEnter()
 {
 	if (APSCharacter* Character = GetPlayerCharacter())
 	{
 		Character->SetIsTargeting(true);
+		Character->SetTargetingCamera();
+
 		Character->GetCharacterMovement()->MaxWalkSpeed = Character->GetTargetingWalkSpeed();
 		Character->GetCharacterMovement()->bOrientRotationToMovement = false;
 		Character->bUseControllerRotationYaw = true;
+
+		Character->GetCurrentTarget()->ShowHealthWidget(true);
 	}
 
 	UE_LOG(LogTemp, Warning, TEXT("Enter Targeting State"));
@@ -96,7 +101,10 @@ void UPlayerTargetingState::Unlock()
 		if (UPlayerStateMachine* PSM = GetPlayerStateMachine())
 		{
 			Character->SetIsTargeting(false);
+
+			Character->GetCurrentTarget()->ShowHealthWidget(false);
 			Character->SetCurrentTarget(nullptr);
+
 			PSM->ChangeState(PSM->GetFreeLookState());
 		}
 	}

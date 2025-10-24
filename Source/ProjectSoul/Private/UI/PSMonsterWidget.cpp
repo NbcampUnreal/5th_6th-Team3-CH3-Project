@@ -5,20 +5,16 @@
 #include "Character/PSCharacter.h"
 #include "Components/WidgetComponent.h" 
 
-
-
 void UPSMonsterWidget::NativeOnInitialized()
 {
-	HPBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("HPBar")));
-
-	HPBar->SetVisibility(ESlateVisibility::Hidden);
+	Super::NativeOnInitialized();
 }
 
-void UPSMonsterWidget::UpdateMonsterHP()
+void UPSMonsterWidget::UpdateMonsterHP(float Percent)
 {
-
+	HPBar->SetPercent(Percent);
 }
-
+  
 //player Finde Delegate add??
 void UPSMonsterWidget::ShowMonsterHP()
 {
@@ -49,7 +45,6 @@ void UPSMonsterWidget::SetMonsterHP(UWidgetComponent* OverheadWidget, APSEnemy* 
 	//}
 }
 
-
 APSCharacter* UPSMonsterWidget::GetCharacter()
 {
 	if (APlayerController* PlayerContrller = GetWorld()->GetFirstPlayerController())
@@ -59,5 +54,6 @@ APSCharacter* UPSMonsterWidget::GetCharacter()
 			return PSCharacter;
 		}
 	}
+
 	return nullptr;
 }
