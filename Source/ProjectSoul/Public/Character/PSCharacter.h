@@ -11,6 +11,7 @@ class UPlayerStateMachine;
 class USphereComponent;
 class UAnimMontage;
 class APSWeaponBase;
+class APSEnemy;
 struct FInputActionValue;
 
 UCLASS()
@@ -29,14 +30,10 @@ public:
 		float DamageAmount,
 		struct FDamageEvent const& DamageEvent,
 		AController* EventInstigator,
-		AActor* DamageCauser
-	) override;
+		AActor* DamageCauser) override;
 
 	UFUNCTION(BlueprintCallable, Category = "Stats")
 	void RestoreAllStats();
-
-	UFUNCTION(BlueprintPure, Category = "Targeting")
-	bool GetIsTargeting() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
 	void OnAttackEndNotify();
@@ -46,6 +43,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
 	void OnDisableWeaponCollision();
+
+	UFUNCTION(BlueprintPure, Category = "Targeting")
+	bool GetIsTargeting() const;
 
 	UFUNCTION(BlueprintPure, Category = "Stats")
 	float GetHealthPercent() const;
@@ -62,7 +62,7 @@ public:
 
 	float GetTargetingWalkSpeed() const;
 
-	AActor* GetCurrentTarget() const;
+	APSEnemy* GetCurrentTarget() const;
 
 	float GetMaxTargetDistance() const;
 
@@ -70,7 +70,7 @@ public:
 
 	UAnimMontage* GetAttackMontage() const;
 
-	void SetCurrentTarget(AActor* NewTarget);
+	void SetCurrentTarget(APSEnemy* NewTarget);
 
 	void SetIsTargeting(bool Value);
 
@@ -126,13 +126,19 @@ protected:
 	TObjectPtr<UPlayerStateMachine> StateMachine;
 
 	UPROPERTY(VisibleAnywhere, Category = "Targeting")
-	TObjectPtr<AActor> CurrentTarget;
+	TObjectPtr<APSEnemy> CurrentTarget;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
-	TSubclassOf<APSWeaponBase> WeaponClass;
+	TSubclassOf<APSWeaponBase> RightWeaponClass;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon")
-	TObjectPtr<APSWeaponBase> EquippedWeapon;
+	TObjectPtr<APSWeaponBase> EquippedRightWeapon;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	TSubclassOf<APSWeaponBase> LeftWeaponClass;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon")
+	TObjectPtr<APSWeaponBase> EquippedLeftWeapon;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
 	FPlayerStats PlayerStats;

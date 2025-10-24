@@ -7,6 +7,7 @@
 #include "Components/ProgressBar.h"
 #include "UI/PSMonsterWidget.h"
 
+
 APSEnemy::APSEnemy()
 	: Attack(20), 
 	Score(50),
@@ -34,8 +35,18 @@ APSEnemy::APSEnemy()
 void APSEnemy::BeginPlay()
 {
 	Super::BeginPlay();
-
+	StateMachine = NewObject<UEnemyStateMachine>(this);
+	if (StateMachine)
+	{
+		StateMachine->Initialize(this);
+	}
 }
+
+UEnemyStateMachine* APSEnemy::GetStateMachine()
+{
+	return StateMachine;
+}
+
 void APSEnemy::SetMovementSpeed(float NewSpeed)
 {
 	if (UCharacterMovementComponent* EnemyMovement = GetCharacterMovement())
@@ -65,6 +76,14 @@ float APSEnemy::TakeDamage(
 	}
 
 	return ActualDamage;
+}
+
+void APSEnemy::ShowHealthWidget(bool bShow)
+{
+	if (HealthWidget)
+	{
+		HealthWidget->SetVisibility(bShow);
+	}
 }
 
 void APSEnemy::UpdateHealthWidget()
