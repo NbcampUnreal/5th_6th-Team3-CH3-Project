@@ -25,7 +25,7 @@ EBTNodeResult::Type UBTTask_SetState::ExecuteTask(UBehaviorTreeComponent& OwnerC
 	if (!EnemyChar)
 		return EBTNodeResult::Failed;
 
-	TObjectPtr<UEnemyStateMachine> StateMachine = EnemyChar->GetStateMachine();
+	UEnemyStateMachine* StateMachine = EnemyChar->GetStateMachine();
 	if (!StateMachine)
 		return EBTNodeResult::Failed;
 

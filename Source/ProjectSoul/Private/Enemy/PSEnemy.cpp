@@ -42,7 +42,7 @@ void APSEnemy::BeginPlay()
 	}
 }
 
-TObjectPtr<UEnemyStateMachine> APSEnemy::GetStateMachine()
+UEnemyStateMachine* APSEnemy::GetStateMachine()
 {
 	return StateMachine;
 }
