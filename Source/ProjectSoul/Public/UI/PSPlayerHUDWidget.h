@@ -15,7 +15,7 @@ class PROJECTSOUL_API UPSPlayerHUDWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	void UpdatePlayerHUD();
+	void UpdatePlayerHUD(APSCharacter* PSCharacter);
 	
 	void ShowLockOn();
 	void HiddenLockOn();

@@ -1,54 +1,60 @@
 #include "UI/PSMonsterWidget.h"
 #include "Components/ProgressBar.h"
 #include "Components/WidgetComponent.h"
-#include "Enemy/PSEnemy.h"
 #include "Character/PSCharacter.h"
-#include "Components/WidgetComponent.h" 
-
-
 
 void UPSMonsterWidget::NativeOnInitialized()
 {
 	HPBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("HPBar")));
 
 	HPBar->SetVisibility(ESlateVisibility::Hidden);
+	bLockOn = false;
+	TestHP = 1.0f;
 }
 
-void UPSMonsterWidget::UpdateMonsterHP()
+//call from monster TakeDamege()
+void UPSMonsterWidget::UpdateMonsterHP(float Percent)
 {
-
+	if (Percent >= 0)
+	{
+		HPBar->SetPercent(Percent);
+		ShowHitMonsterHP();
+	}
 }
 
-//player Finde Delegate add??
-void UPSMonsterWidget::ShowMonsterHP()
+//call from monster Find()
+void UPSMonsterWidget::ShowTargetMonsterHP()
 {
+	bLockOn = true;
 	HPBar->SetVisibility(ESlateVisibility::Visible);
 }
 
-void UPSMonsterWidget::HiddenMonsterHP()
+void UPSMonsterWidget::HiddenTargetMonsterHP()
 {
+	bLockOn = false;
 	HPBar->SetVisibility(ESlateVisibility::Hidden);
 }
 
-void UPSMonsterWidget::SetMonsterHP(UWidgetComponent* OverheadWidget, APSEnemy* Monster)
+
+void UPSMonsterWidget::ShowHitMonsterHP()
 {
-	//if (UUserWidget* WidgetInstance = OverheadWidget->GetUserWidgetObject())
-	//{
-	//	WidgetInstance->SetVisibility(ESlateVisibility::Visible);
-
-	//	if (UProgressBar* HPBar = Cast<UProgressBar>(WidgetInstance->GetWidgetFromName(TEXT("HPBar"))))
-	//	{
-	//		//const float HPPercent = (Monster->HP > 0.f) ? Monster->HP / Monster->MaxHP : 0.f;
-	//		HPBar->SetPercent(1.0f);
-
-	//		/*if (HPPercent < 0.3f)
-	//		{
-	//			HPBar->SetFillColorAndOpacity(FLinearColor::Red);
-	//		}*/
-	//	}
-	//}
+	HPBar->SetVisibility(ESlateVisibility::Visible);
+	GetWorld()->GetTimerManager().SetTimer(
+		ShowMonsterHPTimer,
+		this,
+		&UPSMonsterWidget::HiddenHitMonsterHP,
+		3.0f
+	);
 }
 
+void UPSMonsterWidget::HiddenHitMonsterHP()
+{
+	if (!bLockOn)
+	{
+		HPBar->SetVisibility(ESlateVisibility::Hidden);
+		GetWorld()->GetTimerManager().ClearTimer(ShowMonsterHPTimer);
+	}
+}
 
 APSCharacter* UPSMonsterWidget::GetCharacter()
 {

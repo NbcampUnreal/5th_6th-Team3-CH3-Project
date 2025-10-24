@@ -36,7 +36,8 @@ void UPSPlayerHUDWidget::NativeOnInitialized()
 	LockOnImage->SetVisibility(ESlateVisibility::Hidden);
 }
 
-void UPSPlayerHUDWidget::UpdatePlayerHUD()
+//called from the player's TakeDamage() ?
+void UPSPlayerHUDWidget::UpdatePlayerHUD(APSCharacter* PSCharacter)
 {
 	if (APSCharacter* PSCharacter = GetCharacter())
 	{
@@ -85,7 +86,6 @@ void UPSPlayerHUDWidget::SetStaminaBarSize(int MaxStamina)
 {
 	StaminaBarContainer->SetWidthOverride(MaxStamina * 2);
 }
-
 
 //player Finde Delegate add
 void UPSPlayerHUDWidget::ShowLockOn()
