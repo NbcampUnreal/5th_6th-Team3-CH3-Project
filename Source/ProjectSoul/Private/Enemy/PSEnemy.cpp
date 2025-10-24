@@ -3,6 +3,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "StateMachine/EnemyStateMachine.h"
 #include "State/EnemyStateBase.h"
+
 APSEnemy::APSEnemy()
 	: HP(100), 
 	Attack(20), 
@@ -20,8 +21,18 @@ APSEnemy::APSEnemy()
 void APSEnemy::BeginPlay()
 {
 	Super::BeginPlay();
-
+	StateMachine = NewObject<UEnemyStateMachine>(this);
+	if (StateMachine)
+	{
+		StateMachine->Initialize(this);
+	}
 }
+
+TObjectPtr<UEnemyStateMachine> APSEnemy::GetStateMachine()
+{
+	return StateMachine;
+}
+
 void APSEnemy::SetMovementSpeed(float NewSpeed)
 {
 	if (UCharacterMovementComponent* EnemyMovement = GetCharacterMovement())

@@ -12,6 +12,7 @@ EBTNodeResult::Type UBTTask_ClearInvestigating::ExecuteTask(UBehaviorTreeCompone
     if (BlackboardComp)
     {
         BlackboardComp->SetValueAsBool("bIsInvestigating", false);
+        BlackboardComp->SetValueAsBool("bIsReturning", true);
         return EBTNodeResult::Succeeded;
     }
     return EBTNodeResult::Failed;

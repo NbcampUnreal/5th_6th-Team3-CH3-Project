@@ -91,7 +91,7 @@ UEnemyIdleState* UEnemyStateMachine::GetIdleState() const
 	return IdleState;
 }
 
-UEnemyInvestigateState* UEnemyStateMachine::GetInvestigateStateState() const
+UEnemyInvestigateState* UEnemyStateMachine::GetInvestigateState() const
 {
 	return InvestigateState;
 }

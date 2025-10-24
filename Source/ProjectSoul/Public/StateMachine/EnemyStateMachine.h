@@ -34,7 +34,7 @@ public:
 
 	UEnemyIdleState* GetIdleState() const;
 
-	UEnemyInvestigateState* GetInvestigateStateState() const;
+	UEnemyInvestigateState* GetInvestigateState() const;
 
 	UEnemyReturnState* GetReturnState() const;
 

@@ -3,7 +3,9 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "PSEnemy.generated.h"
+
 class UEnemyStateMachine;
+
 UCLASS()
 class PROJECTSOUL_API APSEnemy : public ACharacter
 {
@@ -13,9 +15,11 @@ public:
 	APSEnemy();
 	virtual void SetMovementSpeed(float NewSpeed);
 
+	virtual TObjectPtr<UEnemyStateMachine> GetStateMachine();
+
 protected:
 	virtual void BeginPlay() override;
-	
+
 public:	
 
 protected:
