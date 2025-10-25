@@ -8,6 +8,7 @@
 #include "StateMachine/PlayerStateMachine.h"
 #include "State/PlayerStateBase.h"
 #include "State/PlayerAttackState.h"
+#include "State/PlayerDodgeState.h"
 #include "Weapon/PSWeaponBase.h"
 #include "Enemy/PSEnemy.h"
 
@@ -42,7 +43,7 @@ APSCharacter::APSCharacter()
 		Scanner->SetSphereRadius(1000.0f);
 	}
 
-	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f);
+	GetCharacterMovement()->RotationRate = FRotator(0.0f, 720.0f, 0.0f);
 }
 
 void APSCharacter::BeginPlay()
@@ -395,12 +396,20 @@ void APSCharacter::OnAttackEndNotify()
 	}
 }
 
-void APSCharacter::OnEnableWeaponCollision()
+void APSCharacter::OnDodgeEndNotify()
+{
+	if (StateMachine && StateMachine->GetDodgeState())
+	{
+		StateMachine->GetDodgeState()->DodgeEnd();
+	}
+}
+
+void APSCharacter::OnEnableWeaponCollisionNotify()
 {
 	EquippedRightWeapon->EnableWeaponCollision();
 }
 
-void APSCharacter::OnDisableWeaponCollision()
+void APSCharacter::OnDisableWeaponCollisionNotify()
 {
 	EquippedRightWeapon->DisableWeaponCollision();
 }

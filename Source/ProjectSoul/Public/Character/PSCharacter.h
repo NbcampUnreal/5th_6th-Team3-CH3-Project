@@ -35,14 +35,17 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Stats")
 	void RestoreAllStats();
 
-	UFUNCTION(BlueprintCallable, Category = "Weapon")
+	UFUNCTION(BlueprintCallable, Category = "Notify")
 	void OnAttackEndNotify();
 
-	UFUNCTION(BlueprintCallable, Category = "Weapon")
-	void OnEnableWeaponCollision();
+	UFUNCTION(BlueprintCallable, Category = "Notify")
+	void OnDodgeEndNotify();
 
-	UFUNCTION(BlueprintCallable, Category = "Weapon")
-	void OnDisableWeaponCollision();
+	UFUNCTION(BlueprintCallable, Category = "Notify")
+	void OnEnableWeaponCollisionNotify();
+
+	UFUNCTION(BlueprintCallable, Category = "Notify")
+	void OnDisableWeaponCollisionNotify();
 
 	UFUNCTION(BlueprintPure, Category = "Targeting")
 	bool GetIsTargeting() const;

@@ -12,14 +12,6 @@ void UPlayerDodgeState::OnEnter()
 	{
 		Character->PlayAnimMontage(Character->GetDodgeMontage());
 	}
-
-	GetWorld()->GetTimerManager().SetTimer(
-		TestTimer,
-		this,
-		&UPlayerDodgeState::DodgeEnd,
-		1.0f,
-		false
-	);
 }
 
 void UPlayerDodgeState::OnUpdate(float DeltaTime)
@@ -31,8 +23,18 @@ void UPlayerDodgeState::OnExit()
 	UE_LOG(LogTemp, Warning, TEXT("Exit Dodge State"));
 }
 
+void UPlayerDodgeState::Look(const FVector2D& Value)
+{
+	if (UPlayerStateMachine* PSM = GetPlayerStateMachine())
+	{
+		PSM->GetPrevState()->Look(Value);
+	}
+}
+
 void UPlayerDodgeState::DodgeEnd()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Call Dodge End in AttackState"));
+
 	if (UPlayerStateMachine* PSM = GetPlayerStateMachine())
 	{
 		PSM->ChangeState(PSM->GetPrevState());
