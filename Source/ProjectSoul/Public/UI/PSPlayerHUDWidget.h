@@ -15,44 +15,45 @@ class PROJECTSOUL_API UPSPlayerHUDWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	void UpdatePlayerHUD(APSCharacter* PSCharacter);
-	
 	void ShowLockOn(AActor* LockOnMonster);
+
 	void HiddenLockOn();
 
 protected:
 	virtual void NativeOnInitialized() override;
 
 private:
-	void SetHPPersent(float Amount);
-	void SetMPPersent(float Amount);
-	void SetStaminaPersent(float Amount);
-	void SetHPBarSize(int Amount);
-	void SetMPBarSize(int Amount);
-	void SetStaminaBarSize(int Amount);
+	UFUNCTION()
+	void OnUpdateHPBar(float CurrentValue, float MaxValue);
+
+	UFUNCTION()
+	void OnUpdateMPBar(float CurrentValue, float MaxValue);
+
+	UFUNCTION()
+	void OnUpdateStaminaBar(float CurrentValue, float MaxValue);
 
 	void UpdateLockOnPosition();
 
 	APSCharacter* GetCharacter();
 
-public:
-
-protected:
-
 private:
 	UPROPERTY(meta = (BindWidget))
-	USizeBox* HPBarContainer;
-	UPROPERTY(meta = (BindWidget))
-	USizeBox* MPBarContainer;
-	UPROPERTY(meta = (BindWidget))
-	USizeBox* StaminaBarContainer;
+	TObjectPtr<USizeBox> HPBarContainer;
 
 	UPROPERTY(meta = (BindWidget))
-	UProgressBar* HPBar;
+	TObjectPtr<USizeBox> MPBarContainer;
+
 	UPROPERTY(meta = (BindWidget))
-	UProgressBar* MPBar;
+	TObjectPtr<USizeBox> StaminaBarContainer;
+
 	UPROPERTY(meta = (BindWidget))
-	UProgressBar* StaminaBar;
+	TObjectPtr<UProgressBar> HPBar;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UProgressBar> MPBar;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UProgressBar> StaminaBar;
 
 	UPROPERTY(meta = (BindWidget))
 	UImage* LockOnImage;
@@ -60,18 +61,5 @@ private:
 	FTimerHandle LockOnPositionHandle;
 	AActor* LockOnTarget;
 
-	//test
-	UPROPERTY(EditAnywhere, Category = "Test Value")
-	float HPBarValue;
-	UPROPERTY(EditAnywhere, Category = "Test Value")
-	float MPBarValue;
-	UPROPERTY(EditAnywhere, Category = "Test Value")
-	float StaminaValue;
-
-	UPROPERTY(EditAnywhere, Category = "Test Value")
-	float HPBarContainerXSize;
-	UPROPERTY(EditAnywhere, Category = "Test Value")
-	float MPBarContainerXSize;
-	UPROPERTY(EditAnywhere, Category = "Test Value")
-	float StaminaBarContainerXSize;
+	float SizeBoxMultiplier;
 };

@@ -11,6 +11,7 @@
 #include "State/PlayerDodgeState.h"
 #include "Weapon/PSWeaponBase.h"
 #include "Enemy/PSEnemy.h"
+#include "Engine/DamageEvents.h"
 
 APSCharacter::APSCharacter()
 	: NormalWalkSpeed(600.0f),
@@ -81,6 +82,41 @@ void APSCharacter::BeginPlay()
 			);
 		}
 	}
+
+	OnHPChanged.Broadcast(PlayerStats.Health.GetCurrent(), PlayerStats.Health.GetMax());
+	OnMPChanged.Broadcast(PlayerStats.Mana.GetCurrent(), PlayerStats.Mana.GetMax());
+	OnStaminaChanged.Broadcast(PlayerStats.Stamina.GetCurrent(), PlayerStats.Stamina.GetMax());
+
+	// Test Delegate
+	GetWorldTimerManager().SetTimer(
+		HPChangeTimer,
+		[this]()
+		{
+			PlayerStats.Health.AdjustValue(-30.0f);
+			OnHPChanged.Broadcast(PlayerStats.Health.GetCurrent(), PlayerStats.Health.GetMax());
+		},
+		3.0f,
+		false);
+
+	GetWorldTimerManager().SetTimer(
+		MPChangeTimer,
+		[this]()
+		{
+			PlayerStats.Mana.AdjustValue(-20.0f);
+			OnMPChanged.Broadcast(PlayerStats.Mana.GetCurrent(), PlayerStats.Mana.GetMax());
+		},
+		5.0f,
+		false);
+
+	GetWorldTimerManager().SetTimer(
+		StaminaChangeTimer,
+		[this]()
+		{
+			PlayerStats.Stamina.AdjustValue(-15.0f);
+			OnStaminaChanged.Broadcast(PlayerStats.Stamina.GetCurrent(), PlayerStats.Stamina.GetMax());
+		},
+		7.0f,
+		false);
 }
 
 void APSCharacter::Tick(float DeltaTime)
@@ -248,6 +284,7 @@ float APSCharacter::TakeDamage(
 	float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
 	PlayerStats.Health.AdjustValue(-DamageAmount);
+	OnHPChanged.Broadcast(PlayerStats.Health.GetCurrent(), PlayerStats.Health.GetMax());
 
 	UE_LOG(LogTemp, Warning, TEXT("Player take damage %.0f from %s"), DamageAmount, *DamageCauser->GetName());
 	UE_LOG(LogTemp, Warning, TEXT("Player Remain Health: %.0f / %.0f"), PlayerStats.Health.GetCurrent(), PlayerStats.Health.GetMax());

@@ -5,6 +5,10 @@
 #include "Structs/FPlayerStats.h"
 #include "PSCharacter.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHPChanged, float, CurrentValue, float, MaxValue);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnMPChanged, float, CurrentValue, float, MaxValue);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnStaminaChanged, float, CurrentValue, float, MaxValue);
+
 class USpringArmComponent;
 class UCameraComponent;
 class UPlayerStateMachine;
@@ -115,6 +119,16 @@ protected:
 private:
 	void FindTargetActor();
 
+public:
+	UPROPERTY(BlueprintAssignable, Category = "Event")
+	FOnHPChanged OnHPChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Event")
+	FOnMPChanged OnMPChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Event")
+	FOnStaminaChanged OnStaminaChanged;
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	TObjectPtr<USpringArmComponent> SpringArmComp;
@@ -166,4 +180,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dodge")
 	TObjectPtr<UAnimMontage> AttackMontage;
+
+private:
+	FTimerHandle HPChangeTimer;
+	FTimerHandle MPChangeTimer;
+	FTimerHandle StaminaChangeTimer;
 };
