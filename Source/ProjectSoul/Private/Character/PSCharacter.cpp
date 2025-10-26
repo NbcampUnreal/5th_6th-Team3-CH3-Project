@@ -11,12 +11,14 @@
 #include "State/PlayerDodgeState.h"
 #include "Weapon/PSWeaponBase.h"
 #include "Enemy/PSEnemy.h"
-#include "Engine/DamageEvents.h"
 
 APSCharacter::APSCharacter()
 	: NormalWalkSpeed(600.0f),
 	SprintWalkSpeed(1200.0f),
-	bIsTargeting(false)
+	bIsTargeting(false),
+	bIsSprinting(false),
+	SprintStaminaTimerInterval(0.1f),
+	StaminaRegenTickTimerInterval(0.1f)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -95,8 +97,9 @@ void APSCharacter::BeginPlay()
 			PlayerStats.Health.AdjustValue(-30.0f);
 			OnHPChanged.Broadcast(PlayerStats.Health.GetCurrent(), PlayerStats.Health.GetMax());
 		},
-		3.0f,
-		false);
+		2.0f,
+		false
+	);
 
 	GetWorldTimerManager().SetTimer(
 		MPChangeTimer,
@@ -105,8 +108,9 @@ void APSCharacter::BeginPlay()
 			PlayerStats.Mana.AdjustValue(-20.0f);
 			OnMPChanged.Broadcast(PlayerStats.Mana.GetCurrent(), PlayerStats.Mana.GetMax());
 		},
-		5.0f,
-		false);
+		2.0f,
+		false
+	);
 
 	GetWorldTimerManager().SetTimer(
 		StaminaChangeTimer,
@@ -115,8 +119,9 @@ void APSCharacter::BeginPlay()
 			PlayerStats.Stamina.AdjustValue(-15.0f);
 			OnStaminaChanged.Broadcast(PlayerStats.Stamina.GetCurrent(), PlayerStats.Stamina.GetMax());
 		},
-		7.0f,
-		false);
+		2.0f,
+		false
+	);
 }
 
 void APSCharacter::Tick(float DeltaTime)
@@ -126,6 +131,11 @@ void APSCharacter::Tick(float DeltaTime)
 	if (!Controller)
 	{
 		return;
+	}
+
+	if (bIsSprinting)
+	{
+		
 	}
 
 	if (StateMachine)
@@ -226,6 +236,12 @@ void APSCharacter::StopJump(const FInputActionValue& Value)
 
 void APSCharacter::StartSprint(const FInputActionValue& Value)
 {
+	if (PlayerStats.Stamina.IsZero())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Not enough stamina to sprint."));
+		return;
+	}
+
 	if (StateMachine)
 	{
 		StateMachine->GetCurrentState()->StartSprint();
@@ -260,6 +276,12 @@ void APSCharacter::Unlock(const FInputActionValue& Value)
 
 void APSCharacter::Dodge(const FInputActionValue& Value)
 {
+	if (PlayerStats.Stamina.IsZero())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Not enough stamina to dodge."));
+		return;
+	}
+
 	if (StateMachine)
 	{
 		StateMachine->GetCurrentState()->Dodge();
@@ -268,6 +290,12 @@ void APSCharacter::Dodge(const FInputActionValue& Value)
 
 void APSCharacter::Attack(const FInputActionValue& Value)
 {
+	if (PlayerStats.Stamina.IsZero())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Not enough stamina to attack."));
+		return;
+	}
+
 	if (StateMachine)
 	{
 		StateMachine->GetCurrentState()->Attack();
@@ -291,6 +319,7 @@ float APSCharacter::TakeDamage(
 
 	if (PlayerStats.Health.IsZero())
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Player Dead"));
 		// Death
 	}
 
@@ -345,6 +374,82 @@ void APSCharacter::RestoreAllStats()
 	PlayerStats.Mana.RestoreFull();
 	PlayerStats.Stamina.RestoreFull();
 }
+
+void APSCharacter::ConsumeStaminaForAttack()
+{
+	StopStaminaRegen();
+
+	PlayerStats.Stamina.AdjustValue(-AttackStaminaCost);
+	OnStaminaChanged.Broadcast(PlayerStats.Stamina.GetCurrent(), PlayerStats.Stamina.GetMax());
+}
+
+void APSCharacter::ConsumeStaminaForDodge()
+{
+	StopStaminaRegen();
+
+	PlayerStats.Stamina.AdjustValue(-DodgeStaminaCost);
+	OnStaminaChanged.Broadcast(PlayerStats.Stamina.GetCurrent(), PlayerStats.Stamina.GetMax());
+}
+
+void APSCharacter::ConsumeStaminaForSprint()
+{
+	StopStaminaRegen();
+
+	PlayerStats.Stamina.AdjustValue(-SprintStaminaCostRate * SprintStaminaTimerInterval);
+	OnStaminaChanged.Broadcast(PlayerStats.Stamina.GetCurrent(), PlayerStats.Stamina.GetMax());
+
+	if (PlayerStats.Stamina.IsZero())
+	{
+		if (StateMachine)
+		{
+			StateMachine->GetCurrentState()->StopSprint();
+		}
+
+		SetIsSprinting(false);
+	}
+}
+
+void APSCharacter::StopStaminaRegen()
+{
+	GetWorld()->GetTimerManager().ClearTimer(StaminaRegenTickTimer);
+	GetWorld()->GetTimerManager().ClearTimer(StaminaRegenDelayTimer);
+
+	GetWorld()->GetTimerManager().SetTimer(
+		StaminaRegenDelayTimer,
+		this,
+		&APSCharacter::StartStaminaRegen,
+		StaminaRegenDelay,
+		false
+	);
+}
+
+void APSCharacter::StartStaminaRegen()
+{
+	if (PlayerStats.Stamina.IsFull())
+	{
+		return;
+	}
+
+	GetWorld()->GetTimerManager().SetTimer(
+		StaminaRegenTickTimer,
+		this,
+		&APSCharacter::RegenStamina,
+		StaminaRegenTickTimerInterval,
+		true
+	);
+}
+
+void APSCharacter::RegenStamina()
+{
+	PlayerStats.Stamina.AdjustValue(StaminaRegenRate * StaminaRegenTickTimerInterval);
+	OnStaminaChanged.Broadcast(PlayerStats.Stamina.GetCurrent(), PlayerStats.Stamina.GetMax());
+
+	if (PlayerStats.Stamina.IsFull())
+	{
+		GetWorld()->GetTimerManager().ClearTimer(StaminaRegenTickTimer);
+	}
+}
+
 
 float APSCharacter::GetHealthPercent() const
 {
@@ -409,6 +514,28 @@ void APSCharacter::SetCurrentTarget(APSEnemy* NewTarget)
 void APSCharacter::SetIsTargeting(bool Value)
 {
 	bIsTargeting = Value;
+}
+
+void APSCharacter::SetIsSprinting(bool Value)
+{
+	if (Value && !bIsSprinting)
+	{
+		GetWorld()->GetTimerManager().ClearTimer(SprintStaminaTimer);
+
+		GetWorld()->GetTimerManager().SetTimer(
+			SprintStaminaTimer,
+			this,
+			&APSCharacter::ConsumeStaminaForSprint,
+			SprintStaminaTimerInterval,
+			true
+		);
+	}
+	else if (!Value && bIsSprinting)
+	{
+		GetWorld()->GetTimerManager().ClearTimer(SprintStaminaTimer);
+	}
+
+	bIsSprinting = Value;
 }
 
 void APSCharacter::SetTargetingCamera()

@@ -56,6 +56,7 @@ void UPlayerFreeLookState::StartSprint()
 {
 	if (APSCharacter* Character = GetPlayerCharacter())
 	{
+		Character->SetIsSprinting(true);
 		Character->GetCharacterMovement()->MaxWalkSpeed = Character->GetSprintWalkSpeed();
 	}
 }
@@ -64,6 +65,7 @@ void UPlayerFreeLookState::StopSprint()
 {
 	if (APSCharacter* Character = GetPlayerCharacter())
 	{
+		Character->SetIsSprinting(false);
 		Character->GetCharacterMovement()->MaxWalkSpeed = Character->GetNormalWalkSpeed();
 	}
 }

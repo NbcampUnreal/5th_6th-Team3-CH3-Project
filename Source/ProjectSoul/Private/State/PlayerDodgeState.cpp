@@ -10,6 +10,8 @@ void UPlayerDodgeState::OnEnter()
 
 	if (APSCharacter* Character = GetPlayerCharacter())
 	{
+		Character->SetIsSprinting(false);
+		Character->ConsumeStaminaForDodge();
 		Character->PlayAnimMontage(Character->GetDodgeMontage());
 	}
 }

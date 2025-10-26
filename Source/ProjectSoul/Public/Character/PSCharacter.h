@@ -34,7 +34,8 @@ public:
 		float DamageAmount,
 		struct FDamageEvent const& DamageEvent,
 		AController* EventInstigator,
-		AActor* DamageCauser) override;
+		AActor* DamageCause
+	) override;
 
 	UFUNCTION(BlueprintCallable, Category = "Stats")
 	void RestoreAllStats();
@@ -81,7 +82,13 @@ public:
 
 	void SetIsTargeting(bool Value);
 
+	void SetIsSprinting(bool Value);
+
 	void SetTargetingCamera();
+
+	void ConsumeStaminaForAttack();
+
+	void ConsumeStaminaForDodge();
 
 protected:
 	virtual void BeginPlay() override;
@@ -118,6 +125,14 @@ protected:
 
 private:
 	void FindTargetActor();
+	
+	void ConsumeStaminaForSprint();
+
+	void StartStaminaRegen();
+
+	void StopStaminaRegen();
+
+	void RegenStamina();
 
 public:
 	UPROPERTY(BlueprintAssignable, Category = "Event")
@@ -172,16 +187,38 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Targeting")
 	float MaxTargetDistance;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Targeting")
-	bool bIsTargeting;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dodge")
 	TObjectPtr<UAnimMontage> DodgeMontage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dodge")
 	TObjectPtr<UAnimMontage> AttackMontage;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stats|Stamina")
+	float AttackStaminaCost;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stats|Stamina")
+	float DodgeStaminaCost;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stats|Stamina")
+	float SprintStaminaCostRate;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stats|Stamina")
+	float StaminaRegenDelay;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stats|Stamina")
+	float StaminaRegenRate;
+
 private:
+	FTimerHandle SprintStaminaTimer;
+	float SprintStaminaTimerInterval;
+	bool bIsSprinting;
+
+	FTimerHandle StaminaRegenDelayTimer;
+	FTimerHandle StaminaRegenTickTimer;
+	float StaminaRegenTickTimerInterval;
+
+	bool bIsTargeting;
+
 	FTimerHandle HPChangeTimer;
 	FTimerHandle MPChangeTimer;
 	FTimerHandle StaminaChangeTimer;
