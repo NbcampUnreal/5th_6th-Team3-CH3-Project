@@ -7,9 +7,6 @@ void UPSMonsterWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 
-	HPBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("HPBar")));
-
-	HPBar->SetVisibility(ESlateVisibility::Hidden);
 	bLockOn = false;
 	TestHP = 1.0f;
 }
@@ -17,11 +14,9 @@ void UPSMonsterWidget::NativeOnInitialized()
 //call from monster TakeDamege()
 void UPSMonsterWidget::UpdateMonsterHP(float Percent)
 {
-
 	if (Percent >= 0)
 	{
 		HPBar->SetPercent(Percent);
-		ShowHitMonsterHP();
 	}
 }
 

@@ -10,6 +10,8 @@ void UPlayerAttackState::OnEnter()
 
 	if (APSCharacter* Character = GetPlayerCharacter())
 	{
+		Character->SetIsSprinting(false);
+		Character->ConsumeStaminaForAttack();
 		Character->PlayAnimMontage(Character->GetAttackMontage());
 	}
 }
