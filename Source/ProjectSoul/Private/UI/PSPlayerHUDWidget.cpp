@@ -10,81 +10,59 @@ void UPSPlayerHUDWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 
-	HPBarContainer = Cast<USizeBox>(GetWidgetFromName(TEXT("HPBarContainer")));
-	MPBarContainer = Cast<USizeBox>(GetWidgetFromName(TEXT("MPBarContainer")));
-	StaminaBarContainer = Cast<USizeBox>(GetWidgetFromName(TEXT("StaminaBarContainer")));
-	HPBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("HPBar")));
-	MPBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("MPBar")));
-	StaminaBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("StaminaBar")));
 	LockOnTarget = nullptr;
-	//USizeBox Init
+
+	SizeBoxMultiplier = 3.0f;
+
 	if (APSCharacter* PSCharacter = GetCharacter())
 	{
-		SetHPBarSize(200);
-		SetMPBarSize(200);
-		SetStaminaBarSize(200);
-		/*SetHPBarSize(PSCharacter->MaxHP);
-		SetMPBarSize(PSCharacter->MaxMP);
-		SetStaminaBarSize(PSCharacter->MaxStamina);*/
+		PSCharacter->OnHPChanged.AddDynamic(this, &UPSPlayerHUDWidget::OnUpdateHPBar);
+		PSCharacter->OnMPChanged.AddDynamic(this, &UPSPlayerHUDWidget::OnUpdateMPBar);
+		PSCharacter->OnStaminaChanged.AddDynamic(this, &UPSPlayerHUDWidget::OnUpdateStaminaBar);
 	}
-
-	//PlayerBar Init
-	SetHPPersent(1.0f);
-	SetMPPersent(1.0f);
-	SetStaminaPersent(1.0f);
 
 	LockOnImage->SetVisibility(ESlateVisibility::Hidden);
 }
 
-//called from the player's TakeDamage() ?
-void UPSPlayerHUDWidget::UpdatePlayerHUD(APSCharacter* PSCharacter)
+void UPSPlayerHUDWidget::OnUpdateHPBar(float CurrentValue, float MaxValue)
 {
-	if (APSCharacter* PSCharacter = GetCharacter())
+	if (HPBar)
 	{
-		SetHPPersent(HPBarValue);
-		SetMPPersent(MPBarValue);
-		SetStaminaPersent(StaminaValue);
-		/*SetHPBarSize(PSCharacter->CurrentHP / PSCharacter->MaxHP);
-		SetMPBarSize(PSCharacter->CurrentMP / PSCharacter->MaxMP);
-		SetStaminaBarSize(PSCharacter->CurrentStamina / PSCharacter->MaxStamina)*/
+		HPBar->SetPercent(CurrentValue / MaxValue);
+	}
 
-		SetHPBarSize(HPBarContainerXSize);
-		SetMPBarSize(MPBarContainerXSize);
-		SetStaminaBarSize(StaminaBarContainerXSize);
-		/*SetHPBarSize(PSCharacter->MaxHP);
-		SetMPBarSize(PSCharacter->MaxMP);
-		SetStaminaBarSize(PSCharacter->MaxStamina)*/
+	if (HPBarContainer)
+	{
+		float NewWidth = MaxValue * SizeBoxMultiplier;
+		HPBarContainer->SetWidthOverride(NewWidth);
 	}
 }
 
-void UPSPlayerHUDWidget::SetHPPersent(float HPPersent)
+void UPSPlayerHUDWidget::OnUpdateMPBar(float CurrentValue, float MaxValue)
 {
-	HPBar->SetPercent(FMath::Clamp(HPPersent, 0.0f, 1.0f));
+	if (MPBar)
+	{
+		MPBar->SetPercent(CurrentValue / MaxValue);
+	}
+
+	if (MPBarContainer)
+	{
+		float NewWidth = MaxValue * SizeBoxMultiplier;
+		MPBarContainer->SetWidthOverride(NewWidth);
+	}
 }
 
-void UPSPlayerHUDWidget::SetMPPersent(float MPPersent)
+void UPSPlayerHUDWidget::OnUpdateStaminaBar(float CurrentValue, float MaxValue)
 {
-	MPBar->SetPercent(FMath::Clamp(MPPersent, 0.0f, 1.0f));
-}
-
-void UPSPlayerHUDWidget::SetStaminaPersent(float StaminaPersent)
-{
-	StaminaBar->SetPercent(FMath::Clamp(StaminaPersent, 0.0f, 1.0f));
-}
-
-void UPSPlayerHUDWidget::SetHPBarSize(int MaxHP)
-{
-	HPBarContainer->SetWidthOverride(MaxHP * 2);
-}
-
-void UPSPlayerHUDWidget::SetMPBarSize(int MaxMP)
-{
-	MPBarContainer->SetWidthOverride(MaxMP * 2);
-}
-
-void UPSPlayerHUDWidget::SetStaminaBarSize(int MaxStamina)
-{
-	StaminaBarContainer->SetWidthOverride(MaxStamina * 2);
+	if (StaminaBar)
+	{
+		StaminaBar->SetPercent(CurrentValue / MaxValue);
+	}
+	if (StaminaBarContainer)
+	{
+		float NewWidth = MaxValue * SizeBoxMultiplier;
+		StaminaBarContainer->SetWidthOverride(NewWidth);
+	}
 }
 
 //player Finde Delegate add
@@ -134,8 +112,6 @@ void UPSPlayerHUDWidget::UpdateLockOnPosition()
 	}
 }
 
-
-
 APSCharacter* UPSPlayerHUDWidget::GetCharacter()
 {
 	if (APlayerController* PlayerContrller = GetWorld()->GetFirstPlayerController())
@@ -145,5 +121,6 @@ APSCharacter* UPSPlayerHUDWidget::GetCharacter()
 			return PSCharacter;
 		}
 	}
+
 	return nullptr;
 }

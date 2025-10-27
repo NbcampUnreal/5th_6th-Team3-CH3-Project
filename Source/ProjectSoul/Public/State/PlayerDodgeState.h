@@ -16,9 +16,8 @@ public:
 
 	virtual void OnExit() override;
 
-private:
-	void DodgeEnd();
+	virtual void Look(const FVector2D& Value) override;
 
-private:
-	FTimerHandle TestTimer;
+	UFUNCTION(BlueprintCallable)
+	void DodgeEnd();
 };

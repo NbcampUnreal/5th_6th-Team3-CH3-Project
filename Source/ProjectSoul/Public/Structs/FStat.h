@@ -25,6 +25,8 @@ public:
 
     bool IsZero() const;
 
+    bool IsFull() const;
+
     float GetPercent() const;
 
 private:
