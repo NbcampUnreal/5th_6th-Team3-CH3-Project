@@ -340,8 +340,7 @@ void APSCharacter::FindTargetActor()
 		return;
 	}
 
-	CurrentTarget = ClosestEnemy;
-	OnEnemyTarget.Broadcast(CurrentTarget);
+	SetCurrentTarget(ClosestEnemy);
 	UE_LOG(LogTemp, Warning, TEXT("Player: Found enemy: %s"), *CurrentTarget->GetName());
 }
 
@@ -506,6 +505,7 @@ UAnimMontage* APSCharacter::GetHitMontage() const
 void APSCharacter::SetCurrentTarget(APSEnemy* NewTarget)
 {
 	CurrentTarget = NewTarget;
+	OnEnemyTarget.Broadcast(CurrentTarget);
 }
 
 void APSCharacter::SetIsTargeting(bool Value)

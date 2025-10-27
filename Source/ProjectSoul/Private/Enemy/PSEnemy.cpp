@@ -24,13 +24,6 @@ APSEnemy::APSEnemy()
 		HealthWidget->SetWidgetSpace(EWidgetSpace::Screen);
 	}
 
-	BoxCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollision"));
-	if (BoxCollision)
-	{
-		BoxCollision->SetupAttachment(GetMesh());
-		BoxCollision->SetBoxExtent(FVector(34.0f, 34.0f, 88.0f));
-	}
-
 	UCharacterMovementComponent* EnemyMovement = GetCharacterMovement();
 	EnemyMovement->MaxWalkSpeed = WalkSpeed;
 	EnemyMovement->bOrientRotationToMovement = true;
@@ -46,12 +39,6 @@ void APSEnemy::BeginPlay()
 	if (StateMachine)
 	{
 		StateMachine->Initialize(this);
-	}
-
-	if (BoxCollision)
-	{
-		BoxCollision->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("Weapon_01"));
-		BoxCollision->RegisterComponent();
 	}
 }
 
