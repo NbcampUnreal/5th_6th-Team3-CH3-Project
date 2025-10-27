@@ -11,7 +11,9 @@ UBTService_CheckEnemySituation::UBTService_CheckEnemySituation()
 void UBTService_CheckEnemySituation::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
     Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
-
+    bool bIsAttacking = OwnerComp.GetBlackboardComponent()->GetValueAsBool(TEXT("bIsAttacking"));
+    if (bIsAttacking)
+        return;
     AAIController* AIController = OwnerComp.GetAIOwner();
     APawn* Pawn = AIController->GetPawn();
     AActor* Player = UGameplayStatics::GetPlayerPawn(Pawn->GetWorld(), 0);

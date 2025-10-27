@@ -12,7 +12,8 @@ enum class EEnemyStateType : uint8
 	Attack,
 	Investigate,
 	Return,
-	Die
+	Die,
+	Hit
 };
 
 UCLASS()

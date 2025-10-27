@@ -12,4 +12,7 @@ class PROJECTSOUL_API UEnemyDieState : public UEnemyStateBase
 	virtual void OnEnter() override;
 
 	virtual void OnExit() override;
+
+private:
+	FOnMontageEnded EndDelegate;
 };
