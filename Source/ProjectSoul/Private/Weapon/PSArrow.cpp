@@ -8,14 +8,22 @@ APSArrow::APSArrow()
 	PrimaryActorTick.bCanEverTick = true;
 
 	StaticMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
-	SetRootComponent(StaticMeshComp);
-	StaticMeshComp->SetNotifyRigidBodyCollision(true);
-	StaticMeshComp->SetCollisionProfileName("BlockAllDynamic");
-
+	if (StaticMeshComp)
+	{
+		SetRootComponent(StaticMeshComp);
+		StaticMeshComp->SetNotifyRigidBodyCollision(true);
+		StaticMeshComp->SetCollisionProfileName("BlockAllDynamic");
+	}
+	
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
-	ProjectileMovement->InitialSpeed = 1500.0f;
-	ProjectileMovement->MaxSpeed = 2000.0f;
-	ProjectileMovement->bRotationFollowsVelocity = true;
+	if (ProjectileMovement)
+	{
+		ProjectileMovement->InitialSpeed = 1500.0f;
+		ProjectileMovement->MaxSpeed = 2000.0f;
+		ProjectileMovement->bRotationFollowsVelocity = true;
+		ProjectileMovement->ProjectileGravityScale = 1.0f; //Gravity
+	}
+	
 
 }
 
@@ -29,7 +37,8 @@ void APSArrow::BeginPlay()
 	}
 }
 
-void APSArrow::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor,
+void APSArrow::OnHit(
+	UPrimitiveComponent* HitComp, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, FVector NormalImpulse,
 	const FHitResult& Hit)
 {
@@ -37,8 +46,11 @@ void APSArrow::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor,
 
 	if (OtherActor && OtherActor != this)
 	{
-		UGameplayStatics::ApplyDamage(OtherActor, Damage, nullptr, this, nullptr);
-		Destroy();
+		if (OtherActor->ActorHasTag("Enemy"))
+		{
+			UGameplayStatics::ApplyDamage(OtherActor, Damage, nullptr, this, nullptr);
+			Destroy();
+		}
 	}
 }
 
