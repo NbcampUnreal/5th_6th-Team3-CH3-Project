@@ -7,9 +7,20 @@ void UEnemyDieState::OnEnter()
     UE_LOG(LogTemp, Warning, TEXT("Die state."));
     ACharacter* Enemy = GetEnemyCharacter();//inefficiency
     if (!Enemy) return;
-    Cast<APSEnemy>(Enemy)->PlayAnimMontage(Cast<APSEnemy>(Enemy)->GetDieMontage());
+
+    UAnimInstance* Anim = Enemy->GetMesh()->GetAnimInstance();
+    UAnimMontage* Montage = Cast<APSEnemy>(Enemy)->GetDieMontage();
+    Anim->Montage_Play(Montage);
+    EndDelegate.BindUObject(this, &UEnemyDieState::OnMontageEnded);
+    Anim->Montage_SetEndDelegate(EndDelegate, Montage);
 }
+
 void UEnemyDieState::OnExit()
 {
     Super::OnExit();
+}
+
+void UEnemyDieState::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+{
+    UE_LOG(LogTemp, Warning, TEXT("Die Montage Ended"));
 }
