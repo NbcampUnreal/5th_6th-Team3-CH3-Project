@@ -88,40 +88,6 @@ void APSCharacter::BeginPlay()
 	OnHPChanged.Broadcast(PlayerStats.Health.GetCurrent(), PlayerStats.Health.GetMax());
 	OnMPChanged.Broadcast(PlayerStats.Mana.GetCurrent(), PlayerStats.Mana.GetMax());
 	OnStaminaChanged.Broadcast(PlayerStats.Stamina.GetCurrent(), PlayerStats.Stamina.GetMax());
-
-	// Test Delegate
-	GetWorldTimerManager().SetTimer(
-		HPChangeTimer,
-		[this]()
-		{
-			PlayerStats.Health.AdjustValue(-30.0f);
-			OnHPChanged.Broadcast(PlayerStats.Health.GetCurrent(), PlayerStats.Health.GetMax());
-		},
-		2.0f,
-		false
-	);
-
-	GetWorldTimerManager().SetTimer(
-		MPChangeTimer,
-		[this]()
-		{
-			PlayerStats.Mana.AdjustValue(-20.0f);
-			OnMPChanged.Broadcast(PlayerStats.Mana.GetCurrent(), PlayerStats.Mana.GetMax());
-		},
-		2.0f,
-		false
-	);
-
-	GetWorldTimerManager().SetTimer(
-		StaminaChangeTimer,
-		[this]()
-		{
-			PlayerStats.Stamina.AdjustValue(-15.0f);
-			OnStaminaChanged.Broadcast(PlayerStats.Stamina.GetCurrent(), PlayerStats.Stamina.GetMax());
-		},
-		2.0f,
-		false
-	);
 }
 
 void APSCharacter::Tick(float DeltaTime)
@@ -238,7 +204,6 @@ void APSCharacter::StartSprint(const FInputActionValue& Value)
 {
 	if (PlayerStats.Stamina.IsZero())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Not enough stamina to sprint."));
 		return;
 	}
 
@@ -278,7 +243,6 @@ void APSCharacter::Dodge(const FInputActionValue& Value)
 {
 	if (PlayerStats.Stamina.IsZero())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Not enough stamina to dodge."));
 		return;
 	}
 
@@ -292,7 +256,6 @@ void APSCharacter::Attack(const FInputActionValue& Value)
 {
 	if (PlayerStats.Stamina.IsZero())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Not enough stamina to attack."));
 		return;
 	}
 
@@ -449,7 +412,6 @@ void APSCharacter::RegenStamina()
 		GetWorld()->GetTimerManager().ClearTimer(StaminaRegenTickTimer);
 	}
 }
-
 
 float APSCharacter::GetHealthPercent() const
 {

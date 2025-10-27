@@ -56,7 +56,7 @@ private:
 	TObjectPtr<UProgressBar> StaminaBar;
 
 	UPROPERTY(meta = (BindWidget))
-	UImage* LockOnImage;
+	TObjectPtr<UImage> LockOnImage;
 
 	FTimerHandle LockOnPositionHandle;
 	AActor* LockOnTarget;
