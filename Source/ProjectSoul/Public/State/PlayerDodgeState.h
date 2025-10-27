@@ -22,4 +22,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void DodgeEnd();
+
+private:
+	FVector CalculateDodgeDirection();
 };

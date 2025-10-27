@@ -87,6 +87,8 @@ public:
 
 	UAnimMontage* GetHitMontage() const;
 
+	FVector2D GetLastMoveInput() const;
+
 	void SetCurrentTarget(APSEnemy* NewTarget);
 
 	void SetIsTargeting(bool Value);
@@ -237,4 +239,6 @@ private:
 	bool bIsTargeting;
 
 	bool bIsDead;
+
+	FVector2D LastMoveInput;
 };
