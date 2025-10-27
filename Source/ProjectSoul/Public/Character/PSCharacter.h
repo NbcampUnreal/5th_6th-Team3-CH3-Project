@@ -48,6 +48,9 @@ public:
 	void OnDodgeEndNotify();
 
 	UFUNCTION(BlueprintCallable, Category = "Notify")
+	void OnHitEndNotify();
+
+	UFUNCTION(BlueprintCallable, Category = "Notify")
 	void OnEnableWeaponCollisionNotify();
 
 	UFUNCTION(BlueprintCallable, Category = "Notify")
@@ -65,6 +68,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Stats")
 	float GetStaminaPercent() const;
 
+	UFUNCTION(BlueprintPure, Category = "Die")
+	bool GetIsDead() const;
+
 	float GetNormalWalkSpeed() const;
 
 	float GetSprintWalkSpeed() const;
@@ -78,6 +84,8 @@ public:
 	UAnimMontage* GetDodgeMontage() const;
 
 	UAnimMontage* GetAttackMontage() const;
+
+	UAnimMontage* GetHitMontage() const;
 
 	void SetCurrentTarget(APSEnemy* NewTarget);
 
@@ -134,6 +142,8 @@ private:
 	void StopStaminaRegen();
 
 	void RegenStamina();
+
+	void OnDie();
 
 public:
 	UPROPERTY(BlueprintAssignable, Category = "Event")
@@ -194,8 +204,11 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dodge")
 	TObjectPtr<UAnimMontage> DodgeMontage;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dodge")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack")
 	TObjectPtr<UAnimMontage> AttackMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hit")
+	TObjectPtr<UAnimMontage> HitMontage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stats|Stamina")
 	float AttackStaminaCost;
@@ -223,7 +236,7 @@ private:
 
 	bool bIsTargeting;
 
-	FTimerHandle HPChangeTimer;
-	FTimerHandle MPChangeTimer;
-	FTimerHandle StaminaChangeTimer;
+	bool bIsDead;
+
+	FTimerHandle TestTimer;
 };

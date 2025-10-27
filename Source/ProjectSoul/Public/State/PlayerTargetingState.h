@@ -34,6 +34,10 @@ public:
 
 	virtual void Dodge() override;
 
+	virtual void Hit() override;
+
+	virtual void Die() override;
+
 private:
 	void CalculateTargetRotation(float DeltaTime);
 

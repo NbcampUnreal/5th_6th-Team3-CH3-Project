@@ -2,6 +2,8 @@
 #include "State/PlayerFreeLookState.h"
 #include "State/PlayerDodgeState.h"
 #include "State/PlayerAttackState.h"
+#include "State/PlayerHitState.h"
+#include "State/PlayerDieState.h"
 #include "StateMachine/PlayerStateMachine.h"
 #include "Character/PSCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -119,6 +121,23 @@ void UPlayerTargetingState::Dodge()
 			PSM->SetPrevState(this);
 			PSM->ChangeState(PSM->GetDodgeState());
 		}
+	}
+}
+
+void UPlayerTargetingState::Hit()
+{
+	if (UPlayerStateMachine* PSM = GetPlayerStateMachine())
+	{
+		PSM->SetPrevState(this);
+		PSM->ChangeState(PSM->GetHitState());
+	}
+}
+
+void UPlayerTargetingState::Die()
+{
+	if (UPlayerStateMachine* PSM = GetPlayerStateMachine())
+	{
+		PSM->ChangeState(PSM->GetDieState());
 	}
 }
 

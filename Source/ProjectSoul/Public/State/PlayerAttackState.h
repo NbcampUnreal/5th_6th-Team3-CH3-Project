@@ -18,6 +18,10 @@ public:
 
 	virtual void Look(const FVector2D& Value) override;
 
+	virtual void Hit() override;
+
+	virtual void Die() override;
+
 	UFUNCTION(BlueprintCallable)
 	void AttackEnd();
 };

@@ -15,4 +15,9 @@ public:
 	virtual void OnUpdate(float DeltaTime) override;
 
 	virtual void OnExit() override;
+
+	virtual void Die() override;
+
+	UFUNCTION(BlueprintCallable)
+	void HitEnd();
 };

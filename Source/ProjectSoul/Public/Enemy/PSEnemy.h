@@ -7,6 +7,7 @@
 
 class UEnemyStateMachine;
 class UWidgetComponent;
+class UBoxComponent;
 
 UCLASS()
 class PROJECTSOUL_API APSEnemy : public ACharacter
@@ -34,6 +35,9 @@ private:
 	void UpdateHealthWidget();
 
 protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<UBoxComponent> BoxCollision;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Targeting")
 	TObjectPtr<UEnemyStateMachine> StateMachine;
 

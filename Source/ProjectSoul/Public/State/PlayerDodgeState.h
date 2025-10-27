@@ -18,6 +18,8 @@ public:
 
 	virtual void Look(const FVector2D& Value) override;
 
+	virtual void Die() override;
+
 	UFUNCTION(BlueprintCallable)
 	void DodgeEnd();
 };
