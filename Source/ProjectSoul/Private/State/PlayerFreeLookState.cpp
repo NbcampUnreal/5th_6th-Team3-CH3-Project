@@ -2,6 +2,8 @@
 #include "State/PlayerTargetingState.h"
 #include "State/PlayerDodgeState.h"
 #include "State/PlayerAttackState.h"
+#include "State/PlayerHitState.h"
+#include "State/PlayerDieState.h"
 #include "Character/PSCharacter.h"
 #include "StateMachine/PlayerStateMachine.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -16,7 +18,7 @@ void UPlayerFreeLookState::OnEnter()
 		Character->bUseControllerRotationYaw = false;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("Enter Free Look State"));
+	UE_LOG(LogTemp, Warning, TEXT("Player: Enter Free Look State"));
 }
 
 void UPlayerFreeLookState::OnUpdate(float DeltaTime)
@@ -25,7 +27,7 @@ void UPlayerFreeLookState::OnUpdate(float DeltaTime)
 
 void UPlayerFreeLookState::OnExit()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Exit Free Look State"));
+	UE_LOG(LogTemp, Warning, TEXT("Player: Exit Free Look State"));
 }
 
 void UPlayerFreeLookState::Move(const FVector2D& Value)
@@ -116,5 +118,22 @@ void UPlayerFreeLookState::Dodge()
 			PSM->SetPrevState(this);
 			PSM->ChangeState(PSM->GetDodgeState());
 		}
+	}
+}
+
+void UPlayerFreeLookState::Hit()
+{
+	if (UPlayerStateMachine* PSM = GetPlayerStateMachine())
+	{
+		PSM->SetPrevState(this);
+		PSM->ChangeState(PSM->GetHitState());
+	}
+}
+
+void UPlayerFreeLookState::Die()
+{
+	if (UPlayerStateMachine* PSM = GetPlayerStateMachine())
+	{
+		PSM->ChangeState(PSM->GetDieState());
 	}
 }

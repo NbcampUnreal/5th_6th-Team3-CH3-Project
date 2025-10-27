@@ -8,6 +8,7 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHPChanged, float, CurrentValue, float, MaxValue);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnMPChanged, float, CurrentValue, float, MaxValue);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnStaminaChanged, float, CurrentValue, float, MaxValue);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemyTarget, AActor*, CurrentTarget);
 
 class USpringArmComponent;
 class UCameraComponent;
@@ -47,6 +48,9 @@ public:
 	void OnDodgeEndNotify();
 
 	UFUNCTION(BlueprintCallable, Category = "Notify")
+	void OnHitEndNotify();
+
+	UFUNCTION(BlueprintCallable, Category = "Notify")
 	void OnEnableWeaponCollisionNotify();
 
 	UFUNCTION(BlueprintCallable, Category = "Notify")
@@ -64,6 +68,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Stats")
 	float GetStaminaPercent() const;
 
+	UFUNCTION(BlueprintPure, Category = "Die")
+	bool GetIsDead() const;
+
 	float GetNormalWalkSpeed() const;
 
 	float GetSprintWalkSpeed() const;
@@ -77,6 +84,8 @@ public:
 	UAnimMontage* GetDodgeMontage() const;
 
 	UAnimMontage* GetAttackMontage() const;
+
+	UAnimMontage* GetHitMontage() const;
 
 	void SetCurrentTarget(APSEnemy* NewTarget);
 
@@ -134,6 +143,8 @@ private:
 
 	void RegenStamina();
 
+	void OnDie();
+
 public:
 	UPROPERTY(BlueprintAssignable, Category = "Event")
 	FOnHPChanged OnHPChanged;
@@ -143,6 +154,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Event")
 	FOnStaminaChanged OnStaminaChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Event")
+	FOnEnemyTarget OnEnemyTarget;
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
@@ -190,8 +204,11 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dodge")
 	TObjectPtr<UAnimMontage> DodgeMontage;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dodge")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack")
 	TObjectPtr<UAnimMontage> AttackMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hit")
+	TObjectPtr<UAnimMontage> HitMontage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stats|Stamina")
 	float AttackStaminaCost;
@@ -219,7 +236,5 @@ private:
 
 	bool bIsTargeting;
 
-	FTimerHandle HPChangeTimer;
-	FTimerHandle MPChangeTimer;
-	FTimerHandle StaminaChangeTimer;
+	bool bIsDead;
 };

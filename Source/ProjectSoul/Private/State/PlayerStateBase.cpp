@@ -54,6 +54,14 @@ void UPlayerStateBase::Dodge()
 {
 }
 
+void UPlayerStateBase::Hit()
+{
+}
+
+void UPlayerStateBase::Die()
+{
+}
+
 UPlayerStateMachine* UPlayerStateBase::GetPlayerStateMachine() const
 {
 	return Cast<UPlayerStateMachine>(StateMachine);

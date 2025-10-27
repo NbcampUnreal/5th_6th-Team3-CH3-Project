@@ -39,6 +39,10 @@ public:
 
 	virtual void Dodge();
 
+	virtual void Hit();
+
+	virtual void Die();
+
 protected:
 	UPlayerStateMachine* GetPlayerStateMachine() const;
 

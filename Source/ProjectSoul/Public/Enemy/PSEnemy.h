@@ -8,6 +8,7 @@
 class UEnemyStateMachine;
 class UWidgetComponent;
 class UBoxComponent;
+
 UCLASS()
 class PROJECTSOUL_API APSEnemy : public ACharacter
 {

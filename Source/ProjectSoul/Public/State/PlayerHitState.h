@@ -2,10 +2,10 @@
 
 #include "CoreMinimal.h"
 #include "State/PlayerStateBase.h"
-#include "PlayerDodgeState.generated.h"
+#include "PlayerHitState.generated.h"
 
 UCLASS()
-class PROJECTSOUL_API UPlayerDodgeState : public UPlayerStateBase
+class PROJECTSOUL_API UPlayerHitState : public UPlayerStateBase
 {
 	GENERATED_BODY()
 	
@@ -16,10 +16,8 @@ public:
 
 	virtual void OnExit() override;
 
-	virtual void Look(const FVector2D& Value) override;
-
 	virtual void Die() override;
 
 	UFUNCTION(BlueprintCallable)
-	void DodgeEnd();
+	void HitEnd();
 };
