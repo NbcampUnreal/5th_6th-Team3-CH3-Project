@@ -19,6 +19,10 @@ public:
 
 	virtual void SetMovementSpeed(float NewSpeed);
 
+	virtual float GetWalkSpeed();
+
+	virtual float GetChaseSpeed();
+
 	virtual float TakeDamage(
 		float DamageAmount,
 		struct FDamageEvent const& DamageEvent,
@@ -27,16 +31,47 @@ public:
 
 	void ShowHealthWidget(bool bShow);
 
+	void SetIsDead(bool bIsdead);
+
+	UFUNCTION(BlueprintPure, Category = "Dead")
+	bool GetIsDead() const;
+
 	UEnemyStateMachine* GetStateMachine();
-protected:
-	virtual void BeginPlay() override;
-	
-private:
-	void UpdateHealthWidget();
+
+	UAnimMontage* GetAttackMontage() const;
+
+	UAnimMontage* GetDieMontage() const;
+
+	UAnimMontage* GetHitMontage() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Notify")
+	virtual void DisableWeaponCollisionNotify();
+
+	UFUNCTION(BlueprintCallable, Category = "Notify")
+	virtual void EnableWeaponCollisionNotify();
+
+	UFUNCTION()
+	void OnWeaponOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+		const FHitResult& SweepResult);
 
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	TObjectPtr<UBoxComponent> BoxCollision;
+	virtual void BeginPlay() override;
+
+private:
+	void UpdateHealthWidget();
+protected:
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Weapon")
+	TObjectPtr<UBoxComponent> WeaponCollisionL;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	TObjectPtr<UBoxComponent> WeaponCollisionR;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	FName AttachSocketNameL;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	FName AttachSocketNameR;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Targeting")
 	TObjectPtr<UEnemyStateMachine> StateMachine;
@@ -57,5 +92,19 @@ protected:
 	float WalkSpeed;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Move")
-	float RunSpeed;
+	float ChaseSpeed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Montage")
+	TObjectPtr<UAnimMontage> AttackMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Montage")
+	TObjectPtr<UAnimMontage> DieMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Montage")
+	TObjectPtr<UAnimMontage> HitMontage;
+	UPROPERTY()
+	TSet<AActor*> DamagedActors;
+
+private:
+	bool bIsDead;
 };

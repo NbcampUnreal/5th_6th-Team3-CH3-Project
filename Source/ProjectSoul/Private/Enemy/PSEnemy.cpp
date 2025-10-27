@@ -1,18 +1,23 @@
 #include "Enemy/PSEnemy.h"
 #include "Enemy/PSEnemyAIController.h"
+#include "Character/PSCharacter.h"
+#include "Enemy/PSEnemyAIController.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "StateMachine/EnemyStateMachine.h"
 #include "State/EnemyStateBase.h"
+#include "State/EnemyHitState.h"
 #include "Components/WidgetComponent.h"
 #include "Components/ProgressBar.h"
 #include "UI/PSMonsterWidget.h"
+#include "Kismet/GameplayStatics.h"
 #include "Components/BoxComponent.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 APSEnemy::APSEnemy()
 	: Attack(20), 
 	Score(50),
-	WalkSpeed(300.0f),
-	RunSpeed(600.0f)
+	WalkSpeed(200.0f),
+	ChaseSpeed(400.0f)
 {
 	AIControllerClass = APSEnemyAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
@@ -23,20 +28,22 @@ APSEnemy::APSEnemy()
 		HealthWidget->SetupAttachment(GetMesh());
 		HealthWidget->SetWidgetSpace(EWidgetSpace::Screen);
 	}
-
-	BoxCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollision"));
-	if (BoxCollision)
-	{
-		BoxCollision->SetupAttachment(GetMesh());
-		BoxCollision->SetBoxExtent(FVector(34.0f, 34.0f, 88.0f));
-	}
-
 	UCharacterMovementComponent* EnemyMovement = GetCharacterMovement();
 	EnemyMovement->MaxWalkSpeed = WalkSpeed;
 	EnemyMovement->bOrientRotationToMovement = true;
 
 	EnemyStats.Health = FStat();
 	EnemyStats.Stamina = FStat();
+	WeaponCollisionL = CreateDefaultSubobject<UBoxComponent>(TEXT("WeaponL"));
+	WeaponCollisionR = CreateDefaultSubobject<UBoxComponent>(TEXT("WeaponR"));
+	if (WeaponCollisionL)
+	{
+		WeaponCollisionL->SetupAttachment(GetMesh());
+	}
+	if (WeaponCollisionR)
+	{
+		WeaponCollisionR->SetupAttachment(GetMesh());
+	}
 }
 
 void APSEnemy::BeginPlay()
@@ -47,12 +54,67 @@ void APSEnemy::BeginPlay()
 	{
 		StateMachine->Initialize(this);
 	}
-
-	if (BoxCollision)
+	if (!AttachSocketNameL.IsNone())
 	{
-		BoxCollision->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("Weapon_01"));
-		BoxCollision->RegisterComponent();
+		WeaponCollisionL->AttachToComponent(
+			GetMesh(),
+			FAttachmentTransformRules::SnapToTargetIncludingScale,
+			AttachSocketNameL
+		);
 	}
+	if (!AttachSocketNameR.IsNone())
+	{
+		WeaponCollisionR->AttachToComponent(
+			GetMesh(),
+			FAttachmentTransformRules::SnapToTargetIncludingScale,
+			AttachSocketNameR
+		);
+	}
+	if (WeaponCollisionR)
+	{
+		WeaponCollisionR->RegisterComponent();
+		WeaponCollisionR->OnComponentBeginOverlap.AddDynamic(this, &APSEnemy::OnWeaponOverlap);
+	}
+	if (WeaponCollisionL)
+	{
+
+		WeaponCollisionL->RegisterComponent();
+		WeaponCollisionL->OnComponentBeginOverlap.AddDynamic(this, &APSEnemy::OnWeaponOverlap);
+	}
+}
+
+void APSEnemy::OnWeaponOverlap(
+	UPrimitiveComponent* OverlappedComponent,
+	AActor* OtherActor,
+	UPrimitiveComponent* OtherComp,
+	int32 OtherBodyIndex,
+	bool bFromSweep,
+	const FHitResult& SweepResult
+)
+{
+	if (!OtherActor || OtherActor == GetOwner())
+	{
+		return;
+	}
+
+	if (DamagedActors.Contains(OtherActor))
+	{
+		return;
+	}
+
+	if (!OtherActor->ActorHasTag("Player"))
+	{
+		return;
+	}
+
+	DamagedActors.Add(OtherActor);
+	UGameplayStatics::ApplyDamage(
+		OtherActor,
+		Attack,        
+		nullptr,
+		this,
+		UDamageType::StaticClass()
+	);
 }
 
 UEnemyStateMachine* APSEnemy::GetStateMachine()
@@ -81,11 +143,14 @@ float APSEnemy::TakeDamage(
 
 	UE_LOG(LogTemp, Warning, TEXT("Enemy take damage %.0f from %s"), DamageAmount, *DamageCauser->GetName());
 	UE_LOG(LogTemp, Warning, TEXT("Enemy Remain Health: %.0f / %.0f"), EnemyStats.Health.GetCurrent(), EnemyStats.Health.GetMax());
+	AAIController* EnemyAIController = Cast<AAIController>(this->GetController());
+	UBlackboardComponent* BlackboardComp = EnemyAIController ? EnemyAIController->GetBlackboardComponent() : nullptr;
+	BlackboardComp->SetValueAsBool(TEXT("bIsHit"), true);
 
 	if (EnemyStats.Health.IsZero())
 	{
-		Destroy();
-		// Death
+		BlackboardComp->SetValueAsBool(TEXT("bIsDead"), true);
+		UE_LOG(LogTemp, Warning, TEXT("Enemy Death"));
 	}
 
 	return ActualDamage;
@@ -111,4 +176,52 @@ void APSEnemy::UpdateHealthWidget()
 			}
 		}
 	}
+}
+
+float APSEnemy::GetChaseSpeed()
+{
+	return ChaseSpeed;
+}
+
+float APSEnemy::GetWalkSpeed()
+{
+	return WalkSpeed;
+}
+
+UAnimMontage* APSEnemy::GetAttackMontage() const
+{
+	return AttackMontage;
+}
+
+UAnimMontage* APSEnemy::GetDieMontage() const
+{
+	return DieMontage;
+}
+
+UAnimMontage* APSEnemy::GetHitMontage() const
+{
+	return HitMontage;
+}
+
+void APSEnemy::EnableWeaponCollisionNotify()
+{
+	WeaponCollisionR->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	WeaponCollisionL->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+}
+
+void APSEnemy::DisableWeaponCollisionNotify()
+{
+	WeaponCollisionR->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	WeaponCollisionL->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	DamagedActors.Empty(); // Initialize the list
+}
+
+void APSEnemy::SetIsDead(bool bIsdead)
+{
+	bIsDead = bIsdead;
+}
+
+bool APSEnemy::GetIsDead() const
+{
+	return bIsDead;
 }

@@ -2,6 +2,7 @@
 #include "Components/ProgressBar.h"
 #include "Components/SizeBox.h"
 #include "Components/Image.h"
+#include "Components/Overlay.h"
 #include "Components/CanvasPanelSlot.h"
 #include "Character/PSCharacter.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
@@ -11,17 +12,20 @@ void UPSPlayerHUDWidget::NativeOnInitialized()
 	Super::NativeOnInitialized();
 
 	LockOnTarget = nullptr;
-
 	SizeBoxMultiplier = 3.0f;
-
+	bLockOn = false;
 	if (APSCharacter* PSCharacter = GetCharacter())
 	{
 		PSCharacter->OnHPChanged.AddDynamic(this, &UPSPlayerHUDWidget::OnUpdateHPBar);
 		PSCharacter->OnMPChanged.AddDynamic(this, &UPSPlayerHUDWidget::OnUpdateMPBar);
 		PSCharacter->OnStaminaChanged.AddDynamic(this, &UPSPlayerHUDWidget::OnUpdateStaminaBar);
+	
+		PSCharacter->OnEnemyTarget.AddDynamic(this, &UPSPlayerHUDWidget::ShowLockOn);
+		//PSCharacter->HitEnemy.AddDynamic(this, &UPSPlayerHUDWidget::ShowHit);
 	}
 
 	LockOnImage->SetVisibility(ESlateVisibility::Hidden);
+	HitImage->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UPSPlayerHUDWidget::OnUpdateHPBar(float CurrentValue, float MaxValue)
@@ -66,29 +70,71 @@ void UPSPlayerHUDWidget::OnUpdateStaminaBar(float CurrentValue, float MaxValue)
 }
 
 //player Finde Delegate add
-void UPSPlayerHUDWidget::ShowLockOn(AActor* LockOnMonster)
+void UPSPlayerHUDWidget::ShowLockOn(AActor* CurrentTarget)
 {
-	if (LockOnMonster)
+	if (CurrentTarget)
 	{
-		LockOnTarget = LockOnMonster;
-	}
-	LockOnImage->SetVisibility(ESlateVisibility::Visible);
+		bLockOn = true;
+		LockOnTarget = CurrentTarget;
+		LockOnImage->SetVisibility(ESlateVisibility::Visible);
 
-	GetWorld()->GetTimerManager().SetTimer(
-		LockOnPositionHandle,
-		this,
-		&UPSPlayerHUDWidget::UpdateLockOnPosition,
-		0.05f,
-		true
-	);
+		GetWorld()->GetTimerManager().SetTimer(
+			LockOnPositionHandle,
+			this,
+			&UPSPlayerHUDWidget::UpdateLockOnPosition,
+			0.125f,
+			true
+		);
+	}
+	else
+	{
+		bLockOn = false;
+		HiddenLockOn();
+	}
 }
 
 void UPSPlayerHUDWidget::HiddenLockOn()
 {
 	LockOnImage->SetVisibility(ESlateVisibility::Hidden);
-
 	GetWorld()->GetTimerManager().ClearTimer(LockOnPositionHandle);
 	LockOnTarget = nullptr;
+}
+
+void UPSPlayerHUDWidget::ShowHit(AActor* LockOnMonster)
+{
+	if (LockOnMonster)
+	{
+		LockOnTarget = LockOnMonster;
+		HitImage->SetVisibility(ESlateVisibility::Visible);
+
+		GetWorld()->GetTimerManager().SetTimer(
+			LockOnPositionHandle,
+			this,
+			&UPSPlayerHUDWidget::UpdateLockOnPosition,
+			0.125f,
+			true
+		);
+
+		GetWorld()->GetTimerManager().SetTimer(
+			HitPositionHandle,
+			this,
+			&UPSPlayerHUDWidget::HiddenHit,
+			1.0f,
+			false
+		);
+	}
+}
+
+void UPSPlayerHUDWidget::HiddenHit()
+{
+	HitImage->SetVisibility(ESlateVisibility::Hidden);
+	GetWorld()->GetTimerManager().ClearTimer(HitPositionHandle);
+	LockOnTarget = nullptr;
+
+	if (!bLockOn)
+	{
+		GetWorld()->GetTimerManager().ClearTimer(LockOnPositionHandle);
+	}
 }
 
 void UPSPlayerHUDWidget::UpdateLockOnPosition()
@@ -104,7 +150,7 @@ void UPSPlayerHUDWidget::UpdateLockOnPosition()
 			float ViewportScale = UWidgetLayoutLibrary::GetViewportScale(this);
 			MonsterScreenLocation /= ViewportScale;
 
-			if (UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(LockOnImage->Slot))
+			if (UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(HitLockOnOverlay->Slot))
 			{
 				CanvasSlot->SetPosition(MonsterScreenLocation);
 			}

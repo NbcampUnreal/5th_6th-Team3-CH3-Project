@@ -20,22 +20,9 @@ void UPSMonsterWidget::UpdateMonsterHP(float Percent)
 	}
 }
 
-//player Finde Delegate add??
-void UPSMonsterWidget::ShowMonsterHP()
+void UPSMonsterWidget::ShowHitMonsterHP(bool bShow)
 {
-	bLockOn = true;
-	HPBar->SetVisibility(ESlateVisibility::Visible);
-}
-
-void UPSMonsterWidget::HiddenMonsterHP()
-{
-	bLockOn = false;
-	HPBar->SetVisibility(ESlateVisibility::Hidden);
-}
-
-
-void UPSMonsterWidget::ShowHitMonsterHP()
-{
+	bLockOn = bShow;
 	HPBar->SetVisibility(ESlateVisibility::Visible);
 	GetWorld()->GetTimerManager().SetTimer(
 		ShowMonsterHPTimer,
