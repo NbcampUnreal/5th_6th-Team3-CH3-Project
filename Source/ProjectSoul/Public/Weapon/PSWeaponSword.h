@@ -13,8 +13,6 @@ class PROJECTSOUL_API APSWeaponSword : public APSWeaponBase
 public:
 	APSWeaponSword();
 
-	virtual void Attack(AActor* Target) override;
-
 	virtual void EnableWeaponCollision() override;
 
 	virtual void DisableWeaponCollision() override;
