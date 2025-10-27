@@ -4,6 +4,8 @@
 #include "State/PlayerTargetingState.h"
 #include "State/PlayerAttackState.h"
 #include "State/PlayerDodgeState.h"
+#include "State/PlayerHitState.h"
+#include "State/PlayerDieState.h"
 
 void UPlayerStateMachine::Initialize(ACharacter* InOwner)
 {
@@ -33,13 +35,25 @@ void UPlayerStateMachine::Initialize(ACharacter* InOwner)
 		DodgeState->Initialize(this);
 	}
 
+	HitState = NewObject<UPlayerHitState>(this);
+	if (HitState)
+	{
+		HitState->Initialize(this);
+	}
+
+	DieState = NewObject<UPlayerDieState>(this);
+	if (DieState)
+	{
+		DieState->Initialize(this);
+	}
+
 	CurrentState = FreeLookState;
 	if (CurrentState)
 	{
 		CurrentState->OnEnter();
 	}
 
-	UE_LOG(LogTemp, Log, TEXT("PlayerStateMachine Initialized"));
+	UE_LOG(LogTemp, Log, TEXT("Player: PlayerStateMachine Initialized"));
 }
 
 void UPlayerStateMachine::OnUpdate(float DeltaTime)
@@ -85,4 +99,14 @@ UPlayerAttackState* UPlayerStateMachine::GetAttackState() const
 UPlayerDodgeState* UPlayerStateMachine::GetDodgeState() const
 {
 	return DodgeState;
+}
+
+UPlayerHitState* UPlayerStateMachine::GetHitState() const
+{
+	return HitState;
+}
+
+UPlayerDieState* UPlayerStateMachine::GetDieState() const
+{
+	return DieState;
 }
