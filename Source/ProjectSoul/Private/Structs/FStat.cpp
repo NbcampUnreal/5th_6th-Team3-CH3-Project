@@ -42,6 +42,11 @@ bool FStat::IsZero() const
     return FMath::IsNearlyZero(CurrentValue);
 }
 
+bool FStat::IsFull() const
+{
+    return FMath::IsNearlyEqual(CurrentValue, MaxValue);
+}
+
 float FStat::GetPercent() const
 {
     if (FMath::IsNearlyZero(MaxValue))
