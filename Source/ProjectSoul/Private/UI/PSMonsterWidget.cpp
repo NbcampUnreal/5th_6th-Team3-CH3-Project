@@ -6,7 +6,7 @@
 void UPSMonsterWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
-	HPBar->SetVisibility(ESlateVisibility::Hidden);
+
 	bLockOn = false;
 	TestHP = 1.0f;
 }
