@@ -20,7 +20,7 @@ void UPSPlayerHUDWidget::NativeOnInitialized()
 		PSCharacter->OnMPChanged.AddDynamic(this, &UPSPlayerHUDWidget::OnUpdateMPBar);
 		PSCharacter->OnStaminaChanged.AddDynamic(this, &UPSPlayerHUDWidget::OnUpdateStaminaBar);
 	
-		//PSCharacter->OnEnemyTarget.AddDynamic(this, &UPSPlayerHUDWidget::ShowLockOn);
+		PSCharacter->OnEnemyTarget.AddDynamic(this, &UPSPlayerHUDWidget::ShowLockOn);
 		//PSCharacter->HitEnemy.AddDynamic(this, &UPSPlayerHUDWidget::ShowHit);
 	}
 
@@ -70,12 +70,12 @@ void UPSPlayerHUDWidget::OnUpdateStaminaBar(float CurrentValue, float MaxValue)
 }
 
 //player Finde Delegate add
-void UPSPlayerHUDWidget::ShowLockOn(AActor* LockOnMonster)
+void UPSPlayerHUDWidget::ShowLockOn(AActor* CurrentTarget)
 {
-	if (LockOnMonster)
+	if (CurrentTarget)
 	{
 		bLockOn = true;
-		LockOnTarget = LockOnMonster;
+		LockOnTarget = CurrentTarget;
 		LockOnImage->SetVisibility(ESlateVisibility::Visible);
 
 		GetWorld()->GetTimerManager().SetTimer(
@@ -86,7 +86,6 @@ void UPSPlayerHUDWidget::ShowLockOn(AActor* LockOnMonster)
 			true
 		);
 	}
-
 	else
 	{
 		bLockOn = false;

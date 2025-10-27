@@ -16,7 +16,9 @@ class PROJECTSOUL_API UPSPlayerHUDWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
+	UFUNCTION()
 	void ShowLockOn(AActor* LockOnMonster);
+
 	void ShowHit(AActor* LockOnMonster);
 	
 
