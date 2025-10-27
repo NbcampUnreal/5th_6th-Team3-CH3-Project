@@ -17,9 +17,7 @@ class PROJECTSOUL_API UPSMonsterWidget : public UUserWidget
 public:
 	void UpdateMonsterHP(float Percent);
 
-	void ShowMonsterHP();
-	void HiddenMonsterHP();
-	void ShowHitMonsterHP();
+	void ShowHitMonsterHP(bool bShow);
 	void HiddenHitMonsterHP();
 
 protected:
