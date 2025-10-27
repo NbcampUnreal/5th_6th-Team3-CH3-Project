@@ -35,9 +35,6 @@ private:
 	void UpdateHealthWidget();
 
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	TObjectPtr<UBoxComponent> BoxCollision;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Targeting")
 	TObjectPtr<UEnemyStateMachine> StateMachine;
 
