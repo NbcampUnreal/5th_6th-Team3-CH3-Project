@@ -15,16 +15,16 @@ public:
 	UPSUIManagerSubsystem();
 
 	void ShowCurrentWidget();
-	void HideCurrentWidget();
-
-	void ShowLockOn(AActor* LockOnMonster);
-	void HiddenLockOn();
 
 	void ShowMainMenuUI();
+
 	void ShowPlayerHUD();
+
 	void ShowGameOverUI();
 
-
+	//test
+	UPSPlayerHUDWidget* TestGetPlayerHUDWidgetInstance();
+	//
 private:
 	void SetCurrentWidget();
 
@@ -46,5 +46,5 @@ private:
 	UPROPERTY()
 	UUserWidget* GameOverWidgetInstance;
 
-	UUserWidget* CurrentWidgetInstance;
+	
 };
