@@ -237,6 +237,4 @@ private:
 	bool bIsTargeting;
 
 	bool bIsDead;
-
-	FTimerHandle TestTimer;
 };
