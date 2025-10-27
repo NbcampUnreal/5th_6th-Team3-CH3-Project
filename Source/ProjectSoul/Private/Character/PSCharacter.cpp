@@ -277,12 +277,12 @@ float APSCharacter::TakeDamage(
 	PlayerStats.Health.AdjustValue(-DamageAmount);
 	OnHPChanged.Broadcast(PlayerStats.Health.GetCurrent(), PlayerStats.Health.GetMax());
 
-	UE_LOG(LogTemp, Warning, TEXT("Player take damage %.0f from %s"), DamageAmount, *DamageCauser->GetName());
-	UE_LOG(LogTemp, Warning, TEXT("Player Remain Health: %.0f / %.0f"), PlayerStats.Health.GetCurrent(), PlayerStats.Health.GetMax());
+	UE_LOG(LogTemp, Warning, TEXT("Player: take damage %.0f from %s"), DamageAmount, *DamageCauser->GetName());
+	UE_LOG(LogTemp, Warning, TEXT("Player: Remain Health: %.0f / %.0f"), PlayerStats.Health.GetCurrent(), PlayerStats.Health.GetMax());
 
 	if (PlayerStats.Health.IsZero())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Player Dead"));
+		UE_LOG(LogTemp, Warning, TEXT("Player: Dead"));
 		// Death
 	}
 
@@ -323,12 +323,13 @@ void APSCharacter::FindTargetActor()
 	if (!ClosestEnemy)
 	{
 		CurrentTarget = nullptr;
-		UE_LOG(LogTemp, Warning, TEXT("Not found enemy."));
+		UE_LOG(LogTemp, Warning, TEXT("Player: Not found enemy."));
 		return;
 	}
 
 	CurrentTarget = ClosestEnemy;
-	UE_LOG(LogTemp, Warning, TEXT("Found enemy: %s"), *CurrentTarget->GetName());
+	OnEnemyTarget.Broadcast(CurrentTarget);
+	UE_LOG(LogTemp, Warning, TEXT("Player: Found enemy: %s"), *CurrentTarget->GetName());
 }
 
 void APSCharacter::RestoreAllStats()

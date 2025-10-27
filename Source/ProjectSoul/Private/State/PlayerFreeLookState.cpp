@@ -16,7 +16,7 @@ void UPlayerFreeLookState::OnEnter()
 		Character->bUseControllerRotationYaw = false;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("Enter Free Look State"));
+	UE_LOG(LogTemp, Warning, TEXT("Player: Enter Free Look State"));
 }
 
 void UPlayerFreeLookState::OnUpdate(float DeltaTime)
@@ -25,7 +25,7 @@ void UPlayerFreeLookState::OnUpdate(float DeltaTime)
 
 void UPlayerFreeLookState::OnExit()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Exit Free Look State"));
+	UE_LOG(LogTemp, Warning, TEXT("Player: Exit Free Look State"));
 }
 
 void UPlayerFreeLookState::Move(const FVector2D& Value)

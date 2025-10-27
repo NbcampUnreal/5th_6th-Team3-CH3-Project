@@ -23,21 +23,21 @@ void UPlayerTargetingState::OnEnter()
 		Character->GetCurrentTarget()->ShowHealthWidget(true);
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("Enter Targeting State"));
+	UE_LOG(LogTemp, Warning, TEXT("Player: Enter Targeting State"));
 }
 
 void UPlayerTargetingState::OnUpdate(float DeltaTime)
 {
 	if (!IsTargetValid())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Target is not valid"));
+		UE_LOG(LogTemp, Warning, TEXT("Player: Target is not valid"));
 		Unlock();
 		return;
 	}
 
 	if (IsTargetTooFar())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Target is too far"));
+		UE_LOG(LogTemp, Warning, TEXT("Player: Target is too far"));
 		Unlock();
 		return;
 	}
@@ -47,7 +47,7 @@ void UPlayerTargetingState::OnUpdate(float DeltaTime)
 
 void UPlayerTargetingState::OnExit()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Exit Targeting State"));
+	UE_LOG(LogTemp, Warning, TEXT("Player: Exit Targeting State"));
 }
 
 void UPlayerTargetingState::Move(const FVector2D& Value)
@@ -129,7 +129,7 @@ void UPlayerTargetingState::CalculateTargetRotation(float DeltaTime)
 		AActor* CurrentTarget = Character->GetCurrentTarget();
 		if (!CurrentTarget)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("No Target."));
+			UE_LOG(LogTemp, Warning, TEXT("Player: No Target."));
 			Unlock();
 			return;
 		}

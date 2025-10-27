@@ -39,7 +39,7 @@ void UPlayerStateMachine::Initialize(ACharacter* InOwner)
 		CurrentState->OnEnter();
 	}
 
-	UE_LOG(LogTemp, Log, TEXT("PlayerStateMachine Initialized"));
+	UE_LOG(LogTemp, Log, TEXT("Player: PlayerStateMachine Initialized"));
 }
 
 void UPlayerStateMachine::OnUpdate(float DeltaTime)

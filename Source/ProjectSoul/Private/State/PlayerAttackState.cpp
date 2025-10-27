@@ -6,7 +6,7 @@
 
 void UPlayerAttackState::OnEnter()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Enter Attack State"));
+	UE_LOG(LogTemp, Warning, TEXT("Player: Enter Attack State"));
 
 	if (APSCharacter* Character = GetPlayerCharacter())
 	{
@@ -22,7 +22,7 @@ void UPlayerAttackState::OnUpdate(float DeltaTime)
 
 void UPlayerAttackState::OnExit()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Exit Attack State"));
+	UE_LOG(LogTemp, Warning, TEXT("Player: Exit Attack State"));
 }
 
 void UPlayerAttackState::Look(const FVector2D& Value)
@@ -35,7 +35,7 @@ void UPlayerAttackState::Look(const FVector2D& Value)
 
 void UPlayerAttackState::AttackEnd()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Call Attack End in AttackState"));
+	UE_LOG(LogTemp, Warning, TEXT("Player: Call Attack End in AttackState"));
 
 	if (UPlayerStateMachine* PSM = GetPlayerStateMachine())
 	{
