@@ -215,3 +215,13 @@ void APSEnemy::DisableWeaponCollisionNotify()
 	WeaponCollisionL->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	DamagedActors.Empty(); // Initialize the list
 }
+
+void APSEnemy::SetIsDead(bool bIsdead)
+{
+	bIsDead = bIsdead;
+}
+
+bool APSEnemy::GetIsDead() const
+{
+	return bIsDead;
+}

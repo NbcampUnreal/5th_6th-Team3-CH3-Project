@@ -13,8 +13,6 @@ class PROJECTSOUL_API UEnemyDieState : public UEnemyStateBase
 
 	virtual void OnExit() override;
 
-	void OnMontageEnded(UAnimMontage* Montage, bool bInterrupted);
-
 private:
 	FOnMontageEnded EndDelegate;
 };

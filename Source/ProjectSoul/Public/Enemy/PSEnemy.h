@@ -31,6 +31,11 @@ public:
 
 	void ShowHealthWidget(bool bShow);
 
+	void SetIsDead(bool bIsdead);
+
+	UFUNCTION(BlueprintPure, Category = "Dead")
+	bool GetIsDead() const;
+
 	UEnemyStateMachine* GetStateMachine();
 
 	UAnimMontage* GetAttackMontage() const;
@@ -99,4 +104,7 @@ protected:
 	TObjectPtr<UAnimMontage> HitMontage;
 	UPROPERTY()
 	TSet<AActor*> DamagedActors;
+
+private:
+	bool bIsDead;
 };
