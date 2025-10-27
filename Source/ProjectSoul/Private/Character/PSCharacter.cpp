@@ -21,7 +21,8 @@ APSCharacter::APSCharacter()
 	bIsSprinting(false),
 	bIsDead(false),
 	SprintStaminaTimerInterval(0.1f),
-	StaminaRegenTickTimerInterval(0.1f)
+	StaminaRegenTickTimerInterval(0.1f),
+	LastMoveInput(FVector2D::ZeroVector)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -126,6 +127,7 @@ void APSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 				if (PlayerController->MoveAction)
 				{
 					EnhancedInput->BindAction(PlayerController->MoveAction, ETriggerEvent::Triggered, this, &APSCharacter::Move);
+					EnhancedInput->BindAction(PlayerController->MoveAction, ETriggerEvent::Completed, this, &APSCharacter::Move);
 				}
 
 				if (PlayerController->LookAction)
@@ -174,6 +176,7 @@ void APSCharacter::Move(const FInputActionValue& Value)
 	if (StateMachine)
 	{
 		FVector2D MoveInput = Value.Get<FVector2D>();
+		LastMoveInput = MoveInput.IsNearlyZero() ? FVector2D::ZeroVector : MoveInput;
 		StateMachine->GetCurrentState()->Move(MoveInput);
 	}
 }
@@ -500,6 +503,11 @@ UAnimMontage* APSCharacter::GetAttackMontage() const
 UAnimMontage* APSCharacter::GetHitMontage() const
 {
 	return HitMontage;
+}
+
+FVector2D APSCharacter::GetLastMoveInput() const
+{
+	return LastMoveInput;
 }
 
 void APSCharacter::SetCurrentTarget(APSEnemy* NewTarget)
