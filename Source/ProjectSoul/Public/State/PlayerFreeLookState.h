@@ -33,4 +33,8 @@ public:
 	virtual void Lock() override;
 
 	virtual void Dodge() override;
+
+	virtual void Hit() override;
+
+	virtual void Die() override;
 };
