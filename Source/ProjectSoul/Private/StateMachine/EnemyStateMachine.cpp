@@ -1,5 +1,5 @@
 #include "StateMachine/EnemyStateMachine.h"
-
+#include "State/EnemyHitState.h"
 #include "Enemy/PSEnemy.h"
 #include "State/EnemyAttackState.h"
 #include "State/EnemyChaseState.h"
@@ -46,6 +46,12 @@ void UEnemyStateMachine::Initialize(ACharacter* InOwner)
 	if (ReturnState)
 	{
 		ReturnState->Initialize(this);
+	}
+
+	HitState= NewObject<UEnemyHitState>(this);
+	if (HitState)
+	{
+		HitState->Initialize(this);
 	}
 
 	CurrentState = IdleState;
@@ -99,4 +105,9 @@ UEnemyInvestigateState* UEnemyStateMachine::GetInvestigateState() const
 UEnemyReturnState* UEnemyStateMachine::GetReturnState() const
 {
 	return ReturnState;
+}
+
+UEnemyHitState* UEnemyStateMachine::GetHitState() const
+{
+	return HitState;
 }

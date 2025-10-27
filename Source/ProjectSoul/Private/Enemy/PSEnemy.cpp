@@ -1,12 +1,17 @@
 #include "Enemy/PSEnemy.h"
 #include "Enemy/PSEnemyAIController.h"
+#include "Character/PSCharacter.h"
+#include "Enemy/PSEnemyAIController.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "StateMachine/EnemyStateMachine.h"
 #include "State/EnemyStateBase.h"
+#include "State/EnemyHitState.h"
 #include "Components/WidgetComponent.h"
 #include "Components/ProgressBar.h"
 #include "UI/PSMonsterWidget.h"
-
+#include "Kismet/GameplayStatics.h"
+#include "Components/BoxComponent.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 APSEnemy::APSEnemy()
 	: Attack(20), 
@@ -30,6 +35,16 @@ APSEnemy::APSEnemy()
 
 	EnemyStats.Health = FStat();
 	EnemyStats.Stamina = FStat();
+	WeaponCollisionL = CreateDefaultSubobject<UBoxComponent>(TEXT("WeaponL"));
+	WeaponCollisionR = CreateDefaultSubobject<UBoxComponent>(TEXT("WeaponR"));
+	if (WeaponCollisionL)
+	{
+		WeaponCollisionL->SetupAttachment(GetMesh());
+	}
+	if (WeaponCollisionR)
+	{
+		WeaponCollisionR->SetupAttachment(GetMesh());
+	}
 }
 
 void APSEnemy::BeginPlay()
@@ -40,6 +55,56 @@ void APSEnemy::BeginPlay()
 	{
 		StateMachine->Initialize(this);
 	}
+	if (WeaponCollisionR)
+	{
+		WeaponCollisionR->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("Weapon_01"));
+		WeaponCollisionR->RegisterComponent();
+		WeaponCollisionR->OnComponentBeginOverlap.AddDynamic(this, &APSEnemy::OnWeaponOverlap);
+	}
+}
+
+void APSEnemy::OnWeaponOverlap(
+	UPrimitiveComponent* OverlappedComponent,
+	AActor* OtherActor,
+	UPrimitiveComponent* OtherComp,
+	int32 OtherBodyIndex,
+	bool bFromSweep,
+	const FHitResult& SweepResult
+)
+{
+	if (!OtherActor || OtherActor == GetOwner())
+	{
+		return;
+	}
+
+	/*if (DamagedActors.Contains(OtherActor))
+	{
+		return;
+	}
+
+	if (!OtherActor->ActorHasTag("Player"))
+	{
+		return;
+	}*/
+
+	DamagedActors.Add(OtherActor);
+	UGameplayStatics::ApplyDamage(
+		OtherActor,
+		Attack,        
+		nullptr,
+		this,
+		UDamageType::StaticClass()
+	);
+}
+
+void APSEnemy::EnableWeaponCollision()
+{
+	UE_LOG(LogTemp, Log, TEXT("Enemy : weapon collision enabled"));
+}
+
+void APSEnemy::DisableWeaponCollision()
+{
+	UE_LOG(LogTemp, Log, TEXT("Enemy : weapon collision disabled"));
 }
 
 UEnemyStateMachine* APSEnemy::GetStateMachine()
@@ -68,13 +133,14 @@ float APSEnemy::TakeDamage(
 
 	UE_LOG(LogTemp, Warning, TEXT("Enemy take damage %.0f from %s"), DamageAmount, *DamageCauser->GetName());
 	UE_LOG(LogTemp, Warning, TEXT("Enemy Remain Health: %.0f / %.0f"), EnemyStats.Health.GetCurrent(), EnemyStats.Health.GetMax());
+	AAIController* EnemyAIController = Cast<AAIController>(this->GetController());
+	UBlackboardComponent* BlackboardComp = EnemyAIController ? EnemyAIController->GetBlackboardComponent() : nullptr;
+	BlackboardComp->SetValueAsBool(TEXT("bIsHit"), true);
 
 	if (EnemyStats.Health.IsZero())
 	{
-
-
-		Destroy();
-		// Death
+		BlackboardComp->SetValueAsBool(TEXT("bIsDead"), true);
+		UE_LOG(LogTemp, Warning, TEXT("Enemy Death"));
 	}
 
 	return ActualDamage;

@@ -4,7 +4,7 @@
 void UEnemyDieState::OnEnter()
 {
     Super::OnEnter();
-    UE_LOG(LogTemp, Warning, TEXT("Die state."));
+    UE_LOG(LogTemp, Warning, TEXT("Enemy : Die state."));
     ACharacter* Enemy = GetEnemyCharacter();//inefficiency
     if (!Enemy) return;
 
@@ -22,5 +22,7 @@ void UEnemyDieState::OnExit()
 
 void UEnemyDieState::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
-    UE_LOG(LogTemp, Warning, TEXT("Die Montage Ended"));
+    UE_LOG(LogTemp, Warning, TEXT("Enemy : Die Montage Ended"));
+    ACharacter* Enemy = GetEnemyCharacter();
+    Cast<APSEnemy>(Enemy)->Destroy();
 }

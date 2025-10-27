@@ -6,7 +6,7 @@
 void UEnemyAttackState::OnEnter()
 {
     Super::OnEnter();
-    UE_LOG(LogTemp, Warning, TEXT("Attack state."));
+    UE_LOG(LogTemp, Warning, TEXT("Enemy : Attack state."));
     ACharacter* Enemy = GetEnemyCharacter();//inefficiency
     if (!Enemy) return;
     AAIController* EnemyAIController = Cast<AAIController>(Enemy->GetController());
@@ -16,6 +16,7 @@ void UEnemyAttackState::OnEnter()
     {
         return;
     }
+    BlackboardComp->SetValueAsBool(TEXT("bIsAttacking"), true);
     AActor* Target = Cast<AActor>(BlackboardComp->GetValueAsObject(TEXT("TargetActor")));
     EnemyAIController->SetFocus(Target);
 
@@ -33,12 +34,11 @@ void UEnemyAttackState::OnExit()
     if (!Enemy) return;
     AAIController* EnemyAIController = Cast<AAIController>(Enemy->GetController());
     UBlackboardComponent* BlackboardComp = EnemyAIController ? EnemyAIController->GetBlackboardComponent() : nullptr;
-    BlackboardComp->SetValueAsBool(TEXT("bIsAttacking"), false);
 }
 
 void UEnemyAttackState::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
-    UE_LOG(LogTemp, Warning, TEXT("Attack Montage Ended"));
+    
     ACharacter* Enemy = GetEnemyCharacter();//inefficiency
     if (!Enemy) return;
     AAIController* EnemyAIController = Cast<AAIController>(Enemy->GetController());
@@ -48,6 +48,7 @@ void UEnemyAttackState::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
     {
         return;
     }
-    BlackboardComp->SetValueAsBool(TEXT("bIsAttacking"), true);
+    UE_LOG(LogTemp, Warning, TEXT("Enemy : Attack Montage Ended"));
+    BlackboardComp->SetValueAsBool(TEXT("bIsAttacking"), false);
     BlackboardComp->SetValueAsBool(TEXT("bInAttackRange"), false);
 }

@@ -8,6 +8,7 @@
 #include "State/EnemyDieState.h"
 #include "State/EnemyInvestigateState.h"
 #include "State/EnemyReturnState.h"
+#include "State/EnemyHitState.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
 UBTTask_SetState::UBTTask_SetState()
@@ -53,6 +54,10 @@ EBTNodeResult::Type UBTTask_SetState::ExecuteTask(UBehaviorTreeComponent& OwnerC
 
 	case EEnemyStateType::Die:
 		StateMachine->ChangeState(StateMachine->GetDieState());
+		break;
+
+	case EEnemyStateType::Hit:
+		StateMachine->ChangeState(StateMachine->GetHitState());
 		break;
 
 	default:

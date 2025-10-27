@@ -6,7 +6,7 @@
 void UEnemyIdleState::OnEnter()
 {
     Super::OnEnter();
-    UE_LOG(LogTemp, Warning, TEXT("Idle state."));
+    UE_LOG(LogTemp, Warning, TEXT("Enemy : Idle state."));
     ACharacter* Enemy = GetEnemyCharacter();
     if (!Enemy) return;
 
