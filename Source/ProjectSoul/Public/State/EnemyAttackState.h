@@ -13,4 +13,9 @@ public:
 	virtual void OnEnter() override;
 
 	virtual void OnExit() override;
+
+	void OnMontageEnded(UAnimMontage* Montage, bool bInterrupted);
+
+private:
+	FOnMontageEnded EndDelegate;
 };

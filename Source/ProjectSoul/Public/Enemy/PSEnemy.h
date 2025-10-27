@@ -18,6 +18,10 @@ public:
 
 	virtual void SetMovementSpeed(float NewSpeed);
 
+	virtual float GetWalkSpeed();
+
+	virtual float GetChaseSpeed();
+
 	virtual float TakeDamage(
 		float DamageAmount,
 		struct FDamageEvent const& DamageEvent,
@@ -27,6 +31,12 @@ public:
 	void ShowHealthWidget(bool bShow);
 
 	UEnemyStateMachine* GetStateMachine();
+
+	UAnimMontage* GetAttackMontage() const;
+
+	UAnimMontage* GetDieMontage() const;
+
+	UAnimMontage* GetHitMontage() const;
 protected:
 	virtual void BeginPlay() override;
 	
@@ -53,5 +63,14 @@ protected:
 	float WalkSpeed;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Move")
-	float RunSpeed;
+	float ChaseSpeed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Montage")
+	TObjectPtr<UAnimMontage> AttackMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Montage")
+	TObjectPtr<UAnimMontage> DieMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Montage")
+	TObjectPtr<UAnimMontage> HitMontage;
 };

@@ -11,8 +11,8 @@
 APSEnemy::APSEnemy()
 	: Attack(20), 
 	Score(50),
-	WalkSpeed(300.0f),
-	RunSpeed(600.0f)
+	WalkSpeed(200.0f),
+	ChaseSpeed(400.0f)
 {
 	AIControllerClass = APSEnemyAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
@@ -71,6 +71,8 @@ float APSEnemy::TakeDamage(
 
 	if (EnemyStats.Health.IsZero())
 	{
+
+
 		Destroy();
 		// Death
 	}
@@ -98,4 +100,29 @@ void APSEnemy::UpdateHealthWidget()
 			}
 		}
 	}
+}
+
+float APSEnemy::GetChaseSpeed()
+{
+	return ChaseSpeed;
+}
+
+float APSEnemy::GetWalkSpeed()
+{
+	return WalkSpeed;
+}
+
+UAnimMontage* APSEnemy::GetAttackMontage() const
+{
+	return AttackMontage;
+}
+
+UAnimMontage* APSEnemy::GetDieMontage() const
+{
+	return DieMontage;
+}
+
+UAnimMontage* APSEnemy::GetHitMontage() const
+{
+	return HitMontage;
 }

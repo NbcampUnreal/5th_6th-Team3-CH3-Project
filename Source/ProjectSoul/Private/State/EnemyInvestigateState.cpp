@@ -10,6 +10,7 @@ void UEnemyInvestigateState::OnEnter()
     UE_LOG(LogTemp, Warning, TEXT("Investigate state."));
     ACharacter* Enemy = GetEnemyCharacter();//inefficiency
     if (!Enemy) return;
+    Cast<APSEnemy>(Enemy)->SetMovementSpeed(Cast<APSEnemy>(Enemy)->GetWalkSpeed());
     AAIController* EnemyAIController = Cast<AAIController>(Enemy->GetController());
     UBlackboardComponent* BlackboardComp = EnemyAIController ? EnemyAIController->GetBlackboardComponent() : nullptr;
 
@@ -45,7 +46,6 @@ void UEnemyInvestigateState::OnExit()
     Super::OnExit();
     ACharacter* Enemy = GetEnemyCharacter();
     if (!Enemy) return;
-
     AAIController* EnemyAIController = Cast<AAIController>(Enemy->GetController());
     if (!EnemyAIController) return;
 

@@ -37,6 +37,7 @@ void APSEnemyAIController::BeginPlay()
 		BlackboardComp->SetValueAsBool(TEXT("bIsInvestigating"), false);
 		BlackboardComp->SetValueAsBool(TEXT("bInAttackRange"), false);
 		BlackboardComp->SetValueAsBool(TEXT("bIsReturning"), false);
+		BlackboardComp->SetValueAsBool(TEXT("bIsAttacking"), false);
 		APawn* ControlledPawn = GetPawn();
 		if (ControlledPawn)
 		{

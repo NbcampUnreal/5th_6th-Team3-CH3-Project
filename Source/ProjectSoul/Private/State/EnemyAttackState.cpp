@@ -18,9 +18,36 @@ void UEnemyAttackState::OnEnter()
     }
     AActor* Target = Cast<AActor>(BlackboardComp->GetValueAsObject(TEXT("TargetActor")));
     EnemyAIController->SetFocus(Target);
+
+    UAnimInstance* Anim = Enemy->GetMesh()->GetAnimInstance();
+    UAnimMontage* Montage = Cast<APSEnemy>(Enemy) ->GetAttackMontage();
+    Anim->Montage_Play(Montage);
+    EndDelegate.BindUObject(this, &UEnemyAttackState::OnMontageEnded);
+    Anim->Montage_SetEndDelegate(EndDelegate, Montage);
 }
 
 void UEnemyAttackState::OnExit()
 {
     Super::OnExit();
+    ACharacter* Enemy = GetEnemyCharacter();//inefficiency
+    if (!Enemy) return;
+    AAIController* EnemyAIController = Cast<AAIController>(Enemy->GetController());
+    UBlackboardComponent* BlackboardComp = EnemyAIController ? EnemyAIController->GetBlackboardComponent() : nullptr;
+    BlackboardComp->SetValueAsBool(TEXT("bIsAttacking"), false);
+}
+
+void UEnemyAttackState::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+{
+    UE_LOG(LogTemp, Warning, TEXT("Attack Montage Ended"));
+    ACharacter* Enemy = GetEnemyCharacter();//inefficiency
+    if (!Enemy) return;
+    AAIController* EnemyAIController = Cast<AAIController>(Enemy->GetController());
+    UBlackboardComponent* BlackboardComp = EnemyAIController ? EnemyAIController->GetBlackboardComponent() : nullptr;
+
+    if (EnemyAIController == nullptr || BlackboardComp == nullptr)
+    {
+        return;
+    }
+    BlackboardComp->SetValueAsBool(TEXT("bIsAttacking"), true);
+    BlackboardComp->SetValueAsBool(TEXT("bInAttackRange"), false);
 }
