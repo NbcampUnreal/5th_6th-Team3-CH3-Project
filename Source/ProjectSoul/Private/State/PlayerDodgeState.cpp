@@ -11,6 +11,13 @@ void UPlayerDodgeState::OnEnter()
 
 	if (APSCharacter* Character = GetPlayerCharacter())
 	{
+		Character->bUseControllerRotationYaw = false;
+
+		FVector DodgeDir = CalculateDodgeDirection();
+		FRotator DodgeRotation = DodgeDir.Rotation();
+		UE_LOG(LogTemp, Warning, TEXT("Player: Dodge Direction: %s"), *DodgeDir.ToString());
+		Character->SetActorRotation(DodgeRotation);
+
 		Character->SetIsSprinting(false);
 		Character->ConsumeStaminaForDodge();
 		Character->PlayAnimMontage(Character->GetDodgeMontage());
@@ -19,6 +26,10 @@ void UPlayerDodgeState::OnEnter()
 
 void UPlayerDodgeState::OnUpdate(float DeltaTime)
 {
+	if (UPlayerStateMachine* PSM = GetPlayerStateMachine())
+	{
+		PSM->GetPrevState()->OnUpdate(DeltaTime);
+	}
 }
 
 void UPlayerDodgeState::OnExit()
@@ -61,4 +72,33 @@ void UPlayerDodgeState::DodgeEnd()
 	{
 		PSM->ChangeState(PSM->GetPrevState());
 	}
+}
+
+FVector UPlayerDodgeState::CalculateDodgeDirection()
+{
+	if (APSCharacter* Character = GetPlayerCharacter())
+	{
+		FVector2D Input = Character->GetLastMoveInput();
+
+		FRotator ControlRotation = Character->GetControlRotation();
+		FRotator YawRotation(0.f, ControlRotation.Yaw, 0.f);
+
+		FVector Forward = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+		FVector Right = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+
+		FVector DodgeDir;
+
+		if (!Input.IsNearlyZero())
+		{
+			DodgeDir = (Forward * Input.X + Right * Input.Y).GetSafeNormal();
+		}
+		else
+		{
+			DodgeDir = Character->GetActorForwardVector();
+		}
+
+		return DodgeDir;
+	}
+
+	return FVector::ZeroVector;
 }
