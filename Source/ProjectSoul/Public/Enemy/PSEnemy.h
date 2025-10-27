@@ -23,10 +23,6 @@ public:
 
 	virtual float GetChaseSpeed();
 
-	virtual void DisableWeaponCollision();
-
-	virtual void EnableWeaponCollision();
-
 	virtual float TakeDamage(
 		float DamageAmount,
 		struct FDamageEvent const& DamageEvent,
@@ -43,6 +39,12 @@ public:
 
 	UAnimMontage* GetHitMontage() const;
 
+	UFUNCTION(BlueprintCallable, Category = "Notify")
+	virtual void DisableWeaponCollisionNotify();
+
+	UFUNCTION(BlueprintCallable, Category = "Notify")
+	virtual void EnableWeaponCollisionNotify();
+
 	UFUNCTION()
 	void OnWeaponOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
@@ -54,11 +56,17 @@ protected:
 private:
 	void UpdateHealthWidget();
 protected:
-	UPROPERTY(VisibleAnywhere,BlueprintReadWrite, Category = "Weapon")
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Weapon")
 	TObjectPtr<UBoxComponent> WeaponCollisionL;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 	TObjectPtr<UBoxComponent> WeaponCollisionR;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	FName AttachSocketNameL;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	FName AttachSocketNameR;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Targeting")
 	TObjectPtr<UEnemyStateMachine> StateMachine;

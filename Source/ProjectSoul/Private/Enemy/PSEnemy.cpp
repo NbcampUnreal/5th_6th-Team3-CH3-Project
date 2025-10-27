@@ -28,14 +28,6 @@ APSEnemy::APSEnemy()
 		HealthWidget->SetupAttachment(GetMesh());
 		HealthWidget->SetWidgetSpace(EWidgetSpace::Screen);
 	}
-
-	BoxCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollision"));
-	if (BoxCollision)
-	{
-		BoxCollision->SetupAttachment(GetMesh());
-		BoxCollision->SetBoxExtent(FVector(34.0f, 34.0f, 88.0f));
-	}
-
 	UCharacterMovementComponent* EnemyMovement = GetCharacterMovement();
 	EnemyMovement->MaxWalkSpeed = WalkSpeed;
 	EnemyMovement->bOrientRotationToMovement = true;
@@ -62,11 +54,32 @@ void APSEnemy::BeginPlay()
 	{
 		StateMachine->Initialize(this);
 	}
+	if (!AttachSocketNameL.IsNone())
+	{
+		WeaponCollisionL->AttachToComponent(
+			GetMesh(),
+			FAttachmentTransformRules::SnapToTargetIncludingScale,
+			AttachSocketNameL
+		);
+	}
+	if (!AttachSocketNameR.IsNone())
+	{
+		WeaponCollisionR->AttachToComponent(
+			GetMesh(),
+			FAttachmentTransformRules::SnapToTargetIncludingScale,
+			AttachSocketNameR
+		);
+	}
 	if (WeaponCollisionR)
 	{
-		WeaponCollisionR->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("Weapon_01"));
 		WeaponCollisionR->RegisterComponent();
 		WeaponCollisionR->OnComponentBeginOverlap.AddDynamic(this, &APSEnemy::OnWeaponOverlap);
+	}
+	if (WeaponCollisionL)
+	{
+
+		WeaponCollisionL->RegisterComponent();
+		WeaponCollisionL->OnComponentBeginOverlap.AddDynamic(this, &APSEnemy::OnWeaponOverlap);
 	}
 }
 
@@ -84,7 +97,7 @@ void APSEnemy::OnWeaponOverlap(
 		return;
 	}
 
-	/*if (DamagedActors.Contains(OtherActor))
+	if (DamagedActors.Contains(OtherActor))
 	{
 		return;
 	}
@@ -92,7 +105,7 @@ void APSEnemy::OnWeaponOverlap(
 	if (!OtherActor->ActorHasTag("Player"))
 	{
 		return;
-	}*/
+	}
 
 	DamagedActors.Add(OtherActor);
 	UGameplayStatics::ApplyDamage(
@@ -102,16 +115,6 @@ void APSEnemy::OnWeaponOverlap(
 		this,
 		UDamageType::StaticClass()
 	);
-}
-
-void APSEnemy::EnableWeaponCollision()
-{
-	UE_LOG(LogTemp, Log, TEXT("Enemy : weapon collision enabled"));
-}
-
-void APSEnemy::DisableWeaponCollision()
-{
-	UE_LOG(LogTemp, Log, TEXT("Enemy : weapon collision disabled"));
 }
 
 UEnemyStateMachine* APSEnemy::GetStateMachine()
@@ -198,4 +201,17 @@ UAnimMontage* APSEnemy::GetDieMontage() const
 UAnimMontage* APSEnemy::GetHitMontage() const
 {
 	return HitMontage;
+}
+
+void APSEnemy::EnableWeaponCollisionNotify()
+{
+	WeaponCollisionR->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	WeaponCollisionL->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+}
+
+void APSEnemy::DisableWeaponCollisionNotify()
+{
+	WeaponCollisionR->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	WeaponCollisionL->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	DamagedActors.Empty(); // Initialize the list
 }
