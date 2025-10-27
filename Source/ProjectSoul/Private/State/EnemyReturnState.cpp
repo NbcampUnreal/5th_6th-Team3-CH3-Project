@@ -7,9 +7,10 @@
 void UEnemyReturnState::OnEnter()
 {
     Super::OnEnter();
-    UE_LOG(LogTemp, Warning, TEXT("Return state."));
+    UE_LOG(LogTemp, Warning, TEXT("Enemy : Return state."));
     ACharacter* Enemy = GetEnemyCharacter();//inefficiency
     if (!Enemy) return;
+    Cast<APSEnemy>(Enemy)->SetMovementSpeed(Cast<APSEnemy>(Enemy)->GetWalkSpeed());
     AAIController* EnemyAIController = Cast<AAIController>(Enemy->GetController());
     UBlackboardComponent* BlackboardComp = EnemyAIController ? EnemyAIController->GetBlackboardComponent() : nullptr;
 
@@ -61,7 +62,7 @@ void UEnemyReturnState::HandleMoveFinished(FAIRequestID RequestID, const FPathFo
 {
     if (Result.IsSuccess())
     {
-        UE_LOG(LogTemp, Warning, TEXT("success Return"));
+        UE_LOG(LogTemp, Warning, TEXT("Enemy : success Return"));
         ACharacter* Enemy = GetEnemyCharacter();
         if (!Enemy) return;
 

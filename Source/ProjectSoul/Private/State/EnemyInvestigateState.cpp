@@ -7,9 +7,10 @@
 void UEnemyInvestigateState::OnEnter()
 {
     Super::OnEnter();
-    UE_LOG(LogTemp, Warning, TEXT("Investigate state."));
+    UE_LOG(LogTemp, Warning, TEXT("Enemy : Investigate state."));
     ACharacter* Enemy = GetEnemyCharacter();//inefficiency
     if (!Enemy) return;
+    Cast<APSEnemy>(Enemy)->SetMovementSpeed(Cast<APSEnemy>(Enemy)->GetWalkSpeed());
     AAIController* EnemyAIController = Cast<AAIController>(Enemy->GetController());
     UBlackboardComponent* BlackboardComp = EnemyAIController ? EnemyAIController->GetBlackboardComponent() : nullptr;
 
@@ -45,7 +46,6 @@ void UEnemyInvestigateState::OnExit()
     Super::OnExit();
     ACharacter* Enemy = GetEnemyCharacter();
     if (!Enemy) return;
-
     AAIController* EnemyAIController = Cast<AAIController>(Enemy->GetController());
     if (!EnemyAIController) return;
 
@@ -62,7 +62,7 @@ void UEnemyInvestigateState::HandleMoveFinished(FAIRequestID RequestID, const FP
 {
     if (Result.IsSuccess())
     {
-        UE_LOG(LogTemp, Warning, TEXT("success Investigate"));
+        UE_LOG(LogTemp, Warning, TEXT("Enemy : success Investigate"));
         ACharacter* Enemy = GetEnemyCharacter();
         if (!Enemy) return;
 

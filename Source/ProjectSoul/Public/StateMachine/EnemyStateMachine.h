@@ -11,6 +11,7 @@ class UEnemyDieState;
 class UEnemyIdleState;
 class UEnemyInvestigateState;
 class UEnemyReturnState;
+class UEnemyHitState;
 class APSEnemy;
 
 UCLASS()
@@ -39,6 +40,8 @@ public:
 
 	UEnemyReturnState* GetReturnState() const;
 
+	UEnemyHitState* GetHitState() const;
+
 protected:
 	UPROPERTY()
 	TObjectPtr<UEnemyChaseState> ChaseState;
@@ -57,4 +60,7 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr <UEnemyReturnState> ReturnState;
+
+	UPROPERTY()
+	TObjectPtr <UEnemyHitState> HitState;
 };
