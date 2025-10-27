@@ -1,12 +1,14 @@
 #include "State/PlayerAttackState.h"
 #include "State/PlayerFreeLookState.h"
 #include "State/PlayerTargetingState.h"
+#include "State/PlayerHitState.h"
+#include "State/PlayerDieState.h"
 #include "StateMachine/PlayerStateMachine.h"
 #include "Character/PSCharacter.h"
 
 void UPlayerAttackState::OnEnter()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Enter Attack State"));
+	UE_LOG(LogTemp, Warning, TEXT("Player: Enter Attack State"));
 
 	if (APSCharacter* Character = GetPlayerCharacter())
 	{
@@ -22,7 +24,18 @@ void UPlayerAttackState::OnUpdate(float DeltaTime)
 
 void UPlayerAttackState::OnExit()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Exit Attack State"));
+	if (APSCharacter* Character = GetPlayerCharacter())
+	{
+		if (UAnimInstance* AnimInst = Character->GetMesh()->GetAnimInstance())
+		{
+			if (AnimInst->IsAnyMontagePlaying())
+			{
+				AnimInst->StopAllMontages(0.1f);
+			}
+		}
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Player: Exit Attack State"));
 }
 
 void UPlayerAttackState::Look(const FVector2D& Value)
@@ -33,9 +46,25 @@ void UPlayerAttackState::Look(const FVector2D& Value)
 	}
 }
 
+void UPlayerAttackState::Hit()
+{
+	if (UPlayerStateMachine* PSM = GetPlayerStateMachine())
+	{
+		PSM->ChangeState(PSM->GetHitState());
+	}
+}
+
+void UPlayerAttackState::Die()
+{
+	if (UPlayerStateMachine* PSM = GetPlayerStateMachine())
+	{
+		PSM->ChangeState(PSM->GetDieState());
+	}
+}
+
 void UPlayerAttackState::AttackEnd()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Call Attack End in AttackState"));
+	UE_LOG(LogTemp, Warning, TEXT("Player: Call Attack End"));
 
 	if (UPlayerStateMachine* PSM = GetPlayerStateMachine())
 	{

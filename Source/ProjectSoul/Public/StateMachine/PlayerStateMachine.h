@@ -9,6 +9,8 @@ class UPlayerFreeLookState;
 class UPlayerTargetingState;
 class UPlayerAttackState;
 class UPlayerDodgeState;
+class UPlayerHitState;
+class UPlayerDieState;
 class APSCharacter;
 
 UCLASS()
@@ -37,6 +39,10 @@ public:
 
 	UPlayerDodgeState* GetDodgeState() const;
 
+	UPlayerHitState* GetHitState() const;
+
+	UPlayerDieState* GetDieState() const;
+
 protected:
 	UPROPERTY()
 	TObjectPtr<UPlayerFreeLookState> FreeLookState;
@@ -49,6 +55,12 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr <UPlayerDodgeState> DodgeState;
+
+	UPROPERTY()
+	TObjectPtr <UPlayerHitState> HitState;
+
+	UPROPERTY()
+	TObjectPtr <UPlayerDieState> DieState;
 
 private:
 	UPROPERTY()

@@ -9,14 +9,17 @@
 #include "State/PlayerStateBase.h"
 #include "State/PlayerAttackState.h"
 #include "State/PlayerDodgeState.h"
+#include "State/PlayerHitState.h"
 #include "Weapon/PSWeaponBase.h"
 #include "Enemy/PSEnemy.h"
+#include "Engine/DamageEvents.h"
 
 APSCharacter::APSCharacter()
 	: NormalWalkSpeed(600.0f),
 	SprintWalkSpeed(1200.0f),
 	bIsTargeting(false),
 	bIsSprinting(false),
+	bIsDead(false),
 	SprintStaminaTimerInterval(0.1f),
 	StaminaRegenTickTimerInterval(0.1f)
 {
@@ -271,19 +274,29 @@ float APSCharacter::TakeDamage(
 	AController* EventInstigator,
 	AActor* DamageCauser)
 {
+	if (bIsDead)
+	{
+		return 0.0f;
+	}
 
 	float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
 	PlayerStats.Health.AdjustValue(-DamageAmount);
 	OnHPChanged.Broadcast(PlayerStats.Health.GetCurrent(), PlayerStats.Health.GetMax());
 
-	UE_LOG(LogTemp, Warning, TEXT("Player take damage %.0f from %s"), DamageAmount, *DamageCauser->GetName());
-	UE_LOG(LogTemp, Warning, TEXT("Player Remain Health: %.0f / %.0f"), PlayerStats.Health.GetCurrent(), PlayerStats.Health.GetMax());
+	UE_LOG(LogTemp, Warning, TEXT("Player: take damage %.0f from %s"), DamageAmount, *DamageCauser->GetName());
+	UE_LOG(LogTemp, Warning, TEXT("Player: Remain Health: %.0f / %.0f"), PlayerStats.Health.GetCurrent(), PlayerStats.Health.GetMax());
 
 	if (PlayerStats.Health.IsZero())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Player Dead"));
-		// Death
+		OnDie();
+	}
+	else
+	{
+		if (StateMachine)
+		{
+			StateMachine->GetCurrentState()->Hit();
+		}
 	}
 
 	return ActualDamage;
@@ -323,12 +336,13 @@ void APSCharacter::FindTargetActor()
 	if (!ClosestEnemy)
 	{
 		CurrentTarget = nullptr;
-		UE_LOG(LogTemp, Warning, TEXT("Not found enemy."));
+		UE_LOG(LogTemp, Warning, TEXT("Player: Not found enemy."));
 		return;
 	}
 
 	CurrentTarget = ClosestEnemy;
-	UE_LOG(LogTemp, Warning, TEXT("Found enemy: %s"), *CurrentTarget->GetName());
+	OnEnemyTarget.Broadcast(CurrentTarget);
+	UE_LOG(LogTemp, Warning, TEXT("Player: Found enemy: %s"), *CurrentTarget->GetName());
 }
 
 void APSCharacter::RestoreAllStats()
@@ -413,6 +427,17 @@ void APSCharacter::RegenStamina()
 	}
 }
 
+void APSCharacter::OnDie()
+{
+	bIsDead = true;
+	UE_LOG(LogTemp, Warning, TEXT("Player: Dead"));
+
+	if (StateMachine)
+	{
+		StateMachine->GetCurrentState()->Die();
+	}
+}
+
 float APSCharacter::GetHealthPercent() const
 {
 	return PlayerStats.GetHealthPercent();
@@ -458,6 +483,11 @@ bool APSCharacter::GetIsTargeting() const
 	return bIsTargeting;
 }
 
+bool APSCharacter::GetIsDead() const
+{
+	return bIsDead;
+}
+
 UAnimMontage* APSCharacter::GetDodgeMontage() const
 {
 	return DodgeMontage;
@@ -466,6 +496,11 @@ UAnimMontage* APSCharacter::GetDodgeMontage() const
 UAnimMontage* APSCharacter::GetAttackMontage() const
 {
 	return AttackMontage;
+}
+
+UAnimMontage* APSCharacter::GetHitMontage() const
+{
+	return HitMontage;
 }
 
 void APSCharacter::SetCurrentTarget(APSEnemy* NewTarget)
@@ -527,6 +562,14 @@ void APSCharacter::OnDodgeEndNotify()
 	if (StateMachine && StateMachine->GetDodgeState())
 	{
 		StateMachine->GetDodgeState()->DodgeEnd();
+	}
+}
+
+void APSCharacter::OnHitEndNotify()
+{
+	if (StateMachine && StateMachine->GetHitState())
+	{
+		StateMachine->GetHitState()->HitEnd();
 	}
 }
 
