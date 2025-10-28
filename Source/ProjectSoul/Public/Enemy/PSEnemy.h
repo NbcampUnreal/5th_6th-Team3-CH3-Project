@@ -61,6 +61,9 @@ protected:
 
 private:
 	void UpdateHealthWidget();
+	void ShowHitHealthWidget();
+	void HiddenHitHealthWidget();
+
 protected:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Weapon")
 	TObjectPtr<UBoxComponent> WeaponCollisionL;
@@ -103,10 +106,13 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Montage")
 	TObjectPtr<UAnimMontage> HitMontage;
+
 	UPROPERTY()
 	TSet<AActor*> DamagedActors;
 
 private:
 	bool bIsDead;
 	bool bIsTargeted;
+	bool bIsHit;
+	FTimerHandle ShowMonsterHPTimer;
 };

@@ -87,9 +87,8 @@ void APSEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (bIsTargeted)
+	if (bIsTargeted || bIsHit)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Is Targeted"));
 		APlayerCameraManager* CameraManager = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0);
 		FVector CameraLocation = CameraManager->GetCameraLocation();
 		FVector WidgetCompLocation = HealthWidget->GetComponentLocation();
@@ -159,7 +158,7 @@ float APSEnemy::TakeDamage(
 
 	EnemyStats.Health.AdjustValue(-DamageAmount);
 	UpdateHealthWidget();
-
+	ShowHitHealthWidget();
 	UE_LOG(LogTemp, Warning, TEXT("Enemy take damage %.0f from %s"), DamageAmount, *DamageCauser->GetName());
 	UE_LOG(LogTemp, Warning, TEXT("Enemy Remain Health: %.0f / %.0f"), EnemyStats.Health.GetCurrent(), EnemyStats.Health.GetMax());
 	AAIController* EnemyAIController = Cast<AAIController>(this->GetController());
@@ -182,6 +181,30 @@ void APSEnemy::ShowHealthWidget(bool bShow)
 		bIsTargeted = bShow;
 		HealthWidget->SetVisibility(bShow);
 	}
+}
+
+void APSEnemy::ShowHitHealthWidget()
+{
+	UE_LOG(LogTemp, Warning, TEXT("HP Bar On"));
+	bIsHit = true;
+	HealthWidget->SetVisibility(true);
+	GetWorld()->GetTimerManager().SetTimer(
+		ShowMonsterHPTimer,
+		this,
+		&APSEnemy::HiddenHitHealthWidget,
+		3.0f
+	);
+}
+
+void APSEnemy::HiddenHitHealthWidget()
+{
+	if (!bIsTargeted)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("HP Bar Off"));
+		HealthWidget->SetVisibility(false);
+		GetWorld()->GetTimerManager().ClearTimer(ShowMonsterHPTimer);
+	}
+	bIsHit = false;
 }
 
 void APSEnemy::UpdateHealthWidget()
