@@ -83,6 +83,25 @@ void APSEnemy::BeginPlay()
 	}
 }
 
+void APSEnemy::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	if (bIsTargeted)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Is Targeted"));
+		APlayerCameraManager* CameraManager = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0);
+		FVector CameraLocation = CameraManager->GetCameraLocation();
+		FVector WidgetCompLocation = HealthWidget->GetComponentLocation();
+
+		FVector Direction = CameraLocation - WidgetCompLocation;
+		Direction.Normalize();
+
+		FRotator LookRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
+		HealthWidget->SetWorldRotation(LookRotation);
+	}
+}
+
 void APSEnemy::OnWeaponOverlap(
 	UPrimitiveComponent* OverlappedComponent,
 	AActor* OtherActor,
@@ -160,6 +179,7 @@ void APSEnemy::ShowHealthWidget(bool bShow)
 {
 	if (HealthWidget)
 	{
+		bIsTargeted = bShow;
 		HealthWidget->SetVisibility(bShow);
 	}
 }

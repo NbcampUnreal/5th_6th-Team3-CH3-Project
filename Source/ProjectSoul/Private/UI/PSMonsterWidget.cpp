@@ -8,7 +8,6 @@ void UPSMonsterWidget::NativeOnInitialized()
 	Super::NativeOnInitialized();
 
 	bLockOn = false;
-	TestHP = 1.0f;
 }
 
 //call from monster TakeDamege()

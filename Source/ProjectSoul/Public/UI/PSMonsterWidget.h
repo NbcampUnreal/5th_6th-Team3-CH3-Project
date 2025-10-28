@@ -31,6 +31,4 @@ private:
 	TObjectPtr<UProgressBar> HPBar;
 	FTimerHandle ShowMonsterHPTimer;
 	bool bLockOn;
-
-	float TestHP;
 };
