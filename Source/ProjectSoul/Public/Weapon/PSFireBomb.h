@@ -38,7 +38,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon|FireBomb")
 	TSubclassOf<UDamageType> DamageType;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon|Effects")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon|Effects")
 	UParticleSystem* ExplosionParticle;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon|FireBomb")

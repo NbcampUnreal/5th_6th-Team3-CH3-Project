@@ -34,4 +34,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon|Arrow")
 	float Damage;
 
+	UPROPERTY()
+	TSet<AActor*> DamagedActors;
+
 };

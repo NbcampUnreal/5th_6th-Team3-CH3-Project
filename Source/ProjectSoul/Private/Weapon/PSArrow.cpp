@@ -23,8 +23,6 @@ APSArrow::APSArrow()
 		ProjectileMovement->bRotationFollowsVelocity = true;
 		ProjectileMovement->ProjectileGravityScale = 1.0f; //Gravity
 	}
-	
-
 }
 
 void APSArrow::BeginPlay()
@@ -44,14 +42,24 @@ void APSArrow::OnHit(
 {
 	UE_LOG(LogTemp, Warning, TEXT("Arrow hit: %s"), OtherActor ? *OtherActor->GetName() : TEXT("None"));
 
-	if (OtherActor && OtherActor != this)
+	if (!OtherActor || OtherActor == this || OtherActor == GetOwner())
 	{
-		if (OtherActor->ActorHasTag("Enemy"))
-		{
-			UGameplayStatics::ApplyDamage(OtherActor, Damage, nullptr, this, nullptr);
-			Destroy();
-		}
+		return;
 	}
+	
+	if (DamagedActors.Contains(OtherActor))
+	{
+		return;
+	}
+
+	DamagedActors.Add(OtherActor);
+
+	if (OtherActor->ActorHasTag("Enemy"))
+	{
+		UGameplayStatics::ApplyDamage(OtherActor, Damage, nullptr, this, nullptr);	
+		Destroy();
+	}
+	
 }
 
 
