@@ -16,19 +16,21 @@ public:
 
 	void ShowCurrentWidget();
 
+private:
+	void SetCurrentWidget();
+
 	void ShowMainMenuUI();
 
 	void ShowPlayerHUD();
 
 	void ShowGameOverUI();
 
-	//test
-	UPSPlayerHUDWidget* TestGetPlayerHUDWidgetInstance();
-	//
-private:
-	void SetCurrentWidget();
 
-	
+public:
+	UPROPERTY(EditAnywhere, Category = "Widget")
+	TSubclassOf<UUserWidget> PlayerHUDWidgetClass;
+	UPROPERTY()
+	UUserWidget* PlayerHUDWidgetInstance;
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Widget")
@@ -36,10 +38,10 @@ private:
 	UPROPERTY()
 	UUserWidget* MainMenuWidgetInstance;
 
-	UPROPERTY(EditAnywhere, Category = "Widget")
+	/*UPROPERTY(EditAnywhere, Category = "Widget")
 	TSubclassOf<UUserWidget> PlayerHUDWidgetClass;
 	UPROPERTY()
-	UUserWidget* PlayerHUDWidgetInstance;
+	UUserWidget* PlayerHUDWidgetInstance;*/
 
 	UPROPERTY(EditAnywhere, Category = "Widget")
 	TSubclassOf<UUserWidget> GameOverWidgetClass;

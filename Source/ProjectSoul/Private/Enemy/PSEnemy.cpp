@@ -13,6 +13,9 @@
 #include "Components/BoxComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
+#include "UI/PSUIManagerSubsystem.h"
+#include "UI/PSPlayerHUDWidget.h"
+
 APSEnemy::APSEnemy()
 	: Attack(20), 
 	Score(50),
@@ -83,6 +86,24 @@ void APSEnemy::BeginPlay()
 	}
 }
 
+void APSEnemy::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	if (bIsTargeted || bIsHit)
+	{
+		APlayerCameraManager* CameraManager = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0);
+		FVector CameraLocation = CameraManager->GetCameraLocation();
+		FVector WidgetCompLocation = HealthWidget->GetComponentLocation();
+
+		FVector Direction = CameraLocation - WidgetCompLocation;
+		Direction.Normalize();
+
+		FRotator LookRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
+		HealthWidget->SetWorldRotation(LookRotation);
+	}
+}
+
 void APSEnemy::OnWeaponOverlap(
 	UPrimitiveComponent* OverlappedComponent,
 	AActor* OtherActor,
@@ -140,7 +161,7 @@ float APSEnemy::TakeDamage(
 
 	EnemyStats.Health.AdjustValue(-DamageAmount);
 	UpdateHealthWidget();
-
+	ShowHitHealthWidget();
 	UE_LOG(LogTemp, Warning, TEXT("Enemy take damage %.0f from %s"), DamageAmount, *DamageCauser->GetName());
 	UE_LOG(LogTemp, Warning, TEXT("Enemy Remain Health: %.0f / %.0f"), EnemyStats.Health.GetCurrent(), EnemyStats.Health.GetMax());
 	AAIController* EnemyAIController = Cast<AAIController>(this->GetController());
@@ -152,6 +173,10 @@ float APSEnemy::TakeDamage(
 		BlackboardComp->SetValueAsBool(TEXT("bIsDead"), true);
 		UE_LOG(LogTemp, Warning, TEXT("Enemy Death"));
 	}
+	//test
+	/*UPSPlayerHUDWidget* PlayerHUDWidget = Cast<UPSPlayerHUDWidget>(GetGameInstance()->GetSubsystem<UPSUIManagerSubsystem>()->PlayerHUDWidgetInstance);
+	PlayerHUDWidget->ShowHit(this);*/
+
 
 	return ActualDamage;
 }
@@ -160,8 +185,33 @@ void APSEnemy::ShowHealthWidget(bool bShow)
 {
 	if (HealthWidget)
 	{
+		bIsTargeted = bShow;
 		HealthWidget->SetVisibility(bShow);
 	}
+}
+
+void APSEnemy::ShowHitHealthWidget()
+{
+	UE_LOG(LogTemp, Warning, TEXT("HP Bar On"));
+	bIsHit = true;
+	HealthWidget->SetVisibility(true);
+	GetWorld()->GetTimerManager().SetTimer(
+		ShowMonsterHPTimer,
+		this,
+		&APSEnemy::HiddenHitHealthWidget,
+		3.0f
+	);
+}
+
+void APSEnemy::HiddenHitHealthWidget()
+{
+	if (!bIsTargeted)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("HP Bar Off"));
+		HealthWidget->SetVisibility(false);
+		GetWorld()->GetTimerManager().ClearTimer(ShowMonsterHPTimer);
+	}
+	bIsHit = false;
 }
 
 void APSEnemy::UpdateHealthWidget()

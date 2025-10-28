@@ -7,11 +7,6 @@ void UPSGameOverWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 
-	MainMenuButton = Cast<UButton>(GetWidgetFromName(TEXT("MainMenuButton")));
-	ReStartButton = Cast<UButton>(GetWidgetFromName(TEXT("ReStartButton")));
-	TotalScoreText = Cast<UTextBlock>(GetWidgetFromName(TEXT("TotalScoreText")));
-	KillCountText = Cast<UTextBlock>(GetWidgetFromName(TEXT("KillCountText")));
-
 	MainMenuButton->OnClicked.AddDynamic(this, &UPSGameOverWidget::MainMenuButtonClick);
 	ReStartButton->OnClicked.AddDynamic(this, &UPSGameOverWidget::RestartButtonClick);
 

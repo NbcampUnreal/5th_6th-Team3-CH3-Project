@@ -31,16 +31,6 @@ UPSUIManagerSubsystem::UPSUIManagerSubsystem()
 void UPSUIManagerSubsystem::ShowCurrentWidget()
 {
 	SetCurrentWidget();
-
-	//test
-	/*FTimerHandle TextTimer;
-	GetWorld()->GetTimerManager().SetTimer(
-		TextTimer,
-		this,
-		&UPSUIManagerSubsystem::ShowGameOverUI,
-		3.0f
-	);*/
-	//
 }
 
 
@@ -134,10 +124,3 @@ void UPSUIManagerSubsystem::ShowGameOverUI()
 		PC->SetInputMode(FInputModeUIOnly());
 	}
 }
-
-UPSPlayerHUDWidget* UPSUIManagerSubsystem::TestGetPlayerHUDWidgetInstance()
-{
-	UPSPlayerHUDWidget* PlayerHUDWidget = Cast<UPSPlayerHUDWidget>(PlayerHUDWidgetInstance);
-	return PlayerHUDWidget;
-}
-

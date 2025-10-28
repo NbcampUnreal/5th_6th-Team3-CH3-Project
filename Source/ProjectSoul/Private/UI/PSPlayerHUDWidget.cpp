@@ -1,8 +1,8 @@
 #include "UI/PSPlayerHUDWidget.h"
+#include "UI/PSMonsterHitWidget.h"
 #include "Components/ProgressBar.h"
 #include "Components/SizeBox.h"
 #include "Components/Image.h"
-#include "Components/Overlay.h"
 #include "Components/CanvasPanelSlot.h"
 #include "Character/PSCharacter.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
@@ -14,6 +14,7 @@ void UPSPlayerHUDWidget::NativeOnInitialized()
 	LockOnTarget = nullptr;
 	SizeBoxMultiplier = 3.0f;
 	bLockOn = false;
+
 	if (APSCharacter* PSCharacter = GetCharacter())
 	{
 		PSCharacter->OnHPChanged.AddDynamic(this, &UPSPlayerHUDWidget::OnUpdateHPBar);
@@ -21,13 +22,17 @@ void UPSPlayerHUDWidget::NativeOnInitialized()
 		PSCharacter->OnStaminaChanged.AddDynamic(this, &UPSPlayerHUDWidget::OnUpdateStaminaBar);
 	
 		PSCharacter->OnEnemyTarget.AddDynamic(this, &UPSPlayerHUDWidget::ShowLockOn);
-		//PSCharacter->HitEnemy.AddDynamic(this, &UPSPlayerHUDWidget::ShowHit);
 	}
 
 	LockOnImage->SetVisibility(ESlateVisibility::Hidden);
-	HitImage->SetVisibility(ESlateVisibility::Hidden);
-}
 
+	/*static ConstructorHelpers::FClassFinder<UUserWidget> MonsterHitWidgetBPClass(TEXT("/Game/Blueprints/UI/WBP_PSMonsterHitWidget.WBP_PSMonsterHitWidget_C"));
+	if (MonsterHitWidgetBPClass.Succeeded())
+	{
+		MonsterHitWidgetClass = MonsterHitWidgetBPClass.Class;
+	}*/
+}
+//player Delegate add
 void UPSPlayerHUDWidget::OnUpdateHPBar(float CurrentValue, float MaxValue)
 {
 	if (HPBar)
@@ -41,7 +46,7 @@ void UPSPlayerHUDWidget::OnUpdateHPBar(float CurrentValue, float MaxValue)
 		HPBarContainer->SetWidthOverride(NewWidth);
 	}
 }
-
+//player Delegate add
 void UPSPlayerHUDWidget::OnUpdateMPBar(float CurrentValue, float MaxValue)
 {
 	if (MPBar)
@@ -55,7 +60,7 @@ void UPSPlayerHUDWidget::OnUpdateMPBar(float CurrentValue, float MaxValue)
 		MPBarContainer->SetWidthOverride(NewWidth);
 	}
 }
-
+//player Delegate add
 void UPSPlayerHUDWidget::OnUpdateStaminaBar(float CurrentValue, float MaxValue)
 {
 	if (StaminaBar)
@@ -68,8 +73,7 @@ void UPSPlayerHUDWidget::OnUpdateStaminaBar(float CurrentValue, float MaxValue)
 		StaminaBarContainer->SetWidthOverride(NewWidth);
 	}
 }
-
-//player Finde Delegate add
+//player Delegate add
 void UPSPlayerHUDWidget::ShowLockOn(AActor* CurrentTarget)
 {
 	if (CurrentTarget)
@@ -100,9 +104,10 @@ void UPSPlayerHUDWidget::HiddenLockOn()
 	LockOnTarget = nullptr;
 }
 
+
 void UPSPlayerHUDWidget::ShowHit(AActor* LockOnMonster)
 {
-	if (LockOnMonster)
+	/*if (LockOnMonster)
 	{
 		LockOnTarget = LockOnMonster;
 		HitImage->SetVisibility(ESlateVisibility::Visible);
@@ -122,19 +127,26 @@ void UPSPlayerHUDWidget::ShowHit(AActor* LockOnMonster)
 			1.0f,
 			false
 		);
-	}
+	}*/
+ 
+	UE_LOG(LogTemp, Warning, TEXT("ShowHit Test"));
+	/*APlayerController* PC = GetWorld()->GetFirstPlayerController();
+
+	UPSMonsterHitWidget* HitWidgetInstance = CreateWidget<UPSMonsterHitWidget>(PC, HitWidgetClass);
+	HitWidgetInstance->ShowHitWidget(LockOnMonster);*/
 }
 
 void UPSPlayerHUDWidget::HiddenHit()
 {
-	HitImage->SetVisibility(ESlateVisibility::Hidden);
+	/*HitImage->SetVisibility(ESlateVisibility::Hidden);
 	GetWorld()->GetTimerManager().ClearTimer(HitPositionHandle);
 	LockOnTarget = nullptr;
 
 	if (!bLockOn)
 	{
 		GetWorld()->GetTimerManager().ClearTimer(LockOnPositionHandle);
-	}
+	}*/
+
 }
 
 void UPSPlayerHUDWidget::UpdateLockOnPosition()
@@ -150,7 +162,7 @@ void UPSPlayerHUDWidget::UpdateLockOnPosition()
 			float ViewportScale = UWidgetLayoutLibrary::GetViewportScale(this);
 			MonsterScreenLocation /= ViewportScale;
 
-			if (UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(HitLockOnOverlay->Slot))
+			if (UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(LockOnImage->Slot))
 			{
 				CanvasSlot->SetPosition(MonsterScreenLocation);
 			}
