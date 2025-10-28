@@ -8,23 +8,6 @@ APSWeaponSword::APSWeaponSword()
 	AttackRange = 120.0f;
 }
 
-void APSWeaponSword::Attack(AActor* Target)
-{
-	Super::Attack(Target);
-
-	UE_LOG(LogTemp, Log, TEXT("Sword swing at %s"), *Target->GetName());
-
-	if (Target)
-	{
-		UGameplayStatics::ApplyDamage(
-			Target,
-			AttackPower,
-			nullptr,
-			this,
-			nullptr);
-	}
-}
-
 void APSWeaponSword::EnableWeaponCollision()
 {
 	Super::EnableWeaponCollision();
