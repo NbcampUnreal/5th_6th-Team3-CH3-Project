@@ -2,36 +2,26 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "PSMainMenuWidget.generated.h"
+#include "PSMonsterHitWidget.generated.h"
 
 class UTextBlock;
-class UButton;
+class UImage;
 
 UCLASS()
-class PROJECTSOUL_API UPSMainMenuWidget : public UUserWidget
+class PROJECTSOUL_API UPSMonsterHitWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
 public:
+	void ShowHitWidget(AActor* Monster);
 
 protected:
 	virtual void NativeOnInitialized() override;
 
 private:
-	UFUNCTION()
-	void StartButtonClick();
-
-	UFUNCTION()
-	void EndButtonClick();
-
-public:
-
-protected:
-
-private:
 	UPROPERTY(meta = (BindWidget))
-	UButton* StartButton;
+	UTextBlock* DamageText;
 
 	UPROPERTY(meta = (BindWidget))
-	UButton* EndButton;
+	UImage* HitMarkerImage;
 };

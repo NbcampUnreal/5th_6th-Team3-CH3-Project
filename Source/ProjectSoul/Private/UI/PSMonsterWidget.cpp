@@ -1,14 +1,5 @@
 #include "UI/PSMonsterWidget.h"
 #include "Components/ProgressBar.h"
-#include "Components/WidgetComponent.h"
-#include "Character/PSCharacter.h"
-
-void UPSMonsterWidget::NativeOnInitialized()
-{
-	Super::NativeOnInitialized();
-
-	bLockOn = false;
-}
 
 //call from monster TakeDamege()
 void UPSMonsterWidget::UpdateMonsterHP(float Percent)
@@ -17,38 +8,4 @@ void UPSMonsterWidget::UpdateMonsterHP(float Percent)
 	{
 		HPBar->SetPercent(Percent);
 	}
-}
-
-void UPSMonsterWidget::ShowHitMonsterHP(bool bShow)
-{
-	bLockOn = bShow;
-	HPBar->SetVisibility(ESlateVisibility::Visible);
-	GetWorld()->GetTimerManager().SetTimer(
-		ShowMonsterHPTimer,
-		this,
-		&UPSMonsterWidget::HiddenHitMonsterHP,
-		3.0f
-	);
-}
-
-void UPSMonsterWidget::HiddenHitMonsterHP()
-{
-	if (!bLockOn)
-	{
-		HPBar->SetVisibility(ESlateVisibility::Hidden);
-		GetWorld()->GetTimerManager().ClearTimer(ShowMonsterHPTimer);
-	}
-}
-
-APSCharacter* UPSMonsterWidget::GetCharacter()
-{
-	if (APlayerController* PlayerContrller = GetWorld()->GetFirstPlayerController())
-	{
-		if (APSCharacter* PSCharacter = Cast<APSCharacter>(PlayerContrller->GetPawn()))
-		{
-			return PSCharacter;
-		}
-	}
-
-	return nullptr;
 }

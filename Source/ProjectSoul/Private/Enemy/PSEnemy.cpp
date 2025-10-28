@@ -13,6 +13,9 @@
 #include "Components/BoxComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
+#include "UI/PSUIManagerSubsystem.h"
+#include "UI/PSPlayerHUDWidget.h"
+
 APSEnemy::APSEnemy()
 	: Attack(20), 
 	Score(50),
@@ -170,6 +173,10 @@ float APSEnemy::TakeDamage(
 		BlackboardComp->SetValueAsBool(TEXT("bIsDead"), true);
 		UE_LOG(LogTemp, Warning, TEXT("Enemy Death"));
 	}
+	//test
+	/*UPSPlayerHUDWidget* PlayerHUDWidget = Cast<UPSPlayerHUDWidget>(GetGameInstance()->GetSubsystem<UPSUIManagerSubsystem>()->PlayerHUDWidgetInstance);
+	PlayerHUDWidget->ShowHit(this);*/
+
 
 	return ActualDamage;
 }

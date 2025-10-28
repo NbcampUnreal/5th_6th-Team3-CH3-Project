@@ -6,8 +6,7 @@
 
 void UPSMainMenuWidget::NativeOnInitialized()
 {
-	StartButton = Cast<UButton>(GetWidgetFromName(TEXT("StartButton")));
-	EndButton = Cast<UButton>(GetWidgetFromName(TEXT("EndButton")));
+	Super::NativeOnInitialized();
 
 	StartButton->OnClicked.AddDynamic(this, &UPSMainMenuWidget::StartButtonClick);
 	EndButton->OnClicked.AddDynamic(this, &UPSMainMenuWidget::EndButtonClick);
