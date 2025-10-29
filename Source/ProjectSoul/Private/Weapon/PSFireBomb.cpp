@@ -6,7 +6,7 @@
 
 APSFireBomb::APSFireBomb() :
 	FireBombDamage(30.0f),
-	BombRadius(1000.0f)
+	BombRadius(30.0f)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
