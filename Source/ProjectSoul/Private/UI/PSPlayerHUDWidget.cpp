@@ -7,6 +7,9 @@
 #include "Character/PSCharacter.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 
+#include "Enemy/PSEnemy.h"
+#include "Kismet/GameplayStatics.h"
+
 void UPSPlayerHUDWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
@@ -24,13 +27,22 @@ void UPSPlayerHUDWidget::NativeOnInitialized()
 		PSCharacter->OnEnemyTarget.AddDynamic(this, &UPSPlayerHUDWidget::ShowLockOn);
 	}
 
+	APSEnemy* Enemy = Cast<APSEnemy>(UGameplayStatics::GetActorOfClass(GetWorld(), APSEnemy::StaticClass()));
+	if (Enemy)
+	{
+		// HUD에 등록 함수 제공
+		Enemy->OnHit.AddDynamic(this, &UPSPlayerHUDWidget::ShowHitWidget);
+	}
+
+
 	LockOnImage->SetVisibility(ESlateVisibility::Hidden);
 
-	/*static ConstructorHelpers::FClassFinder<UUserWidget> MonsterHitWidgetBPClass(TEXT("/Game/Blueprints/UI/WBP_PSMonsterHitWidget.WBP_PSMonsterHitWidget_C"));
-	if (MonsterHitWidgetBPClass.Succeeded())
+	//RunTime Load
+	UClass* WidgetClass = LoadClass<UUserWidget>(nullptr,TEXT("/Game/Blueprints/UI/WBP_PSMonsterHitWidget.WBP_PSMonsterHitWidget_C"));
+	if (WidgetClass)
 	{
-		MonsterHitWidgetClass = MonsterHitWidgetBPClass.Class;
-	}*/
+		MonsterHitWidgetClass = WidgetClass;
+	}
 }
 //player Delegate add
 void UPSPlayerHUDWidget::OnUpdateHPBar(float CurrentValue, float MaxValue)
@@ -86,7 +98,7 @@ void UPSPlayerHUDWidget::ShowLockOn(AActor* CurrentTarget)
 			LockOnPositionHandle,
 			this,
 			&UPSPlayerHUDWidget::UpdateLockOnPosition,
-			0.125f,
+			0.02f,
 			true
 		);
 	}
@@ -105,47 +117,17 @@ void UPSPlayerHUDWidget::HiddenLockOn()
 }
 
 
-void UPSPlayerHUDWidget::ShowHit(AActor* LockOnMonster)
+void UPSPlayerHUDWidget::ShowHitWidget(AActor* LockOnMonster, float Damage)
 {
-	/*if (LockOnMonster)
-	{
-		LockOnTarget = LockOnMonster;
-		HitImage->SetVisibility(ESlateVisibility::Visible);
-
-		GetWorld()->GetTimerManager().SetTimer(
-			LockOnPositionHandle,
-			this,
-			&UPSPlayerHUDWidget::UpdateLockOnPosition,
-			0.125f,
-			true
-		);
-
-		GetWorld()->GetTimerManager().SetTimer(
-			HitPositionHandle,
-			this,
-			&UPSPlayerHUDWidget::HiddenHit,
-			1.0f,
-			false
-		);
-	}*/
- 
 	UE_LOG(LogTemp, Warning, TEXT("ShowHit Test"));
-	/*APlayerController* PC = GetWorld()->GetFirstPlayerController();
+	APlayerController* PC = GetWorld()->GetFirstPlayerController();
 
-	UPSMonsterHitWidget* HitWidgetInstance = CreateWidget<UPSMonsterHitWidget>(PC, HitWidgetClass);
-	HitWidgetInstance->ShowHitWidget(LockOnMonster);*/
+	UPSMonsterHitWidget* HitWidgetInstance = CreateWidget<UPSMonsterHitWidget>(PC, MonsterHitWidgetClass);
+	HitWidgetInstance->ShowHitWidget(LockOnMonster, Damage);
 }
 
 void UPSPlayerHUDWidget::HiddenHit()
 {
-	/*HitImage->SetVisibility(ESlateVisibility::Hidden);
-	GetWorld()->GetTimerManager().ClearTimer(HitPositionHandle);
-	LockOnTarget = nullptr;
-
-	if (!bLockOn)
-	{
-		GetWorld()->GetTimerManager().ClearTimer(LockOnPositionHandle);
-	}*/
 
 }
 
@@ -182,3 +164,4 @@ APSCharacter* UPSPlayerHUDWidget::GetCharacter()
 
 	return nullptr;
 }
+

@@ -5,6 +5,8 @@
 #include "Structs/FEnemyStats.h"
 #include "PSEnemy.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHit, AActor*, Monster, float, Damage);
+
 class UEnemyStateMachine;
 class UWidgetComponent;
 class UBoxComponent;
@@ -63,6 +65,11 @@ private:
 	void UpdateHealthWidget();
 	void ShowHitHealthWidget();
 	void HiddenHitHealthWidget();
+
+
+public:
+	UPROPERTY(BlueprintAssignable, Category = "Event")
+	FOnHit OnHit;
 
 protected:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Weapon")

@@ -179,10 +179,7 @@ float APSEnemy::TakeDamage(
 			GM->OnEnemyKilled(Score);
 		}
 	}
-	//test
-	/*UPSPlayerHUDWidget* PlayerHUDWidget = Cast<UPSPlayerHUDWidget>(GetGameInstance()->GetSubsystem<UPSUIManagerSubsystem>()->PlayerHUDWidgetInstance);
-	PlayerHUDWidget->ShowHit(this);*/
-
+	OnHit.Broadcast(this, ActualDamage);
 
 	return ActualDamage;
 }
