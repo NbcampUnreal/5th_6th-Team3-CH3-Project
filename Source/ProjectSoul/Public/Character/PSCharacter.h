@@ -101,6 +101,8 @@ public:
 
 	void ConsumeStaminaForDodge();
 
+	void SetPlayerHealthStats(float Amount);
+
 protected:
 	virtual void BeginPlay() override;
 
