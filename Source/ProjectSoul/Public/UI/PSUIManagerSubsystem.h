@@ -15,20 +15,22 @@ public:
 	UPSUIManagerSubsystem();
 
 	void ShowCurrentWidget();
-	void HideCurrentWidget();
-
-	void ShowLockOn(AActor* LockOnMonster);
-	void HiddenLockOn();
-
-	void ShowMainMenuUI();
-	void ShowPlayerHUD();
-	void ShowGameOverUI();
-
 
 private:
 	void SetCurrentWidget();
 
-	
+	void ShowMainMenuUI();
+
+	void ShowPlayerHUD();
+
+	void ShowGameOverUI();
+
+
+public:
+	UPROPERTY(EditAnywhere, Category = "Widget")
+	TSubclassOf<UUserWidget> PlayerHUDWidgetClass;
+	UPROPERTY()
+	UUserWidget* PlayerHUDWidgetInstance;
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Widget")
@@ -36,15 +38,15 @@ private:
 	UPROPERTY()
 	UUserWidget* MainMenuWidgetInstance;
 
-	UPROPERTY(EditAnywhere, Category = "Widget")
+	/*UPROPERTY(EditAnywhere, Category = "Widget")
 	TSubclassOf<UUserWidget> PlayerHUDWidgetClass;
 	UPROPERTY()
-	UUserWidget* PlayerHUDWidgetInstance;
+	UUserWidget* PlayerHUDWidgetInstance;*/
 
 	UPROPERTY(EditAnywhere, Category = "Widget")
 	TSubclassOf<UUserWidget> GameOverWidgetClass;
 	UPROPERTY()
 	UUserWidget* GameOverWidgetInstance;
 
-	UUserWidget* CurrentWidgetInstance;
+	
 };

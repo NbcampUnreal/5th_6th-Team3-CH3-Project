@@ -5,6 +5,8 @@
 #include "Structs/FEnemyStats.h"
 #include "PSEnemy.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHit, AActor*, Monster, float, Damage);
+
 class UEnemyStateMachine;
 class UWidgetComponent;
 class UBoxComponent;
@@ -57,9 +59,18 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
 
 private:
 	void UpdateHealthWidget();
+	void ShowHitHealthWidget();
+	void HiddenHitHealthWidget();
+
+
+public:
+	UPROPERTY(BlueprintAssignable, Category = "Event")
+	FOnHit OnHit;
+
 protected:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Weapon")
 	TObjectPtr<UBoxComponent> WeaponCollisionL;
@@ -102,9 +113,13 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Montage")
 	TObjectPtr<UAnimMontage> HitMontage;
+
 	UPROPERTY()
 	TSet<AActor*> DamagedActors;
 
 private:
 	bool bIsDead;
+	bool bIsTargeted;
+	bool bIsHit;
+	FTimerHandle ShowMonsterHPTimer;
 };

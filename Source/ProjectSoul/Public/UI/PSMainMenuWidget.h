@@ -20,6 +20,7 @@ protected:
 private:
 	UFUNCTION()
 	void StartButtonClick();
+
 	UFUNCTION()
 	void EndButtonClick();
 
@@ -30,6 +31,7 @@ protected:
 private:
 	UPROPERTY(meta = (BindWidget))
 	UButton* StartButton;
+
 	UPROPERTY(meta = (BindWidget))
 	UButton* EndButton;
 };

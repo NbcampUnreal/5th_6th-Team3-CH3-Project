@@ -7,6 +7,7 @@
 class USizeBox;
 class UProgressBar;
 class UImage;
+class UOverlay;
 class APSCharacter;
 
 UCLASS()
@@ -15,9 +16,8 @@ class PROJECTSOUL_API UPSPlayerHUDWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	void ShowLockOn(AActor* LockOnMonster);
-
-	void HiddenLockOn();
+	UFUNCTION()
+	void ShowHitWidget(AActor* LockOnMonster, float Damage);
 
 protected:
 	virtual void NativeOnInitialized() override;
@@ -32,9 +32,23 @@ private:
 	UFUNCTION()
 	void OnUpdateStaminaBar(float CurrentValue, float MaxValue);
 
+	UFUNCTION()
+	void ShowLockOn(AActor* LockOnMonster);
+
+	void HiddenLockOn();
+
 	void UpdateLockOnPosition();
 
+	//void ShowHit(AActor* LockOnMonster);
+
+	void HiddenHit();
+
 	APSCharacter* GetCharacter();
+
+public:
+	//test
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
+	TSubclassOf<UUserWidget> MonsterHitWidgetClass;
 
 private:
 	UPROPERTY(meta = (BindWidget))
@@ -62,4 +76,6 @@ private:
 	AActor* LockOnTarget;
 
 	float SizeBoxMultiplier;
+	bool bLockOn;
+
 };

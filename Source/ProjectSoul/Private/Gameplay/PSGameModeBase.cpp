@@ -1,5 +1,6 @@
 #include "Gameplay/PSGameModeBase.h"
 #include "Gameplay/PSGameStateBase.h"
+#include "Enemy/PSEnemy.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
 #include "TimerManager.h"
@@ -15,6 +16,11 @@ void APSGameModeBase::BeginPlay()
 {
     Super::BeginPlay();
     StartGame();
+
+    TArray<AActor*> FoundEnemies;
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), APSEnemy::StaticClass(), FoundEnemies);
+    RemainingEnemies = FoundEnemies.Num();
+    UE_LOG(LogTemp, Warning, TEXT("Enemy Count: %d"), RemainingEnemies);
 
     FTimerHandle ScoreTimer;
     GetWorldTimerManager().SetTimer(ScoreTimer, [this]()
@@ -35,7 +41,7 @@ void APSGameModeBase::StartGame()
         PSState->bIsGameOver = false;
     }
 
-    UE_LOG(LogTemp, Warning, TEXT("GameStart)"));
+    UE_LOG(LogTemp, Warning, TEXT("GameStart"));
 }
 
 void APSGameModeBase::EndGame()
@@ -71,5 +77,30 @@ void APSGameModeBase::AddPlayerScore(int32 Amount)
     if (PSState && PSState->bIsGamePlaying)
     {
         PSState->AddScore(Amount);
+    }
+}
+
+void APSGameModeBase::OnEnemyKilled(int32 EnemyScore)
+{
+    AddPlayerScore(EnemyScore);
+
+    RemainingEnemies--;
+    UE_LOG(LogTemp, Warning, TEXT("Enemy Dead | Remaining: %d"), RemainingEnemies);
+
+    CheckClearCondition();
+}
+
+void APSGameModeBase::OnPlayerKilled()
+{
+    UE_LOG(LogTemp, Warning, TEXT("Player Dead - Game Over"));
+    EndGame();
+}
+
+void APSGameModeBase::CheckClearCondition()
+{
+    if (RemainingEnemies <= 0)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("All Enemies Dead - Mission Clear!"));
+        EndGame();
     }
 }

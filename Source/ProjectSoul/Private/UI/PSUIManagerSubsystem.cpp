@@ -10,7 +10,6 @@ UPSUIManagerSubsystem::UPSUIManagerSubsystem()
 	PlayerHUDWidgetInstance = nullptr;
 	GameOverWidgetClass = nullptr;
 	GameOverWidgetInstance = nullptr;
-	CurrentWidgetInstance = nullptr;
 
 	static ConstructorHelpers::FClassFinder<UUserWidget> MainMenuWidgetBPClass(TEXT("/Game/Blueprints/UI/WBP_PSMainMenuWidget.WBP_PSMainMenuWidget_C"));
 	if (MainMenuWidgetBPClass.Succeeded())
@@ -32,72 +31,96 @@ UPSUIManagerSubsystem::UPSUIManagerSubsystem()
 void UPSUIManagerSubsystem::ShowCurrentWidget()
 {
 	SetCurrentWidget();
-	CurrentWidgetInstance->AddToViewport();
 }
 
-void UPSUIManagerSubsystem::HideCurrentWidget()
-{
-	CurrentWidgetInstance->RemoveFromParent();
-}
-
-void UPSUIManagerSubsystem::ShowLockOn(AActor* LockOnMonster)
-{
-	GetWorld()->GetFirstPlayerController()->GetOwner();
-
-	UPSPlayerHUDWidget* PlayerHUD = Cast<UPSPlayerHUDWidget>(PlayerHUDWidgetInstance);
-	PlayerHUD->ShowLockOn(LockOnMonster);
-}
-
-void UPSUIManagerSubsystem::HiddenLockOn()
-{
-	UPSPlayerHUDWidget* PlayerHUD = Cast<UPSPlayerHUDWidget>(PlayerHUDWidgetInstance);
-	PlayerHUD->HiddenLockOn();
-}
 
 void UPSUIManagerSubsystem::SetCurrentWidget()
 {
 	FString CurrentMapName = GetWorld()->GetMapName();
 	if (CurrentMapName.Contains("MenuLevel"))
 	{
-		if (!MainMenuWidgetInstance)
-		{
-			MainMenuWidgetInstance = CreateWidget(GetWorld()->GetFirstPlayerController(), MainMenuWidgetClass);
-		}
-		if (MainMenuWidgetInstance)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("MainMenu Create Success"));
-			CurrentWidgetInstance = MainMenuWidgetInstance;
-		}
+		ShowMainMenuUI();
 	}
-	else
+	/*else if ( PlayerDie )
 	{
-		if (!PlayerHUDWidgetInstance)
-		{
-			PlayerHUDWidgetInstance = CreateWidget(GetWorld()->GetFirstPlayerController(), PlayerHUDWidgetClass);
-			
-		}
-		if (PlayerHUDWidgetInstance)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("PlayerHUD Create Success"));
-			CurrentWidgetInstance = PlayerHUDWidgetInstance;
-		}
+		ShowGameOverUI();
+	}*/
+	else 
+	{
+		ShowPlayerHUD();
 	}
 }
 
 void UPSUIManagerSubsystem::ShowMainMenuUI()
 {
-	MainMenuWidgetInstance = CreateWidget(GetWorld()->GetFirstPlayerController(), MainMenuWidgetClass);
-	MainMenuWidgetInstance->AddToViewport();
+	if (PlayerHUDWidgetInstance)
+	{
+		PlayerHUDWidgetInstance->RemoveFromParent();
+	}
+	if (GameOverWidgetInstance)
+	{
+		GameOverWidgetInstance->RemoveFromParent();
+	}
+
+	APlayerController* PC = GetWorld()->GetFirstPlayerController();
+
+	if (!MainMenuWidgetInstance)
+	{
+		MainMenuWidgetInstance = CreateWidget(PC, MainMenuWidgetClass);
+	}
+	if (MainMenuWidgetInstance)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("MainMenu Create Success"));
+		MainMenuWidgetInstance->AddToViewport();
+		PC->bShowMouseCursor = true;
+		PC->SetInputMode(FInputModeUIOnly());
+	}
 }
 
 void UPSUIManagerSubsystem::ShowPlayerHUD()
 {
-	PlayerHUDWidgetInstance = CreateWidget(GetWorld()->GetFirstPlayerController(), PlayerHUDWidgetClass);
-	PlayerHUDWidgetInstance->AddToViewport();
+	if (MainMenuWidgetInstance)
+	{
+		MainMenuWidgetInstance->RemoveFromParent();
+	}
+	if (GameOverWidgetInstance)
+	{
+		GameOverWidgetInstance->RemoveFromParent();
+	}
+
+	APlayerController* PC = GetWorld()->GetFirstPlayerController();
+
+	if (!PlayerHUDWidgetInstance)
+	{
+		PlayerHUDWidgetInstance = CreateWidget(PC, PlayerHUDWidgetClass);
+	}
+	if (PlayerHUDWidgetInstance)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("MainMenu Create Success"));
+		PlayerHUDWidgetInstance->AddToViewport();
+		PC->bShowMouseCursor = false;
+		PC->SetInputMode(FInputModeGameOnly());
+	}
 }
 
 void UPSUIManagerSubsystem::ShowGameOverUI()
 {
-	GameOverWidgetInstance = CreateWidget(GetWorld()->GetFirstPlayerController(), GameOverWidgetClass);
-	GameOverWidgetInstance->AddToViewport();
+	if (MainMenuWidgetInstance)
+	{
+		MainMenuWidgetInstance->RemoveFromParent();
+	}
+
+	APlayerController* PC = GetWorld()->GetFirstPlayerController();
+
+	if (!GameOverWidgetInstance)
+	{
+		GameOverWidgetInstance = CreateWidget(PC, GameOverWidgetClass);
+	}
+	if (GameOverWidgetInstance)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("MainMenu Create Success"));
+		GameOverWidgetInstance->AddToViewport();
+		PC->bShowMouseCursor = true;
+		PC->SetInputMode(FInputModeUIOnly());
+	}
 }
