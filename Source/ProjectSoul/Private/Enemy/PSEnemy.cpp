@@ -173,10 +173,7 @@ float APSEnemy::TakeDamage(
 		BlackboardComp->SetValueAsBool(TEXT("bIsDead"), true);
 		UE_LOG(LogTemp, Warning, TEXT("Enemy Death"));
 	}
-	//test
-	/*UPSPlayerHUDWidget* PlayerHUDWidget = Cast<UPSPlayerHUDWidget>(GetGameInstance()->GetSubsystem<UPSUIManagerSubsystem>()->PlayerHUDWidgetInstance);
-	PlayerHUDWidget->ShowHit(this);*/
-
+	OnHit.Broadcast(this, ActualDamage);
 
 	return ActualDamage;
 }
