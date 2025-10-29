@@ -8,6 +8,18 @@ void UEnemyDieState::OnEnter()
     APSEnemy* Enemy = GetEnemyCharacter();//inefficiency
     if (!Enemy) return;
     Enemy->SetIsDead(true);
+    Enemy->GetWorldTimerManager().SetTimer(
+        DestroyTimerHandle,
+        [Enemy]()
+        {
+            if (IsValid(Enemy))
+            {
+                Enemy->Destroy();
+            }
+        },
+        1.0f,
+        false 
+    );
 }
 
 void UEnemyDieState::OnExit()
