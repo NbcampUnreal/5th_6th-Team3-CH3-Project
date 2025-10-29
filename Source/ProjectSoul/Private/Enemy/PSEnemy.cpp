@@ -116,6 +116,14 @@ void APSEnemy::OnWeaponOverlap(
 		return;
 	}
 
+	if (OtherComp)
+	{
+		if (OtherComp->GetName() != TEXT("CollisionCylinder"))
+		{
+			return;
+		}
+	}
+
 	if (DamagedActors.Contains(OtherActor))
 	{
 		return;
@@ -164,10 +172,11 @@ float APSEnemy::TakeDamage(
 	UE_LOG(LogTemp, Warning, TEXT("Enemy Remain Health: %.0f / %.0f"), EnemyStats.Health.GetCurrent(), EnemyStats.Health.GetMax());
 	AAIController* EnemyAIController = Cast<AAIController>(this->GetController());
 	UBlackboardComponent* BlackboardComp = EnemyAIController ? EnemyAIController->GetBlackboardComponent() : nullptr;
-	BlackboardComp->SetValueAsBool(TEXT("bIsHit"), true);
 
 	if (EnemyStats.Health.IsZero())
 	{
+		BlackboardComp->SetValueAsBool(TEXT("bIsAttacking"), false);
+		BlackboardComp->SetValueAsBool(TEXT("bInAttackRange"), false);
 		BlackboardComp->SetValueAsBool(TEXT("bIsDead"), true);
 		UE_LOG(LogTemp, Warning, TEXT("Enemy Death"));
 
@@ -175,6 +184,10 @@ float APSEnemy::TakeDamage(
 		{
 			GM->OnEnemyKilled(Score);
 		}
+	}
+	else
+	{
+		BlackboardComp->SetValueAsBool(TEXT("bIsHit"), true);
 	}
 	//PSPlayerHUDWidget class Function Call
 	OnHit.Broadcast(this, ActualDamage);

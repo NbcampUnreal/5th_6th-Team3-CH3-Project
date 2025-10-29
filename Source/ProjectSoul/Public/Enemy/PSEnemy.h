@@ -36,7 +36,7 @@ public:
 	void SetIsDead(bool bIsdead);
 
 	UFUNCTION(BlueprintPure, Category = "Dead")
-	bool GetIsDead() const;
+	virtual bool GetIsDead() const;
 
 	UEnemyStateMachine* GetStateMachine();
 
