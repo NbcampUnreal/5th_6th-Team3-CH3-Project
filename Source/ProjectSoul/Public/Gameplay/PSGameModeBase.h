@@ -24,6 +24,12 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Game")
     void AddPlayerScore(int32 Amount);
 
+    UFUNCTION(BlueprintCallable, Category = "Game")
+    void OnEnemyKilled(int32 EnemyScore);
+
+    UFUNCTION(BlueprintCallable, Category = "Game")
+    void OnPlayerKilled();
+
 protected:
     virtual void BeginPlay() override;
 
@@ -32,6 +38,11 @@ protected:
 
     UPROPERTY(VisibleAnywhere, Category = "Game")
     bool bIsGameOver;
+
+    UPROPERTY(VisibleAnywhere, Category = "Game")
+    int32 RemainingEnemies;
+
+    void CheckClearCondition();
 
     UPROPERTY(EditAnywhere, Category = "Game")
     float RestartDelay = 3.0f;

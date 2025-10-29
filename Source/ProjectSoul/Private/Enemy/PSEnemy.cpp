@@ -1,5 +1,6 @@
 #include "Enemy/PSEnemy.h"
 #include "Enemy/PSEnemyAIController.h"
+#include "Gameplay/PSGameModeBase.h"
 #include "Character/PSCharacter.h"
 #include "Enemy/PSEnemyAIController.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -172,11 +173,13 @@ float APSEnemy::TakeDamage(
 	{
 		BlackboardComp->SetValueAsBool(TEXT("bIsDead"), true);
 		UE_LOG(LogTemp, Warning, TEXT("Enemy Death"));
-	}
-	//test
-	/*UPSPlayerHUDWidget* PlayerHUDWidget = Cast<UPSPlayerHUDWidget>(GetGameInstance()->GetSubsystem<UPSUIManagerSubsystem>()->PlayerHUDWidgetInstance);
-	PlayerHUDWidget->ShowHit(this);*/
 
+		if (APSGameModeBase* GM = Cast<APSGameModeBase>(UGameplayStatics::GetGameMode(this)))
+		{
+			GM->OnEnemyKilled(Score);
+		}
+	}
+	OnHit.Broadcast(this, ActualDamage);
 
 	return ActualDamage;
 }

@@ -3,6 +3,8 @@
 #include "Camera/CameraComponent.h"
 #include "Components/SphereComponent.h"
 #include "Gameplay/PSPlayerController.h"
+#include "Gameplay/PSGameModeBase.h"
+#include "Kismet/GameplayStatics.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "StateMachine/PlayerStateMachine.h"
@@ -105,7 +107,7 @@ void APSCharacter::Tick(float DeltaTime)
 
 	if (bIsSprinting)
 	{
-		
+
 	}
 
 	if (StateMachine)
@@ -448,6 +450,11 @@ void APSCharacter::OnDie()
 	if (StateMachine)
 	{
 		StateMachine->GetCurrentState()->Die();
+	}
+
+	if (APSGameModeBase* GM = Cast<APSGameModeBase>(UGameplayStatics::GetGameMode(this)))
+	{
+		GM->EndGame();
 	}
 }
 

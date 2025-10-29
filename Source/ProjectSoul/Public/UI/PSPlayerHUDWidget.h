@@ -10,16 +10,14 @@ class UImage;
 class UOverlay;
 class APSCharacter;
 
-class UPSMonsterHitWidget;
-
 UCLASS()
 class PROJECTSOUL_API UPSPlayerHUDWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
-
 public:
-	void ShowHit(AActor* LockOnMonster);
+	UFUNCTION()
+	void ShowHitWidget(AActor* LockOnMonster, float Damage);
 
 protected:
 	virtual void NativeOnInitialized() override;
@@ -37,7 +35,6 @@ private:
 	UFUNCTION()
 	void ShowLockOn(AActor* LockOnMonster);
 
-
 	void HiddenLockOn();
 
 	void UpdateLockOnPosition();
@@ -47,7 +44,6 @@ private:
 	void HiddenHit();
 
 	APSCharacter* GetCharacter();
-
 
 public:
 	//test
@@ -81,4 +77,5 @@ private:
 
 	float SizeBoxMultiplier;
 	bool bLockOn;
+
 };
