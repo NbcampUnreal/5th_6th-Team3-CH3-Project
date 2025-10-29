@@ -370,9 +370,15 @@ void APSCharacter::ConsumeStaminaForDodge()
 	OnStaminaChanged.Broadcast(PlayerStats.Stamina.GetCurrent(), PlayerStats.Stamina.GetMax());
 }
 
-void APSCharacter::SetPlayerHealthStats(float Amount)
+void APSCharacter::Heal(float Amount)
 {
-	PlayerStats.Health.SetCurrent(Amount);
+	if (Amount <= 0.0f)
+	{
+		return;
+	}
+
+	PlayerStats.Health.AdjustValue(+Amount);
+	OnHPChanged.Broadcast(PlayerStats.Health.GetCurrent(), PlayerStats.Health.GetMax());
 }
 
 void APSCharacter::ConsumeStaminaForSprint()

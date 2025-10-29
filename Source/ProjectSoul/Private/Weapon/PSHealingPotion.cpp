@@ -3,7 +3,7 @@
 #include "Components/BoxComponent.h"
 
 APSHealingPotion::APSHealingPotion()
-	: HealAmount(100.0f)
+	: HealAmount(20.0f)
 {
 	PrimaryActorTick.bCanEverTick = false;
 
@@ -66,10 +66,11 @@ void APSHealingPotion::UseItem(APSCharacter* Player)
 		return;
 	}
 
-	Player->SetPlayerHealthStats(HealAmount);
+	Player->Heal(HealAmount);
 
 	Destroy();
 
 }
+
 
 
