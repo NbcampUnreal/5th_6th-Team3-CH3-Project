@@ -30,10 +30,6 @@ void UEnemyAttackState::OnEnter()
 void UEnemyAttackState::OnExit()
 {
     Super::OnExit();
-    ACharacter* Enemy = GetEnemyCharacter();//inefficiency
-    if (!Enemy) return;
-    AAIController* EnemyAIController = Cast<AAIController>(Enemy->GetController());
-    UBlackboardComponent* BlackboardComp = EnemyAIController ? EnemyAIController->GetBlackboardComponent() : nullptr;
 }
 
 void UEnemyAttackState::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)

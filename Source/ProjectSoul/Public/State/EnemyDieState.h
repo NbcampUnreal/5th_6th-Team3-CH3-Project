@@ -15,4 +15,6 @@ class PROJECTSOUL_API UEnemyDieState : public UEnemyStateBase
 
 private:
 	FOnMontageEnded EndDelegate;
+
+	FTimerHandle DestroyTimerHandle;
 };
