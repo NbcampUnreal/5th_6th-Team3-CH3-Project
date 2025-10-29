@@ -16,18 +16,46 @@ APSHealingPotion::APSHealingPotion()
 	if (StaticMesh)
 	{
 		StaticMesh->SetupAttachment(Scene);
+		StaticMesh->SetCollisionEnabled(ECollisionEnabled::QueryOnly); //test
+		StaticMesh->SetCollisionResponseToAllChannels(ECR_Ignore);
+		StaticMesh->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 	}
+}
+void APSHealingPotion::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (StaticMesh)
+	{
+		StaticMesh->OnComponentBeginOverlap.AddDynamic(this, &APSHealingPotion::OnPotionOverlap)
+	}
+}
+void APSHealingPotion::OnPotionOverlap(
+	UPrimitiveComponent* OverlappedComp,
+	AActor* OtherActor,
+	UPrimitiveComponent* OtherComp,
+	int32 OtherBodyIndex,
+	bool bFromSweep,
+	const FHitResult& SweepResult)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Healing Potion overlapped with: %s"), *OtherActor->GetName());
+	
+	APSCharacter* Player = Cast<APSCharacter>(OtherActor);
+	if (Player)
+	{
+		UseItem(Player);
+	}
+	
 }
 
 void APSHealingPotion::UseItem(APSCharacter* Player)
 {
-
+	
 	if (!Player)
 	{
 		return;
 	}
 
-	//캐릭터 힐링 코드 작성
 	Player->SetPlayerHealthStats(HealAmount);
 
 	Destroy();

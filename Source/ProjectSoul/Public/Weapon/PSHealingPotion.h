@@ -15,8 +15,19 @@ public:
 	
 	APSHealingPotion();
 
+	virtual void BeginPlay() override;//test
+
 	UFUNCTION(BlueprintCallable, Category = "Item|Healing")
 	void UseItem(APSCharacter* Player);
+
+	UFUNCTION() //test
+		void OnPotionOverlap(
+			UPrimitiveComponent* OverlappedComp,
+			AActor* OtherActor,
+			UPrimitiveComponent* OtherComp,
+			int32 OtherBodyIndex,
+			bool bFromSweep,
+			const FHitResult& SweepResult);
 
 protected:
 
