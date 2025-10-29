@@ -88,7 +88,7 @@ protected:
 	TObjectPtr<UEnemyStateMachine> StateMachine;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
-	TObjectPtr<UWidgetComponent> HealthWidget;
+	TObjectPtr<UWidgetComponent> HealthWidgetComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
 	FEnemyStats EnemyStats;
