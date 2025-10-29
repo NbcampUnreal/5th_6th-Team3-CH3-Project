@@ -17,6 +17,7 @@ public:
 
 protected:
 	virtual void NativeOnInitialized() override;
+	virtual void NativePreConstruct() override;
 
 protected:
 	UFUNCTION()
@@ -36,5 +37,6 @@ private:
 	UTextBlock* TotalScoreText;
 
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* KillCountText;
+
+	UTextBlock* ClearOrDieText;
 };

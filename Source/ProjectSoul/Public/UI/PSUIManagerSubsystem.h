@@ -14,23 +14,14 @@ class PROJECTSOUL_API UPSUIManagerSubsystem : public UGameInstanceSubsystem
 public:
 	UPSUIManagerSubsystem();
 
-	void ShowCurrentWidget();
+	void ShowCurrentWidget(bool bIsGameOver);
 
 private:
-	void SetCurrentWidget();
-
 	void ShowMainMenuUI();
 
 	void ShowPlayerHUD();
 
 	void ShowGameOverUI();
-
-
-public:
-	UPROPERTY(EditAnywhere, Category = "Widget")
-	TSubclassOf<UUserWidget> PlayerHUDWidgetClass;
-	UPROPERTY()
-	UUserWidget* PlayerHUDWidgetInstance;
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Widget")
@@ -38,10 +29,10 @@ private:
 	UPROPERTY()
 	UUserWidget* MainMenuWidgetInstance;
 
-	/*UPROPERTY(EditAnywhere, Category = "Widget")
+	UPROPERTY(EditAnywhere, Category = "Widget")
 	TSubclassOf<UUserWidget> PlayerHUDWidgetClass;
 	UPROPERTY()
-	UUserWidget* PlayerHUDWidgetInstance;*/
+	UUserWidget* PlayerHUDWidgetInstance;
 
 	UPROPERTY(EditAnywhere, Category = "Widget")
 	TSubclassOf<UUserWidget> GameOverWidgetClass;

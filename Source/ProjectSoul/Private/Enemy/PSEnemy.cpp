@@ -14,9 +14,6 @@
 #include "Components/BoxComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
-#include "UI/PSUIManagerSubsystem.h"
-#include "UI/PSPlayerHUDWidget.h"
-
 APSEnemy::APSEnemy()
 	: Attack(20), 
 	Score(50),
@@ -26,11 +23,11 @@ APSEnemy::APSEnemy()
 	AIControllerClass = APSEnemyAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
-	HealthWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthWidget"));
-	if (HealthWidget)
+	HealthWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthWidget"));
+	if (HealthWidgetComponent)
 	{
-		HealthWidget->SetupAttachment(GetMesh());
-		HealthWidget->SetWidgetSpace(EWidgetSpace::Screen);
+		HealthWidgetComponent->SetupAttachment(GetMesh());
+		HealthWidgetComponent->SetWidgetSpace(EWidgetSpace::Screen);
 	}
 	UCharacterMovementComponent* EnemyMovement = GetCharacterMovement();
 	EnemyMovement->MaxWalkSpeed = WalkSpeed;
@@ -90,18 +87,18 @@ void APSEnemy::BeginPlay()
 void APSEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	
 	if (bIsTargeted || bIsHit)
 	{
 		APlayerCameraManager* CameraManager = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0);
 		FVector CameraLocation = CameraManager->GetCameraLocation();
-		FVector WidgetCompLocation = HealthWidget->GetComponentLocation();
+		FVector WidgetCompLocation = HealthWidgetComponent->GetComponentLocation();
 
 		FVector Direction = CameraLocation - WidgetCompLocation;
 		Direction.Normalize();
 
 		FRotator LookRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
-		HealthWidget->SetWorldRotation(LookRotation);
+		HealthWidgetComponent->SetWorldRotation(LookRotation);
 	}
 }
 
@@ -192,25 +189,27 @@ float APSEnemy::TakeDamage(
 	{
 		BlackboardComp->SetValueAsBool(TEXT("bIsHit"), true);
 	}
+	//PSPlayerHUDWidget class Function Call
 	OnHit.Broadcast(this, ActualDamage);
 
 	return ActualDamage;
 }
 
+//Lock On Call
 void APSEnemy::ShowHealthWidget(bool bShow)
 {
-	if (HealthWidget)
+	if (HealthWidgetComponent)
 	{
 		bIsTargeted = bShow;
-		HealthWidget->SetVisibility(bShow);
+		HealthWidgetComponent->SetVisibility(bShow);
 	}
 }
 
 void APSEnemy::ShowHitHealthWidget()
 {
-	UE_LOG(LogTemp, Warning, TEXT("HP Bar On"));
 	bIsHit = true;
-	HealthWidget->SetVisibility(true);
+	HealthWidgetComponent->SetVisibility(true);
+	
 	GetWorld()->GetTimerManager().SetTimer(
 		ShowMonsterHPTimer,
 		this,
@@ -223,8 +222,7 @@ void APSEnemy::HiddenHitHealthWidget()
 {
 	if (!bIsTargeted)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("HP Bar Off"));
-		HealthWidget->SetVisibility(false);
+		HealthWidgetComponent->SetVisibility(false);
 		GetWorld()->GetTimerManager().ClearTimer(ShowMonsterHPTimer);
 	}
 	bIsHit = false;
@@ -232,9 +230,9 @@ void APSEnemy::HiddenHitHealthWidget()
 
 void APSEnemy::UpdateHealthWidget()
 {
-	if (HealthWidget)
+	if (HealthWidgetComponent)
 	{
-		if (UUserWidget* Widget = HealthWidget->GetUserWidgetObject())
+		if (UUserWidget* Widget = HealthWidgetComponent->GetUserWidgetObject())
 		{
 			if (UPSMonsterWidget* MonsterWidget = Cast<UPSMonsterWidget>(Widget))
 			{

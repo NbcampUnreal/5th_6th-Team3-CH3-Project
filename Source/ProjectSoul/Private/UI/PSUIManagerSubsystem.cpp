@@ -28,23 +28,17 @@ UPSUIManagerSubsystem::UPSUIManagerSubsystem()
 	}
 }
 
-void UPSUIManagerSubsystem::ShowCurrentWidget()
-{
-	SetCurrentWidget();
-}
-
-
-void UPSUIManagerSubsystem::SetCurrentWidget()
+void UPSUIManagerSubsystem::ShowCurrentWidget(bool bIsGameOver)
 {
 	FString CurrentMapName = GetWorld()->GetMapName();
 	if (CurrentMapName.Contains("MenuLevel"))
 	{
 		ShowMainMenuUI();
 	}
-	/*else if ( PlayerDie )
+	else if ( bIsGameOver )
 	{
 		ShowGameOverUI();
-	}*/
+	}
 	else 
 	{
 		ShowPlayerHUD();
