@@ -1,8 +1,9 @@
 #include "Weapon/PSHealingPotion.h"
 #include "Character/PSCharacter.h"
+#include "Components/BoxComponent.h"
 
 APSHealingPotion::APSHealingPotion()
-	: HealAmount(20.0f)
+	: HealAmount(100.0f)
 {
 	PrimaryActorTick.bCanEverTick = false;
 
@@ -12,22 +13,29 @@ APSHealingPotion::APSHealingPotion()
 		SetRootComponent(Scene);
 	}
 	
-	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
+	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComp"));
 	if (StaticMesh)
 	{
 		StaticMesh->SetupAttachment(Scene);
-		StaticMesh->SetCollisionEnabled(ECollisionEnabled::QueryOnly); //test
-		StaticMesh->SetCollisionResponseToAllChannels(ECR_Ignore);
-		StaticMesh->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+		StaticMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
+
+	PotionCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("WeaponCollision"));
+	if (PotionCollision)
+	{
+		PotionCollision->SetupAttachment(StaticMesh);
+		PotionCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+		PotionCollision->SetCollisionResponseToAllChannels(ECR_Ignore);
+		PotionCollision->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 	}
 }
 void APSHealingPotion::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (StaticMesh)
+	if (PotionCollision)
 	{
-		StaticMesh->OnComponentBeginOverlap.AddDynamic(this, &APSHealingPotion::OnPotionOverlap)
+		PotionCollision->OnComponentBeginOverlap.AddDynamic(this, &APSHealingPotion::OnPotionOverlap);
 	}
 }
 void APSHealingPotion::OnPotionOverlap(
@@ -38,11 +46,12 @@ void APSHealingPotion::OnPotionOverlap(
 	bool bFromSweep,
 	const FHitResult& SweepResult)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Healing Potion overlapped with: %s"), *OtherActor->GetName());
+	UE_LOG(LogTemp, Log, TEXT("Healing Potion overlap"));
 	
 	APSCharacter* Player = Cast<APSCharacter>(OtherActor);
 	if (Player)
 	{
+		UE_LOG(LogTemp, Log, TEXT("Healing Potion cast"));
 		UseItem(Player);
 	}
 	
@@ -50,9 +59,10 @@ void APSHealingPotion::OnPotionOverlap(
 
 void APSHealingPotion::UseItem(APSCharacter* Player)
 {
-	
+	UE_LOG(LogTemp, Log, TEXT("Healing Potion UseItem"));
 	if (!Player)
 	{
+		UE_LOG(LogTemp, Log, TEXT("Healing Potion return"));
 		return;
 	}
 

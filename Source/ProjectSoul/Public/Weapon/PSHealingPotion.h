@@ -5,6 +5,9 @@
 #include "PSHealingPotion.generated.h"
 
 class APSCharacter;
+class UBoxComponent;
+struct FPlayerStats;
+
 
 UCLASS()
 class PROJECTSOUL_API APSHealingPotion : public AActor
@@ -37,7 +40,11 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item|Component")
 	UStaticMeshComponent* StaticMesh;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item|Component")
+	UBoxComponent* PotionCollision;
+
 	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "Item|Healing")
 	float HealAmount;
+
 
 };
