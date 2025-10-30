@@ -20,6 +20,7 @@ void UEnemyIdleState::OnEnter()
 
     Enemy->SetActorRotation(SpawnRot);
 }
+
 void UEnemyIdleState::OnExit()
 {
     Super::OnExit();
