@@ -1,9 +1,10 @@
-#include "AI/BTTask_SetState.h"
-#include "Enemy/PSEnemy.h"
+#include "AI/BTTask_BossSetState.h"
+#include "Enemy/PSBossEnemy.h"
 #include "Enemy/PSEnemyAIController.h"
-#include "StateMachine/EnemyStateMachine.h"
+#include "StateMachine/BossEnemyStateMachine.h"
 #include "State/EnemyIdleState.h"
-#include "State/EnemyAttackState.h"
+#include "State/BossEnemyAttackState.h"
+#include "State/BossEnemySkillAttackState.h"
 #include "State/EnemyChaseState.h"
 #include "State/EnemyDieState.h"
 #include "State/EnemyInvestigateState.h"
@@ -11,52 +12,56 @@
 #include "State/EnemyHitState.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
-UBTTask_SetState::UBTTask_SetState()
+UBTTask_BossSetState::UBTTask_BossSetState()
 {
-    NodeName = TEXT("Set Enemy FSM State");
+	NodeName = TEXT("Set Boss Enemy FSM State");
 }
 
-EBTNodeResult::Type UBTTask_SetState::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+EBTNodeResult::Type UBTTask_BossSetState::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	AAIController* AICon = OwnerComp.GetAIOwner();
 	if (!AICon)
 		return EBTNodeResult::Failed;
 
-	APSEnemy* EnemyChar = Cast<APSEnemy>(AICon->GetPawn());
+	APSBossEnemy* EnemyChar = Cast<APSBossEnemy>(AICon->GetPawn());
 	if (!EnemyChar)
 		return EBTNodeResult::Failed;
 
-	UEnemyStateMachine* StateMachine = Cast<UEnemyStateMachine>(EnemyChar->GetStateMachine());
+	UBossEnemyStateMachine* StateMachine = Cast<UBossEnemyStateMachine>(EnemyChar->GetStateMachine());
 	if (!StateMachine)
 		return EBTNodeResult::Failed;
 
 	switch (TargetState)
 	{
-	case EEnemyStateType::Idle:
+	case EBossEnemyStateType::Idle:
 		StateMachine->ChangeState(StateMachine->GetIdleState());
 		break;
 
-	case EEnemyStateType::Chase:
+	case EBossEnemyStateType::Chase:
 		StateMachine->ChangeState(StateMachine->GetChaseState());
 		break;
 
-	case EEnemyStateType::Attack:
-		StateMachine->ChangeState(StateMachine->GetAttackState());
+	case EBossEnemyStateType::Attack:
+		StateMachine->ChangeState(StateMachine->GetBossAttackState());
 		break;
 
-	case EEnemyStateType::Investigate:
+	case EBossEnemyStateType::Skill:
+		StateMachine->ChangeState(StateMachine->GetBossSkillAttackState());
+		break;
+
+	case EBossEnemyStateType::Investigate:
 		StateMachine->ChangeState(StateMachine->GetInvestigateState());
 		break;
 
-	case EEnemyStateType::Return:
+	case EBossEnemyStateType::Return:
 		StateMachine->ChangeState(StateMachine->GetReturnState());
 		break;
 
-	case EEnemyStateType::Die:
+	case EBossEnemyStateType::Die:
 		StateMachine->ChangeState(StateMachine->GetDieState());
 		break;
 
-	case EEnemyStateType::Hit:
+	case EBossEnemyStateType::Hit:
 		StateMachine->ChangeState(StateMachine->GetHitState());
 		break;
 

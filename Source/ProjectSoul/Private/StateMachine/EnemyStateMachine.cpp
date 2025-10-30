@@ -71,12 +71,6 @@ UEnemyStateBase* UEnemyStateMachine::GetCurrentState() const
 	return Cast<UEnemyStateBase>(CurrentState);
 }
 
-
-APSEnemy* UEnemyStateMachine::GetOwnerEnemy() const
-{
-	return Cast<APSEnemy>(OwnerCharacter);
-}
-
 UEnemyChaseState* UEnemyStateMachine::GetChaseState() const 
 {
 	return ChaseState;

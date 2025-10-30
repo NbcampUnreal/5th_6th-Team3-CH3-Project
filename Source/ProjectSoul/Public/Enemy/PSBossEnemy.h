@@ -19,6 +19,8 @@ protected:
 
 	virtual void Tick(float DeltaTime) override;
 
+	virtual UStateMachineBase* CreateStateMachine() override;
+
 private:
 	void UpdateHealthWidget();
 

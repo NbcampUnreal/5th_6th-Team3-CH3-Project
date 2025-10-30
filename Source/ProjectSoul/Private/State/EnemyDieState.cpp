@@ -7,7 +7,7 @@ void UEnemyDieState::OnEnter()
 {
     Super::OnEnter();
     UE_LOG(LogTemp, Warning, TEXT("Enemy : Die state."));
-    APSEnemy* Enemy = GetEnemyCharacter();//inefficiency
+    APSEnemy* Enemy = Cast<APSEnemy>(GetEnemyCharacter());//inefficiency
     if (!Enemy) return;
     Enemy->SetIsDead(true);
 

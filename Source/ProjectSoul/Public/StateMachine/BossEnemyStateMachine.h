@@ -2,11 +2,12 @@
 
 #include "CoreMinimal.h"
 #include "StateMachine/StateMachineBase.h"
-#include "EnemyStateMachine.generated.h"
+#include "BossEnemyStateMachine.generated.h"
 
 class UEnemyStateBase;
 class UEnemyChaseState;
-class UEnemyAttackState;
+class UBossEnemyAttackState;
+class UBossEnemySkillAttackState;
 class UEnemyDieState;
 class UEnemyIdleState;
 class UEnemyInvestigateState;
@@ -14,7 +15,7 @@ class UEnemyReturnState;
 class UEnemyHitState;
 
 UCLASS()
-class PROJECTSOUL_API UEnemyStateMachine : public UStateMachineBase
+class PROJECTSOUL_API UBossEnemyStateMachine : public UStateMachineBase
 {
 	GENERATED_BODY()
 
@@ -27,7 +28,9 @@ public:
 
 	UEnemyChaseState* GetChaseState() const;
 
-	UEnemyAttackState* GetAttackState() const;
+	UBossEnemyAttackState* GetBossAttackState() const;
+
+	UBossEnemySkillAttackState* GetBossSkillAttackState() const;
 
 	UEnemyDieState* GetDieState() const;
 
@@ -44,7 +47,10 @@ protected:
 	TObjectPtr<UEnemyChaseState> ChaseState;
 
 	UPROPERTY()
-	TObjectPtr <UEnemyAttackState> AttackState;
+	TObjectPtr <UBossEnemyAttackState> BossAttackState;
+
+	UPROPERTY()
+	TObjectPtr <UBossEnemySkillAttackState> BossSkillAttackState;
 
 	UPROPERTY()
 	TObjectPtr<UEnemyDieState> DieState;

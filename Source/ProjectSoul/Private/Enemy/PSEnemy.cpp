@@ -49,7 +49,7 @@ APSEnemy::APSEnemy()
 void APSEnemy::BeginPlay()
 {
 	Super::BeginPlay();
-	StateMachine = NewObject<UEnemyStateMachine>(this);
+	StateMachine = CreateStateMachine();
 	if (StateMachine)
 	{
 		StateMachine->Initialize(this);
@@ -143,7 +143,12 @@ void APSEnemy::OnWeaponOverlap(
 	);
 }
 
-UEnemyStateMachine* APSEnemy::GetStateMachine()
+UStateMachineBase* APSEnemy::CreateStateMachine()
+{
+	return NewObject<UEnemyStateMachine>(this);
+}
+
+UStateMachineBase* APSEnemy::GetStateMachine()
 {
 	return StateMachine;
 }

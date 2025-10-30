@@ -8,6 +8,7 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHit, AActor*, Monster, float, Damage);
 
 class UEnemyStateMachine;
+class UStateMachineBase;
 class UWidgetComponent;
 class UBoxComponent;
 
@@ -35,7 +36,7 @@ public:
 
 	void SetIsDead(bool bIsdead);
 
-	UEnemyStateMachine* GetStateMachine();
+	virtual UStateMachineBase* GetStateMachine();
 
 	UAnimMontage* GetAttackMontage() const;
 
@@ -61,6 +62,8 @@ protected:
 	virtual void BeginPlay() override;
 
 	virtual void Tick(float DeltaTime) override;
+
+	virtual UStateMachineBase* CreateStateMachine();
 
 private:
 	void UpdateHealthWidget();
@@ -88,7 +91,7 @@ protected:
 	FName AttachSocketNameR;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Targeting")
-	TObjectPtr<UEnemyStateMachine> StateMachine;
+	TObjectPtr<UStateMachineBase> StateMachine;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
 	TObjectPtr<UWidgetComponent> HealthWidgetComponent;
