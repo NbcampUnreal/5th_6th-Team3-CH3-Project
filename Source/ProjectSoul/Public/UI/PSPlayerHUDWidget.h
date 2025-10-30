@@ -7,7 +7,8 @@
 class USizeBox;
 class UProgressBar;
 class UImage;
-class UOverlay;
+class UTextBlock;
+class UVerticalBox;
 class APSCharacter;
 
 UCLASS()
@@ -15,9 +16,6 @@ class PROJECTSOUL_API UPSPlayerHUDWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
-public:
-	UFUNCTION()
-	void ShowHitWidget(AActor* LockOnMonster, float Damage);
 
 protected:
 	virtual void NativeOnInitialized() override;
@@ -35,15 +33,18 @@ private:
 	void OnUpdateStaminaBar(float CurrentValue, float MaxValue);
 
 	UFUNCTION()
-	void ShowLockOn(AActor* LockOnMonster);
+	void ShowLockOnWidget(AActor* LockOnMonster);
 
-	void HiddenLockOn();
+	UFUNCTION()
+	void ShowHitWidget(AActor* LockOnMonster, float Damage);
+
+	void ShowBossStatusWidget();
+
+	void HiddenBossStatusWidget();
+
+	void HiddenLockOnWidget();
 
 	void UpdateLockOnPosition();
-
-	//void ShowHit(AActor* LockOnMonster);
-
-	void HiddenHit();
 
 	APSCharacter* GetCharacter();
 
@@ -73,6 +74,17 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UImage> LockOnImage;
+
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UVerticalBox> BossStatsVerticalBox;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> BossName;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UProgressBar> BossHPBar;
+
 
 	FTimerHandle LockOnPositionHandle;
 	AActor* LockOnTarget;
