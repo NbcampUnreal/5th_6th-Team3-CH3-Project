@@ -1,5 +1,6 @@
 #include "UI/PSPlayerHUDWidget.h"
 #include "UI/PSMonsterHitWidget.h"
+#include "UI/PSTriggerActor.h"
 #include "Components/ProgressBar.h"
 #include "Components/SizeBox.h"
 #include "Components/Image.h"
@@ -12,11 +13,13 @@
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Kismet/GameplayStatics.h"
 
+
 void UPSPlayerHUDWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 
 	SizeBoxMultiplier = 3.0f;
+	HiddenBossStatusWidget();
 	//RunTime Load
 	UClass* WidgetClass = LoadClass<UUserWidget>(nullptr, TEXT("/Game/Blueprints/UI/WBP_PSMonsterHitWidget.WBP_PSMonsterHitWidget_C"));
 	if (WidgetClass)
@@ -55,6 +58,14 @@ void UPSPlayerHUDWidget::NativePreConstruct()
 			{
 				Boss->OnHit.AddDynamic(this, &UPSPlayerHUDWidget::OnUpdateBossHPBar);
 			}
+		}
+	}
+
+	if (AActor* Actor = UGameplayStatics::GetActorOfClass(GetWorld(), APSTriggerActor::StaticClass()))
+	{
+		if (APSTriggerActor* TriggerActor = Cast<APSTriggerActor>(Actor))
+		{
+			TriggerActor->OnTrigger.AddDynamic(this, &UPSPlayerHUDWidget::ShowBossStatusWidget);
 		}
 	}
 }
@@ -133,15 +144,15 @@ void UPSPlayerHUDWidget::HiddenLockOnWidget()
 //Enemy Delegate add
 void UPSPlayerHUDWidget::ShowHitWidget(AActor* LockOnMonster, float Damage)
 {
-	UE_LOG(LogTemp, Warning, TEXT("ShowHit Test"));
 	APlayerController* PC = GetWorld()->GetFirstPlayerController();
 
 	UPSMonsterHitWidget* HitWidgetInstance = CreateWidget<UPSMonsterHitWidget>(PC, MonsterHitWidgetClass);
 	HitWidgetInstance->ShowHitWidget(LockOnMonster, Damage);
 }
 
-void UPSPlayerHUDWidget::ShowBossStatusWidget()
+void UPSPlayerHUDWidget::ShowBossStatusWidget() 
 {
+	UE_LOG(LogTemp, Warning, TEXT("ShowBossStatusWidget On"));
 	BossStatsVerticalBox->SetVisibility(ESlateVisibility::Visible);
 	BossName->SetText(FText::FromString(FString::Printf(TEXT(""))));
 	BossHPBar->SetPercent(1.0f);

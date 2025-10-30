@@ -38,12 +38,13 @@ private:
 	UFUNCTION()
 	void ShowHitWidget(AActor* LockOnMonster, float Damage);
 
+	UFUNCTION()
 	void ShowBossStatusWidget();
-
-	void HiddenBossStatusWidget();
 
 	UFUNCTION()
 	void OnUpdateBossHPBar(AActor* Boss, float Damage);
+
+	void HiddenBossStatusWidget();
 
 	void HiddenLockOnWidget();
 
