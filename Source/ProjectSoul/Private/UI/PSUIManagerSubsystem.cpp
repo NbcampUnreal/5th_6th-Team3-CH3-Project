@@ -1,6 +1,8 @@
 #include "UI/PSUIManagerSubsystem.h"
 #include "Blueprint/UserWidget.h"
 #include "UI/PSPlayerHUDWidget.h"
+#include "Gameplay/PSGameModeBase.h"
+#include "Kismet/GameplayStatics.h"
 
 UPSUIManagerSubsystem::UPSUIManagerSubsystem()
 {
@@ -25,6 +27,11 @@ UPSUIManagerSubsystem::UPSUIManagerSubsystem()
 	if (MainMenuWidgetBPClass.Succeeded())
 	{
 		GameOverWidgetClass = GameOverWidgetBPClass.Class;
+	}
+
+	if (APSGameModeBase* PSGameMode = Cast<APSGameModeBase>(UGameplayStatics::GetGameMode(this)))
+	{
+		PSGameMode->OnGameOver.AddDynamic(this, &UPSUIManagerSubsystem::ShowCurrentWidget);
 	}
 }
 

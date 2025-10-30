@@ -1,6 +1,7 @@
 #include "Gameplay/PSPlayerController.h"
 #include "Blueprint/UserWidget.h"
 #include "EnhancedInputSubsystems.h"
+#include "UI/PSUIManagerSubsystem.h"
 
 APSPlayerController::APSPlayerController()
 {
@@ -24,4 +25,7 @@ void APSPlayerController::BeginPlay()
 
 	PlayerCameraManager->ViewPitchMin = -70.f;
 	PlayerCameraManager->ViewPitchMax = 60.f;
+
+	UPSUIManagerSubsystem* UIManagerSubsystem =  GetGameInstance()->GetSubsystem<UPSUIManagerSubsystem>();
+	UIManagerSubsystem->ShowCurrentWidget(false);
 }
