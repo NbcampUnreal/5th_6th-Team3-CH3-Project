@@ -42,6 +42,9 @@ private:
 
 	void HiddenBossStatusWidget();
 
+	UFUNCTION()
+	void OnUpdateBossHPBar(AActor* Boss, float Damage);
+
 	void HiddenLockOnWidget();
 
 	void UpdateLockOnPosition();
@@ -49,7 +52,6 @@ private:
 	APSCharacter* GetCharacter();
 
 public:
-	//test
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
 	TSubclassOf<UUserWidget> MonsterHitWidgetClass;
 
