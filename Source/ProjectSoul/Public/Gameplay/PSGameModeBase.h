@@ -16,7 +16,7 @@ public:
     void StartGame();
 
     UFUNCTION(BlueprintCallable, Category = "Game")
-    void EndGame();
+    void EndGame(bool bIsClear);
 
     UFUNCTION(BlueprintCallable, Category = "Game")
     void RestartGame();

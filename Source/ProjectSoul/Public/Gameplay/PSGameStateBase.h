@@ -19,6 +19,9 @@ public:
     bool bIsGameOver;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Game")
+    bool bIsGameClear;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Game")
     int32 CurrentScore;
 
 public:
