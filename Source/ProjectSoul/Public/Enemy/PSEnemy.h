@@ -35,9 +35,6 @@ public:
 
 	void SetIsDead(bool bIsdead);
 
-	UFUNCTION(BlueprintPure, Category = "Dead")
-	virtual bool GetIsDead() const;
-
 	UEnemyStateMachine* GetStateMachine();
 
 	UAnimMontage* GetAttackMontage() const;
@@ -45,6 +42,9 @@ public:
 	UAnimMontage* GetDieMontage() const;
 
 	UAnimMontage* GetHitMontage() const;
+
+	UFUNCTION(BlueprintPure, Category = "Dead")
+	virtual bool GetIsDead() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Notify")
 	virtual void DisableWeaponCollisionNotify();
@@ -59,11 +59,14 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+
 	virtual void Tick(float DeltaTime) override;
 
 private:
 	void UpdateHealthWidget();
+
 	void ShowHitHealthWidget();
+
 	void HiddenHitHealthWidget();
 
 
@@ -119,7 +122,10 @@ protected:
 
 private:
 	bool bIsDead;
+
 	bool bIsTargeted;
+
 	bool bIsHit;
+
 	FTimerHandle ShowMonsterHPTimer;
 };
