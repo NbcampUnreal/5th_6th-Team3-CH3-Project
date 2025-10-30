@@ -113,6 +113,18 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Move")
 	float ChaseSpeed;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Collision")
+	FVector WeaponR_BoxExtent = FVector(29.0f, 129.0f, 12.0f);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Collision")
+	FVector WeaponR_RelativeLocation = FVector(0.0f, 97.0f, 0.0f);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Collision")
+	FVector WeaponL_BoxExtent = FVector(29.0f, 129.0f, 12.0f);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Collision")
+	FVector WeaponL_RelativeLocation = FVector(0.0f, 97.0f, 0.0f);
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Montage")
 	TObjectPtr<UAnimMontage> AttackMontage;
 

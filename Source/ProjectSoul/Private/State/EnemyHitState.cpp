@@ -1,6 +1,7 @@
 #include "State/EnemyHitState.h"
 #include "Enemy/PSEnemy.h"
 #include "Enemy/PSEnemyAIController.h"
+#include "Navigation/PathFollowingComponent.h"
 
 void UEnemyHitState::OnEnter()
 {
@@ -8,7 +9,6 @@ void UEnemyHitState::OnEnter()
     UE_LOG(LogTemp, Warning, TEXT("Enemy : Hit state."));
     ACharacter* Enemy = GetEnemyCharacter();
     if (!Enemy) return;
-
     UAnimInstance* Anim = Enemy->GetMesh()->GetAnimInstance();
     UAnimMontage* Montage = Cast<APSEnemy>(Enemy)->GetHitMontage();
     Anim->StopAllMontages(0.1f);
