@@ -18,7 +18,6 @@ void UEnemyAttackState::OnEnter()
     }
     BlackboardComp->SetValueAsBool(TEXT("bIsAttacking"), true);
     AActor* Target = Cast<AActor>(BlackboardComp->GetValueAsObject(TEXT("TargetActor")));
-    EnemyAIController->SetFocus(Target);
 
     UAnimInstance* Anim = Enemy->GetMesh()->GetAnimInstance();
     UAnimMontage* Montage = Cast<APSEnemy>(Enemy) ->GetAttackMontage();

@@ -17,14 +17,28 @@ void UBossEnemyAttackState::OnEnter()
     }
     BlackboardComp->SetValueAsBool(TEXT("bIsAttacking"), true);
     AActor* Target = Cast<AActor>(BlackboardComp->GetValueAsObject(TEXT("TargetActor")));
-    EnemyAIController->SetFocus(Target);
     UAnimInstance* Anim = Enemy->GetMesh()->GetAnimInstance();
+
+    int32 RandIndex = FMath::RandRange(0, 2);
     UAnimMontage* Montage1 = Cast<APSEnemy>(Enemy)->GetAttackMontage();
-    UAnimMontage* Montage2 = Cast<APSBossEnemy>(Enemy)->GetAttackMontage();
-    UAnimMontage* Montage3 = Cast<APSBossEnemy>(Enemy)->GetAttackMontage();
-    Anim->Montage_Play(Montage1);
+    UAnimMontage* Montage2 = Cast<APSBossEnemy>(Enemy)->GetAttack1Montage();
+    UAnimMontage* Montage3 = Cast<APSBossEnemy>(Enemy)->GetAttack2Montage();
+    UAnimMontage* MontageToPlay = nullptr;
+    if (RandIndex == 0 && Montage1)
+    {
+        MontageToPlay = Montage1;
+    }
+    else if (RandIndex == 1 && Montage2)
+    {
+        MontageToPlay = Montage2;
+    }
+    else if (RandIndex == 2 && Montage3)
+    {
+        MontageToPlay = Montage3;
+    }
+    Anim->Montage_Play(MontageToPlay);
     EndDelegate.BindUObject(this, &UBossEnemyAttackState::OnMontageEnded);
-    Anim->Montage_SetEndDelegate(EndDelegate, Montage1);
+    Anim->Montage_SetEndDelegate(EndDelegate, MontageToPlay);
 }
 
 void UBossEnemyAttackState::OnExit()
@@ -34,7 +48,7 @@ void UBossEnemyAttackState::OnExit()
 
 void UBossEnemyAttackState::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
-    ACharacter* Enemy = GetEnemyCharacter();//inefficiency
+    ACharacter* Enemy = GetEnemyCharacter();
     if (!Enemy) return;
     AAIController* EnemyAIController = Cast<AAIController>(Enemy->GetController());
     UBlackboardComponent* BlackboardComp = EnemyAIController ? EnemyAIController->GetBlackboardComponent() : nullptr;

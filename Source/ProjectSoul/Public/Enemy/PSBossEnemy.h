@@ -14,6 +14,10 @@ public:
 
 	void ShowHealthWidget(bool bShow);
 
+	UAnimMontage* GetAttack1Montage() const;
+
+	UAnimMontage* GetAttack2Montage() const;
+
 protected:
 	virtual void BeginPlay();
 

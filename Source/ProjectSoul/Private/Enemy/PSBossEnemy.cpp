@@ -27,6 +27,15 @@ UStateMachineBase* APSBossEnemy::CreateStateMachine()
 	return NewObject<UBossEnemyStateMachine>(this);
 }
 
+UAnimMontage* APSBossEnemy::GetAttack1Montage() const
+{
+	return Attack_1_Montage;
+}
+
+UAnimMontage* APSBossEnemy::GetAttack2Montage() const
+{
+	return Attack_2_Montage;
+}
 void APSBossEnemy::ShowHealthWidget(bool bShow)
 {
 
