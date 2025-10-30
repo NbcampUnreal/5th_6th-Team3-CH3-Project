@@ -10,24 +10,19 @@ APSGameModeBase::APSGameModeBase()
 {
     bIsGamePlaying = false;
     bIsGameOver = false;
-    RestartDelay = 3.0f;
 }
 
 void APSGameModeBase::BeginPlay()
 {
     Super::BeginPlay();
+
     StartGame();
 
     TArray<AActor*> FoundEnemies;
     UGameplayStatics::GetAllActorsOfClass(GetWorld(), APSEnemy::StaticClass(), FoundEnemies);
     RemainingEnemies = FoundEnemies.Num();
-    UE_LOG(LogTemp, Warning, TEXT("Enemy Count: %d"), RemainingEnemies);
 
-    FTimerHandle ScoreTimer;
-    GetWorldTimerManager().SetTimer(ScoreTimer, [this]()
-        {
-            AddPlayerScore(100);
-        }, 3.0f, false);
+    UE_LOG(LogTemp, Warning, TEXT("Enemy Count: %d"), RemainingEnemies);
 }
 
 void APSGameModeBase::StartGame()
@@ -40,12 +35,13 @@ void APSGameModeBase::StartGame()
     {
         PSState->bIsGamePlaying = true;
         PSState->bIsGameOver = false;
+        PSState->bIsGameClear = false;
     }
-    GetGameInstance()->GetSubsystem<UPSUIManagerSubsystem>()->ShowCurrentWidget(bIsGameOver);
-    UE_LOG(LogTemp, Warning, TEXT("GameStart"));
+
+    UE_LOG(LogTemp, Warning, TEXT("Game Start"));
 }
 
-void APSGameModeBase::EndGame()
+void APSGameModeBase::EndGame(bool bIsClear)
 {
     if (bIsGameOver)
         return;
@@ -58,18 +54,18 @@ void APSGameModeBase::EndGame()
     {
         PSState->bIsGamePlaying = false;
         PSState->bIsGameOver = true;
+        PSState->bIsGameClear = bIsClear;
     }
 
-    UE_LOG(LogTemp, Warning, TEXT("GameOver"));
+    UE_LOG(LogTemp, Warning, TEXT("Game Over | Result: %s"), bIsClear ? TEXT("CLEAR") : TEXT("FAIL"));
 
-    GetGameInstance()->GetSubsystem<UPSUIManagerSubsystem>()->ShowCurrentWidget(bIsGameOver);
     FTimerHandle RestartTimer;
-    //GetWorldTimerManager().SetTimer(RestartTimer, this, &APSGameModeBase::RestartGame, RestartDelay, false);
+    GetWorldTimerManager().SetTimer(RestartTimer, this,
+        &APSGameModeBase::RestartGame, RestartDelay, false);
 }
 
 void APSGameModeBase::RestartGame()
 {
-    UE_LOG(LogTemp, Warning, TEXT("ReStart"));
     UGameplayStatics::OpenLevel(this, FName(*GetWorld()->GetName()), false);
 }
 
@@ -95,7 +91,7 @@ void APSGameModeBase::OnEnemyKilled(int32 EnemyScore)
 void APSGameModeBase::OnPlayerKilled()
 {
     UE_LOG(LogTemp, Warning, TEXT("Player Dead - Game Over"));
-    EndGame();
+    EndGame(false);
 }
 
 void APSGameModeBase::CheckClearCondition()
@@ -103,6 +99,6 @@ void APSGameModeBase::CheckClearCondition()
     if (RemainingEnemies <= 0)
     {
         UE_LOG(LogTemp, Warning, TEXT("All Enemies Dead - Mission Clear!"));
-        EndGame();
+        EndGame(true);
     }
 }

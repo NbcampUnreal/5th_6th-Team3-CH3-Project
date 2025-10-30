@@ -454,7 +454,7 @@ void APSCharacter::OnDie()
 
 	if (APSGameModeBase* GM = Cast<APSGameModeBase>(UGameplayStatics::GetGameMode(this)))
 	{
-		GM->EndGame();
+		GM->EndGame(false);
 	}
 }
 
