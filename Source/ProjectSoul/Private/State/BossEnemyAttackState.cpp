@@ -1,12 +1,11 @@
-#include "State/EnemyAttackState.h"
-#include "Enemy/PSEnemy.h"
+#include "State/BossEnemyAttackState.h"
+#include "Enemy/PSBossEnemy.h"
 #include "Enemy/PSEnemyAIController.h"
-#include "BehaviorTree/BlackboardComponent.h"
 
-void UEnemyAttackState::OnEnter()
+void UBossEnemyAttackState::OnEnter()
 {
     Super::OnEnter();
-    UE_LOG(LogTemp, Warning, TEXT("Enemy : Attack state."));
+    UE_LOG(LogTemp, Warning, TEXT("Enemy : BossAttack state."));
     ACharacter* Enemy = GetEnemyCharacter();
     if (!Enemy) return;
     AAIController* EnemyAIController = Cast<AAIController>(Enemy->GetController());
@@ -18,23 +17,38 @@ void UEnemyAttackState::OnEnter()
     }
     BlackboardComp->SetValueAsBool(TEXT("bIsAttacking"), true);
     AActor* Target = Cast<AActor>(BlackboardComp->GetValueAsObject(TEXT("TargetActor")));
-
     UAnimInstance* Anim = Enemy->GetMesh()->GetAnimInstance();
-    UAnimMontage* Montage = Cast<APSEnemy>(Enemy) ->GetAttackMontage();
-    Anim->Montage_Play(Montage);
-    EndDelegate.BindUObject(this, &UEnemyAttackState::OnMontageEnded);
-    Anim->Montage_SetEndDelegate(EndDelegate, Montage);
+
+    int32 RandIndex = FMath::RandRange(0, 2);
+    UAnimMontage* Montage1 = Cast<APSEnemy>(Enemy)->GetAttackMontage();
+    UAnimMontage* Montage2 = Cast<APSBossEnemy>(Enemy)->GetAttack1Montage();
+    UAnimMontage* Montage3 = Cast<APSBossEnemy>(Enemy)->GetAttack2Montage();
+    UAnimMontage* MontageToPlay = nullptr;
+    if (RandIndex == 0 && Montage1)
+    {
+        MontageToPlay = Montage1;
+    }
+    else if (RandIndex == 1 && Montage2)
+    {
+        MontageToPlay = Montage2;
+    }
+    else if (RandIndex == 2 && Montage3)
+    {
+        MontageToPlay = Montage3;
+    }
+    Anim->Montage_Play(MontageToPlay);
+    EndDelegate.BindUObject(this, &UBossEnemyAttackState::OnMontageEnded);
+    Anim->Montage_SetEndDelegate(EndDelegate, MontageToPlay);
 }
 
-void UEnemyAttackState::OnExit()
+void UBossEnemyAttackState::OnExit()
 {
     Super::OnExit();
 }
 
-void UEnemyAttackState::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+void UBossEnemyAttackState::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
-    
-    ACharacter* Enemy = GetEnemyCharacter();//inefficiency
+    ACharacter* Enemy = GetEnemyCharacter();
     if (!Enemy) return;
     AAIController* EnemyAIController = Cast<AAIController>(Enemy->GetController());
     UBlackboardComponent* BlackboardComp = EnemyAIController ? EnemyAIController->GetBlackboardComponent() : nullptr;

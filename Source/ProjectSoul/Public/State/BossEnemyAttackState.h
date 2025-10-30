@@ -2,10 +2,10 @@
 
 #include "CoreMinimal.h"
 #include "State/EnemyStateBase.h"
-#include "BossEnemySkillAttackState.generated.h"
+#include "BossEnemyAttackState.generated.h"
 
 UCLASS()
-class PROJECTSOUL_API UBossEnemySkillAttackState : public UEnemyStateBase
+class PROJECTSOUL_API UBossEnemyAttackState : public UEnemyStateBase
 {
 	GENERATED_BODY()
 

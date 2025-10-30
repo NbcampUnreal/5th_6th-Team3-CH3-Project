@@ -4,8 +4,8 @@
 #include "State/StateBase.h"
 #include "EnemyStateBase.generated.h"
 
-class UEnemyStateMachine;
-class APSEnemy;
+class UStateMachineBase;
+class APSCharacter;
 
 UCLASS()
 class PROJECTSOUL_API UEnemyStateBase : public UStateBase
@@ -19,7 +19,7 @@ public:
 	virtual void OnExit() override;
 
 protected:
-	UEnemyStateMachine* GetEnemyStateMachine() const;
+	UStateMachineBase* GetEnemyStateMachine() const;
 
-	APSEnemy* GetEnemyCharacter() const;
+	ACharacter* GetEnemyCharacter() const;
 };

@@ -14,10 +14,16 @@ public:
 
 	void ShowHealthWidget(bool bShow);
 
+	UAnimMontage* GetAttack1Montage() const;
+
+	UAnimMontage* GetAttack2Montage() const;
+
 protected:
 	virtual void BeginPlay();
 
 	virtual void Tick(float DeltaTime) override;
+
+	virtual UStateMachineBase* CreateStateMachine() override;
 
 private:
 	void UpdateHealthWidget();

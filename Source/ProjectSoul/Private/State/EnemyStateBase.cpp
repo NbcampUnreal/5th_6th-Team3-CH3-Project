@@ -13,16 +13,16 @@ void UEnemyStateBase::OnExit()
 {
 }
 
-UEnemyStateMachine* UEnemyStateBase::GetEnemyStateMachine() const
+UStateMachineBase* UEnemyStateBase::GetEnemyStateMachine() const
 {
-	return Cast<UEnemyStateMachine>(StateMachine);
+	return StateMachine;
 }
 
-APSEnemy* UEnemyStateBase::GetEnemyCharacter() const
+ACharacter* UEnemyStateBase::GetEnemyCharacter() const
 {
-	if (UEnemyStateMachine* EnemyStateMachine = GetEnemyStateMachine())
+	if (UStateMachineBase* EnemyStateMachine = GetEnemyStateMachine())
 	{
-		return EnemyStateMachine->GetOwnerEnemy();
+		return EnemyStateMachine->GetOwnerCharacter();
 	}
 
 	return nullptr;
