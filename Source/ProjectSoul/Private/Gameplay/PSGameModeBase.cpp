@@ -39,6 +39,7 @@ void APSGameModeBase::StartGame()
     }
 
     UE_LOG(LogTemp, Warning, TEXT("Game Start"));
+    OnGameOver.Broadcast(bIsGameOver);
 }
 
 void APSGameModeBase::EndGame(bool bIsClear)
@@ -58,10 +59,11 @@ void APSGameModeBase::EndGame(bool bIsClear)
     }
 
     UE_LOG(LogTemp, Warning, TEXT("Game Over | Result: %s"), bIsClear ? TEXT("CLEAR") : TEXT("FAIL"));
+    OnGameOver.Broadcast(bIsClear);
 
-    FTimerHandle RestartTimer;
+    /*FTimerHandle RestartTimer;
     GetWorldTimerManager().SetTimer(RestartTimer, this,
-        &APSGameModeBase::RestartGame, RestartDelay, false);
+        &APSGameModeBase::RestartGame, RestartDelay, false);*/
 }
 
 void APSGameModeBase::RestartGame()
