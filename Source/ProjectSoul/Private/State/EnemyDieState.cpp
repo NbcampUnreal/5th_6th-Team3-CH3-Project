@@ -1,5 +1,7 @@
 #include "State/EnemyDieState.h"
 #include "Enemy/PSEnemy.h"
+#include "Enemy/PSEnemyAIController.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 void UEnemyDieState::OnEnter()
 {
@@ -8,6 +10,23 @@ void UEnemyDieState::OnEnter()
     APSEnemy* Enemy = GetEnemyCharacter();//inefficiency
     if (!Enemy) return;
     Enemy->SetIsDead(true);
+
+    AAIController* AIController = Cast<AAIController>(Enemy->GetController());
+    if (AIController)
+        AIController->StopMovement();
+
+    Enemy->GetCharacterMovement()->DisableMovement();
+
+    USkeletalMeshComponent* Mesh = Enemy->GetMesh();
+    if (Mesh)
+    {
+        Mesh->SetCollisionProfileName(TEXT("Ragdoll"));
+        Mesh->SetSimulatePhysics(true);
+        Mesh->WakeAllRigidBodies();
+        Mesh->SetAllBodiesBelowSimulatePhysics(TEXT("pelvis"), true);
+        Mesh->bBlendPhysics = true;
+    }
+
     Enemy->GetWorldTimerManager().SetTimer(
         DestroyTimerHandle,
         [Enemy]()
@@ -17,8 +36,8 @@ void UEnemyDieState::OnEnter()
                 Enemy->Destroy();
             }
         },
-        1.0f,
-        false 
+        3.0f,
+        false
     );
 }
 

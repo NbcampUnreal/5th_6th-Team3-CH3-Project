@@ -9,7 +9,10 @@ void UEnemyChaseState::OnEnter()
     Super::OnEnter();
     UE_LOG(LogTemp, Warning, TEXT("Enemy : Chase state."));
     ACharacter* Enemy = GetEnemyCharacter();//inefficiency
-    if (!Enemy) return;
+    if (!Enemy)
+    {
+        return;
+    }
     Cast<APSEnemy>(Enemy)->SetMovementSpeed(Cast<APSEnemy>(Enemy)->GetChaseSpeed());
     AAIController* EnemyAIController= Cast<AAIController>(Enemy->GetController());
     UBlackboardComponent* BlackboardComp = EnemyAIController ? EnemyAIController->GetBlackboardComponent() : nullptr;
