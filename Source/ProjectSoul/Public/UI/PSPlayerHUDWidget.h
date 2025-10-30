@@ -22,6 +22,8 @@ public:
 protected:
 	virtual void NativeOnInitialized() override;
 
+	virtual void NativePreConstruct() override;
+
 private:
 	UFUNCTION()
 	void OnUpdateHPBar(float CurrentValue, float MaxValue);

@@ -14,16 +14,27 @@ void UPSPlayerHUDWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 
-	LockOnTarget = nullptr;
 	SizeBoxMultiplier = 3.0f;
+	//RunTime Load
+	UClass* WidgetClass = LoadClass<UUserWidget>(nullptr, TEXT("/Game/Blueprints/UI/WBP_PSMonsterHitWidget.WBP_PSMonsterHitWidget_C"));
+	if (WidgetClass)
+	{
+		MonsterHitWidgetClass = WidgetClass;
+	}
+}
+
+void UPSPlayerHUDWidget::NativePreConstruct()
+{
+	LockOnTarget = nullptr;
 	bLockOn = false;
+	LockOnImage->SetVisibility(ESlateVisibility::Hidden);
 
 	if (APSCharacter* PSCharacter = GetCharacter())
 	{
 		PSCharacter->OnHPChanged.AddDynamic(this, &UPSPlayerHUDWidget::OnUpdateHPBar);
 		PSCharacter->OnMPChanged.AddDynamic(this, &UPSPlayerHUDWidget::OnUpdateMPBar);
 		PSCharacter->OnStaminaChanged.AddDynamic(this, &UPSPlayerHUDWidget::OnUpdateStaminaBar);
-	
+
 		PSCharacter->OnEnemyTarget.AddDynamic(this, &UPSPlayerHUDWidget::ShowLockOn);
 	}
 
@@ -32,16 +43,6 @@ void UPSPlayerHUDWidget::NativeOnInitialized()
 	{
 		// HUD에 등록 함수 제공
 		Enemy->OnHit.AddDynamic(this, &UPSPlayerHUDWidget::ShowHitWidget);
-	}
-
-
-	LockOnImage->SetVisibility(ESlateVisibility::Hidden);
-
-	//RunTime Load
-	UClass* WidgetClass = LoadClass<UUserWidget>(nullptr,TEXT("/Game/Blueprints/UI/WBP_PSMonsterHitWidget.WBP_PSMonsterHitWidget_C"));
-	if (WidgetClass)
-	{
-		MonsterHitWidgetClass = WidgetClass;
 	}
 }
 //player Delegate add
