@@ -4,6 +4,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
 #include "TimerManager.h"
+#include "UI/PSUIManagerSubsystem.h"
 
 APSGameModeBase::APSGameModeBase()
 {
@@ -40,7 +41,7 @@ void APSGameModeBase::StartGame()
         PSState->bIsGamePlaying = true;
         PSState->bIsGameOver = false;
     }
-
+    GetGameInstance()->GetSubsystem<UPSUIManagerSubsystem>()->ShowCurrentWidget(bIsGameOver);
     UE_LOG(LogTemp, Warning, TEXT("GameStart"));
 }
 
@@ -61,8 +62,9 @@ void APSGameModeBase::EndGame()
 
     UE_LOG(LogTemp, Warning, TEXT("GameOver"));
 
+    GetGameInstance()->GetSubsystem<UPSUIManagerSubsystem>()->ShowCurrentWidget(bIsGameOver);
     FTimerHandle RestartTimer;
-    GetWorldTimerManager().SetTimer(RestartTimer, this, &APSGameModeBase::RestartGame, RestartDelay, false);
+    //GetWorldTimerManager().SetTimer(RestartTimer, this, &APSGameModeBase::RestartGame, RestartDelay, false);
 }
 
 void APSGameModeBase::RestartGame()

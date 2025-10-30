@@ -2,6 +2,8 @@
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
 #include "Kismet/GameplayStatics.h"
+#include "Gameplay/PSGameModeBase.h"
+#include "Gameplay/PSGameStateBase.h"
 
 void UPSGameOverWidget::NativeOnInitialized()
 {
@@ -9,17 +11,23 @@ void UPSGameOverWidget::NativeOnInitialized()
 
 	MainMenuButton->OnClicked.AddDynamic(this, &UPSGameOverWidget::MainMenuButtonClick);
 	ReStartButton->OnClicked.AddDynamic(this, &UPSGameOverWidget::RestartButtonClick);
+}
 
+void UPSGameOverWidget::NativePreConstruct()
+{
 	UpdateUI();
 }
 
 void UPSGameOverWidget::UpdateUI()
 {
-	UTextBlock* TotalScore = Cast<UTextBlock>(GetWidgetFromName(TEXT("TotalScoreText")));
-	UTextBlock* KillCount = Cast<UTextBlock>(GetWidgetFromName(TEXT("KillCountText")));
+	TotalScoreText = Cast<UTextBlock>(GetWidgetFromName(TEXT("TotalScoreText")));
+	ClearOrDieText = Cast<UTextBlock>(GetWidgetFromName(TEXT("ClearOrDieText")));
 
-	TotalScore->SetText(FText::FromString(FString::Printf(TEXT("TotalScore : 100"))));
-	KillCount->SetText(FText::FromString(FString::Printf(TEXT("KillCount : 100"))));
+	APSGameStateBase* GameStateBase = Cast<APSGameStateBase>(GetWorld()->GetGameState());
+	if (GameStateBase)
+	{
+		TotalScoreText->SetText(FText::FromString(FString::Printf(TEXT("TotalScore : %d"), GameStateBase->CurrentScore)));
+	}
 }
 
 void UPSGameOverWidget::MainMenuButtonClick()
@@ -31,7 +39,9 @@ void UPSGameOverWidget::MainMenuButtonClick()
 
 void UPSGameOverWidget::RestartButtonClick()
 {
-	UGameplayStatics::OpenLevel(GetWorld(), "MainLevel");
+	APSGameModeBase* GameModeBase = Cast<APSGameModeBase>(GetWorld()->GetAuthGameMode());
+	GameModeBase->RestartGame();
+	//UGameplayStatics::OpenLevel(GetWorld(), "MainLevel");
 	RemoveFromParent();
 	UE_LOG(LogTemp, Warning, TEXT("RestartButtonClick"));
 }
