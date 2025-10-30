@@ -266,6 +266,11 @@ UAnimMontage* APSEnemy::GetHitMontage() const
 	return HitMontage;
 }
 
+FEnemyStats APSEnemy::GetEnemyStats() const
+{
+	return EnemyStats;
+}
+
 void APSEnemy::EnableWeaponCollisionNotify()
 {
 	WeaponCollisionR->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
