@@ -132,7 +132,14 @@ void APSEnemy::OnWeaponOverlap(
 	{
 		return;
 	}
+	AAIController* EnemyAIController = Cast<AAIController>(this->GetController());
+	UBlackboardComponent* BlackboardComp = EnemyAIController ? EnemyAIController->GetBlackboardComponent() : nullptr;
 
+	if (EnemyAIController == nullptr || BlackboardComp == nullptr)
+	{
+		return;
+	}
+	BlackboardComp->SetValueAsObject(TEXT("TargetActor"), OtherActor);
 	DamagedActors.Add(OtherActor);
 	UGameplayStatics::ApplyDamage(
 		OtherActor,

@@ -34,7 +34,7 @@ void UEnemyAttackState::OnExit()
 void UEnemyAttackState::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
     
-    ACharacter* Enemy = GetEnemyCharacter();//inefficiency
+    ACharacter* Enemy = GetEnemyCharacter();
     if (!Enemy) return;
     AAIController* EnemyAIController = Cast<AAIController>(Enemy->GetController());
     UBlackboardComponent* BlackboardComp = EnemyAIController ? EnemyAIController->GetBlackboardComponent() : nullptr;
