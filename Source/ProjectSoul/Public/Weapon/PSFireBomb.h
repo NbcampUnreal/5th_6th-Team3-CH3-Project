@@ -41,6 +41,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon|Effects")
 	UParticleSystem* ExplosionParticle;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon|Effects")
+	USoundBase* ExplosionSound;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon|FireBomb")
 	float FireBombDamage;
 

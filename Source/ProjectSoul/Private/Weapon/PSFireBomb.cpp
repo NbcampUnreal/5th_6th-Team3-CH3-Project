@@ -26,8 +26,6 @@ APSFireBomb::APSFireBomb() :
 		StaticMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
 	
-
-	
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
 	if (ProjectileMovement)
 	{
@@ -66,6 +64,15 @@ void APSFireBomb::OnHit(
 			FRotator::ZeroRotator,
 			FVector(1.0f),
 			true
+		);
+	}
+
+	if (ExplosionSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(
+			GetWorld(),
+			ExplosionSound,
+			GetActorLocation()
 		);
 	}
 

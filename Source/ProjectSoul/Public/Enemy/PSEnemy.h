@@ -44,6 +44,8 @@ public:
 
 	UAnimMontage* GetHitMontage() const;
 
+	FEnemyStats GetEnemyStats() const;
+
 	UFUNCTION(BlueprintPure, Category = "Dead")
 	virtual bool GetIsDead() const;
 
