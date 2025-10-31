@@ -53,6 +53,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Notify|Dodge")
 	void OnDodgeEndNotify();
 
+	UFUNCTION(BlueprintCallable, Category = "Notify|Dodge")
+	void OnInvulnerableStartNotify();
+
+	UFUNCTION(BlueprintCallable, Category = "Notify|Dodge")
+	void OnInvulnerableEndNotify();
+
 	UFUNCTION(BlueprintCallable, Category = "Notify|Hit")
 	void OnHitEndNotify();
 
@@ -102,6 +108,8 @@ public:
 	void SetIsTargeting(bool Value);
 
 	void SetIsSprinting(bool Value);
+
+	void SetIsInvulnerable(bool Value);
 
 	void SetTargetingCamera();
 
@@ -260,4 +268,6 @@ private:
 	bool bIsDead;
 
 	FVector2D LastMoveInput;
+
+	bool bIsInvulnerable;
 };

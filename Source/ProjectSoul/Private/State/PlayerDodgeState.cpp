@@ -74,6 +74,22 @@ void UPlayerDodgeState::DodgeEnd()
 	}
 }
 
+void UPlayerDodgeState::InvulnerableStart()
+{
+	if (APSCharacter* Character = GetPlayerCharacter())
+	{
+		Character->SetIsInvulnerable(true);
+	}
+}
+
+void UPlayerDodgeState::InvulnerableEnd()
+{
+	if (APSCharacter* Character = GetPlayerCharacter())
+	{
+		Character->SetIsInvulnerable(false);
+	}
+}
+
 FVector UPlayerDodgeState::CalculateDodgeDirection()
 {
 	if (APSCharacter* Character = GetPlayerCharacter())
