@@ -207,10 +207,10 @@ float APSEnemy::TakeDamage(
 		BlackboardComp->SetValueAsBool(TEXT("bIsHit"), true);
 		BlackboardComp->SetValueAsVector(TEXT("TargetLastKnownLocation"), DamageCauser->GetActorLocation());
 		BlackboardComp->SetValueAsBool(TEXT("bIsInvestigating"), true);
-		//PSPlayerHUDWidget class Function Call
-		OnHit.Broadcast(this, DamageAmount);
+		
 	}
-
+	//PSPlayerHUDWidget class Function Call
+	OnHit.Broadcast(this, DamageAmount);
 	return DamageAmount;
 }
 
