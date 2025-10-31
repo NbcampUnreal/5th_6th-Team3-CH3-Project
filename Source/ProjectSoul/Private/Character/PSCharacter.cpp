@@ -23,6 +23,7 @@ APSCharacter::APSCharacter()
 	bIsTargeting(false),
 	bIsSprinting(false),
 	bIsDead(false),
+	bIsInvulnerable(false),
 	SprintStaminaTimerInterval(0.1f),
 	StaminaRegenTickTimerInterval(0.1f),
 	LastMoveInput(FVector2D::ZeroVector)
@@ -293,6 +294,13 @@ float APSCharacter::TakeDamage(
 {
 	if (bIsDead)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Player: Already dead - No damage taken."));
+		return 0.0f;
+	}
+
+	if (bIsInvulnerable)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Player: Invulnerable - No damage taken."));
 		return 0.0f;
 	}
 
@@ -578,6 +586,11 @@ void APSCharacter::SetIsSprinting(bool Value)
 	bIsSprinting = Value;
 }
 
+void APSCharacter::SetIsInvulnerable(bool Value)
+{
+	bIsInvulnerable = Value;
+}
+
 void APSCharacter::SetTargetingCamera()
 {
 	if (bIsTargeting)
@@ -615,6 +628,22 @@ void APSCharacter::OnDodgeEndNotify()
 	if (StateMachine && StateMachine->GetDodgeState())
 	{
 		StateMachine->GetDodgeState()->DodgeEnd();
+	}
+}
+
+void APSCharacter::OnInvulnerableStartNotify()
+{
+	if (StateMachine && StateMachine->GetDodgeState())
+	{
+		StateMachine->GetDodgeState()->InvulnerableStart();
+	}
+}
+
+void APSCharacter::OnInvulnerableEndNotify()
+{
+	if (StateMachine && StateMachine->GetDodgeState())
+	{
+		StateMachine->GetDodgeState()->InvulnerableEnd();
 	}
 }
 
