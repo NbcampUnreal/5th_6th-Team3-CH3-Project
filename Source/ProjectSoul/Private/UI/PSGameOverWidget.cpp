@@ -8,9 +8,7 @@
 void UPSGameOverWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
-
-	TotalScoreText = Cast<UTextBlock>(GetWidgetFromName(TEXT("TotalScoreText")));
-	ClearOrDieText = Cast<UTextBlock>(GetWidgetFromName(TEXT("ClearOrDieText")));
+	
 	MainMenuButton->SetVisibility(ESlateVisibility::Hidden);
 	ReStartButton->SetVisibility(ESlateVisibility::Hidden);
 	MainMenuButton->OnClicked.AddDynamic(this, &UPSGameOverWidget::MainMenuButtonClick);
