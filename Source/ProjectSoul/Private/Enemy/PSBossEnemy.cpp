@@ -6,6 +6,10 @@
 #include "StateMachine/BossEnemyStateMachine.h"
 #include "State/EnemyStateBase.h"
 #include "Components/WidgetComponent.h"
+#include "BehaviorTree/BlackboardComponent.h"
+#include "BehaviorTree/BehaviorTreeComponent.h"
+
+
 APSBossEnemy::APSBossEnemy()
 {
 	AIControllerClass = APSEnemyAIController::StaticClass();
@@ -36,17 +40,25 @@ UAnimMontage* APSBossEnemy::GetAttack2Montage() const
 {
 	return Attack_2_Montage;
 }
-void APSBossEnemy::ShowHealthWidget(bool bShow)
-{
 
+UAnimMontage* APSBossEnemy::GetSkill1Montage() const
+{
+	return Skill_1_Montage;
 }
 
-void APSBossEnemy::ShowHitHealthWidget()
+UAnimMontage* APSBossEnemy::GetSkill2Montage() const
 {
-
+	return Skill_2_Montage;
 }
 
-void APSBossEnemy::HiddenHitHealthWidget()
-{
 
+void APSBossEnemy::Skill1Attack()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Enemy : Skill1"));
+}
+
+
+void APSBossEnemy::Skill2Attack()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Enemy : Skill2"));
 }

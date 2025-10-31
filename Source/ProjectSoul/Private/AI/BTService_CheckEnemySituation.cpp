@@ -22,6 +22,7 @@ void UBTService_CheckEnemySituation::TickNode(UBehaviorTreeComponent& OwnerComp,
     APSEnemyAIController* EnemyAIController = Cast<APSEnemyAIController>(AIController);
     if (!EnemyAIController) return;
     bool bInAttackRange = Distance <= EnemyAIController->GetAttackRange();
-
+    bool bInSkillRange = Distance <= EnemyAIController->GetSkillAttackRange();
     OwnerComp.GetBlackboardComponent()->SetValueAsBool(TEXT("bInAttackRange"), bInAttackRange);
+    OwnerComp.GetBlackboardComponent()->SetValueAsBool(TEXT("bInSkillRange"), bInSkillRange);
 }
