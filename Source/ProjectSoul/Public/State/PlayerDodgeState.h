@@ -23,6 +23,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void DodgeEnd();
 
+	UFUNCTION(BlueprintCallable)
+	void InvulnerableStart();
+
+	UFUNCTION(BlueprintCallable)
+	void InvulnerableEnd();
+
 private:
 	FVector CalculateDodgeDirection();
 };
