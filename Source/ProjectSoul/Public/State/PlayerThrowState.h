@@ -2,10 +2,10 @@
 
 #include "CoreMinimal.h"
 #include "State/PlayerStateBase.h"
-#include "PlayerHitState.generated.h"
+#include "PlayerThrowState.generated.h"
 
 UCLASS()
-class PROJECTSOUL_API UPlayerHitState : public UPlayerStateBase
+class PROJECTSOUL_API UPlayerThrowState : public UPlayerStateBase
 {
 	GENERATED_BODY()
 	
@@ -18,8 +18,10 @@ public:
 
 	virtual void Look(const FVector2D& Value) override;
 
+	virtual void Hit() override;
+
 	virtual void Die() override;
 
 	UFUNCTION(BlueprintCallable)
-	void HitEnd();
+	void ThrowEnd();
 };

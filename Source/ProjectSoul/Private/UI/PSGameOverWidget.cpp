@@ -28,6 +28,18 @@ void UPSGameOverWidget::UpdateUI()
 	{
 		TotalScoreText->SetText(FText::FromString(FString::Printf(TEXT("TotalScore : %d"), GameStateBase->CurrentScore)));
 	}
+
+	if (APSGameStateBase* GameState = GetWorld()->GetGameState<APSGameStateBase>())
+	{
+		if (GameState->bIsGameClear) 
+		{
+			ClearOrDieText->SetText(FText::FromString(FString::Printf(TEXT("Game Clear"))));
+		}
+		else
+		{
+			ClearOrDieText->SetText(FText::FromString(FString::Printf(TEXT("YOU DIED"))));
+		}
+	}
 }
 
 void UPSGameOverWidget::MainMenuButtonClick()

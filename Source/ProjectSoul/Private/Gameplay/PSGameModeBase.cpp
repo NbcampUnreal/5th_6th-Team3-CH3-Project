@@ -21,9 +21,13 @@ void APSGameModeBase::BeginPlay()
 
     TArray<AActor*> FoundEnemies;
     UGameplayStatics::GetAllActorsOfClass(GetWorld(), APSEnemy::StaticClass(), FoundEnemies);
-    RemainingEnemies = FoundEnemies.Num();
 
-    UE_LOG(LogTemp, Warning, TEXT("Enemy Count: %d"), RemainingEnemies);
+    APSGameStateBase* PSState = GetGameState<APSGameStateBase>();
+    if (PSState)
+    {
+        PSState->RemainingEnemies = FoundEnemies.Num();
+        UE_LOG(LogTemp, Warning, TEXT("Enemy Count: %d"), PSState->RemainingEnemies);
+    }
 }
 
 void APSGameModeBase::StartGame()
@@ -40,6 +44,13 @@ void APSGameModeBase::StartGame()
     }
 
     UE_LOG(LogTemp, Warning, TEXT("Game Start"));
+    if (UGameInstance* GameInstance = GetGameInstance())
+    {
+        if (UPSUIManagerSubsystem* UIManager = GameInstance->GetSubsystem<UPSUIManagerSubsystem>())
+        {
+            OnGameOver.AddDynamic(UIManager, &UPSUIManagerSubsystem::ShowCurrentWidget);
+        }
+    }
     OnGameOver.Broadcast(bIsGameOver);
 }
 
@@ -60,7 +71,7 @@ void APSGameModeBase::EndGame(bool bIsClear)
     }
 
     UE_LOG(LogTemp, Warning, TEXT("Game Over | Result: %s"), bIsClear ? TEXT("CLEAR") : TEXT("FAIL"));
-    OnGameOver.Broadcast(bIsClear);
+    OnGameOver.Broadcast(bIsGameOver);
 
     UPSUIManagerSubsystem* UIManagerSubsystem = GetGameInstance()->GetSubsystem<UPSUIManagerSubsystem>();
     UIManagerSubsystem->ShowCurrentWidget(true);
@@ -87,8 +98,12 @@ void APSGameModeBase::OnEnemyKilled(int32 EnemyScore)
 {
     AddPlayerScore(EnemyScore);
 
-    RemainingEnemies--;
-    UE_LOG(LogTemp, Warning, TEXT("Enemy Dead | Remaining: %d"), RemainingEnemies);
+    APSGameStateBase* PSState = GetGameState<APSGameStateBase>();
+    if (PSState)
+    {
+        PSState->RemainingEnemies--;
+        UE_LOG(LogTemp, Warning, TEXT("Enemy Dead | Remaining: %d"), PSState->RemainingEnemies);
+    }
 
     CheckClearCondition();
 }
@@ -101,7 +116,8 @@ void APSGameModeBase::OnPlayerKilled()
 
 void APSGameModeBase::CheckClearCondition()
 {
-    if (RemainingEnemies <= 0)
+    APSGameStateBase* PSState = GetGameState<APSGameStateBase>();
+    if (PSState && PSState->RemainingEnemies <= 0)
     {
         UE_LOG(LogTemp, Warning, TEXT("All Enemies Dead - Mission Clear!"));
         EndGame(true);

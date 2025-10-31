@@ -183,8 +183,10 @@ float APSEnemy::TakeDamage(
 	EnemyStats.Health.AdjustValue(-DamageAmount);
 	UpdateHealthWidget();
 	ShowHitHealthWidget();
+
 	UE_LOG(LogTemp, Warning, TEXT("Enemy take damage %.0f from %s"), DamageAmount, *DamageCauser->GetName());
 	UE_LOG(LogTemp, Warning, TEXT("Enemy Remain Health: %.0f / %.0f"), EnemyStats.Health.GetCurrent(), EnemyStats.Health.GetMax());
+
 	AAIController* EnemyAIController = Cast<AAIController>(this->GetController());
 	UBlackboardComponent* BlackboardComp = EnemyAIController ? EnemyAIController->GetBlackboardComponent() : nullptr;
 
@@ -205,10 +207,11 @@ float APSEnemy::TakeDamage(
 		BlackboardComp->SetValueAsBool(TEXT("bIsHit"), true);
 		BlackboardComp->SetValueAsVector(TEXT("TargetLastKnownLocation"), DamageCauser->GetActorLocation());
 		BlackboardComp->SetValueAsBool(TEXT("bIsInvestigating"), true);
-		//PSPlayerHUDWidget class Function Call
-		OnHit.Broadcast(this, ActualDamage);
+		
 	}
-	return ActualDamage;
+	//PSPlayerHUDWidget class Function Call
+	OnHit.Broadcast(this, DamageAmount);
+	return DamageAmount;
 }
 
 //Lock On Call

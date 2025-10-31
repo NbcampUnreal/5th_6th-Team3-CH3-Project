@@ -28,11 +28,6 @@ UPSUIManagerSubsystem::UPSUIManagerSubsystem()
 	{
 		GameOverWidgetClass = GameOverWidgetBPClass.Class;
 	}
-
-	if (APSGameModeBase* PSGameMode = Cast<APSGameModeBase>(UGameplayStatics::GetGameMode(this)))
-	{
-		PSGameMode->OnGameOver.AddDynamic(this, &UPSUIManagerSubsystem::ShowCurrentWidget);
-	}
 }
 
 void UPSUIManagerSubsystem::ShowCurrentWidget(bool bIsGameOver)
@@ -71,7 +66,6 @@ void UPSUIManagerSubsystem::ShowMainMenuUI()
 	}
 	if (MainMenuWidgetInstance)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("MainMenu Create Success"));
 		MainMenuWidgetInstance->AddToViewport();
 		PC->bShowMouseCursor = true;
 		PC->SetInputMode(FInputModeUIOnly());
@@ -97,7 +91,6 @@ void UPSUIManagerSubsystem::ShowPlayerHUD()
 	}
 	if (PlayerHUDWidgetInstance)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("MainMenu Create Success"));
 		PlayerHUDWidgetInstance->AddToViewport();
 		PC->bShowMouseCursor = false;
 		PC->SetInputMode(FInputModeGameOnly());
@@ -119,7 +112,6 @@ void UPSUIManagerSubsystem::ShowGameOverUI()
 	}
 	if (GameOverWidgetInstance)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("MainMenu Create Success"));
 		GameOverWidgetInstance->AddToViewport();
 		PC->bShowMouseCursor = true;
 		PC->SetInputMode(FInputModeUIOnly());

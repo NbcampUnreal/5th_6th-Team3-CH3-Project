@@ -5,6 +5,7 @@
 #include "State/PlayerAttackState.h"
 #include "State/PlayerDodgeState.h"
 #include "State/PlayerHitState.h"
+#include "State/PlayerThrowState.h"
 #include "State/PlayerDieState.h"
 
 void UPlayerStateMachine::Initialize(ACharacter* InOwner)
@@ -39,6 +40,12 @@ void UPlayerStateMachine::Initialize(ACharacter* InOwner)
 	if (HitState)
 	{
 		HitState->Initialize(this);
+	}
+
+	ThrowState = NewObject<UPlayerThrowState>(this);
+	if (ThrowState)
+	{
+		ThrowState->Initialize(this);
 	}
 
 	DieState = NewObject<UPlayerDieState>(this);
@@ -104,6 +111,11 @@ UPlayerDodgeState* UPlayerStateMachine::GetDodgeState() const
 UPlayerHitState* UPlayerStateMachine::GetHitState() const
 {
 	return HitState;
+}
+
+UPlayerThrowState* UPlayerStateMachine::GetThrowState() const
+{
+	return ThrowState;
 }
 
 UPlayerDieState* UPlayerStateMachine::GetDieState() const

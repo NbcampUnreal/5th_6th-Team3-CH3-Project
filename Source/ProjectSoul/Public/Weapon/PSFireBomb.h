@@ -13,7 +13,6 @@ class PROJECTSOUL_API APSFireBomb : public AActor
 	GENERATED_BODY()
 	
 public:	
-
 	APSFireBomb();
 
 	virtual void BeginPlay() override;
@@ -24,8 +23,9 @@ public:
 		UPrimitiveComponent* OtherComp, FVector NormalImpulse,
 		const FHitResult& Hit);
 
-public:
+	void Init(const FVector& Direction);
 
+public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon|Component")
 	UStaticMeshComponent* StaticMesh;
 
