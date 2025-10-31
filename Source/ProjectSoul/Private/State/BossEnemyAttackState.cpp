@@ -1,6 +1,7 @@
 #include "State/BossEnemyAttackState.h"
 #include "Enemy/PSBossEnemy.h"
 #include "Enemy/PSEnemyAIController.h"
+#include "Navigation/PathFollowingComponent.h"
 
 void UBossEnemyAttackState::OnEnter()
 {
@@ -16,9 +17,18 @@ void UBossEnemyAttackState::OnEnter()
         return;
     }
     BlackboardComp->SetValueAsBool(TEXT("bIsAttacking"), true);
-    AActor* Target = Cast<AActor>(BlackboardComp->GetValueAsObject(TEXT("TargetActor")));
     UAnimInstance* Anim = Enemy->GetMesh()->GetAnimInstance();
+    AActor* Target = Cast<AActor>(BlackboardComp->GetValueAsObject(TEXT("TargetActor")));
+    if (Target)
+    {
+        FVector ToTarget = (Target->GetActorLocation() - Enemy->GetActorLocation()).GetSafeNormal2D();
+        FRotator LookRot = FRotationMatrix::MakeFromX(ToTarget).Rotator();
+        LookRot.Pitch = 0.f;
+        LookRot.Roll = 0.f;
 
+        Enemy->SetActorRotation(LookRot);
+        EnemyAIController->SetControlRotation(LookRot);
+    }
     int32 RandIndex = FMath::RandRange(0, 2);
     UAnimMontage* Montage1 = Cast<APSEnemy>(Enemy)->GetAttackMontage();
     UAnimMontage* Montage2 = Cast<APSBossEnemy>(Enemy)->GetAttack1Montage();
@@ -57,7 +67,7 @@ void UBossEnemyAttackState::OnMontageEnded(UAnimMontage* Montage, bool bInterrup
     {
         return;
     }
-    UE_LOG(LogTemp, Warning, TEXT("Enemy : Attack Montage Ended"));
+    UE_LOG(LogTemp, Warning, TEXT("BossEnemy : Attack Montage Ended"));
     BlackboardComp->SetValueAsBool(TEXT("bIsAttacking"), false);
     BlackboardComp->SetValueAsBool(TEXT("bInAttackRange"), false);
 }

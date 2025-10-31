@@ -12,6 +12,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Components/BoxComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "BehaviorTree/BehaviorTreeComponent.h"
 
 APSEnemy::APSEnemy()
 	: Attack(20), 
@@ -72,15 +73,19 @@ void APSEnemy::BeginPlay()
 	}
 	if (WeaponCollisionR)
 	{
+		WeaponCollisionR->SetRelativeLocation(WeaponR_RelativeLocation);
+		WeaponCollisionR->SetBoxExtent(WeaponR_BoxExtent);
 		WeaponCollisionR->RegisterComponent();
 		WeaponCollisionR->OnComponentBeginOverlap.AddDynamic(this, &APSEnemy::OnWeaponOverlap);
 	}
 	if (WeaponCollisionL)
 	{
-
+		WeaponCollisionL->SetRelativeLocation(WeaponL_RelativeLocation);
+		WeaponCollisionL->SetBoxExtent(WeaponL_BoxExtent);
 		WeaponCollisionL->RegisterComponent();
 		WeaponCollisionL->OnComponentBeginOverlap.AddDynamic(this, &APSEnemy::OnWeaponOverlap);
 	}
+	DisableWeaponCollisionNotify();
 }
 
 void APSEnemy::Tick(float DeltaTime)
@@ -132,7 +137,13 @@ void APSEnemy::OnWeaponOverlap(
 	{
 		return;
 	}
+	AAIController* EnemyAIController = Cast<AAIController>(this->GetController());
+	UBlackboardComponent* BlackboardComp = EnemyAIController ? EnemyAIController->GetBlackboardComponent() : nullptr;
 
+	if (EnemyAIController == nullptr || BlackboardComp == nullptr)
+	{
+		return;
+	}
 	DamagedActors.Add(OtherActor);
 	UGameplayStatics::ApplyDamage(
 		OtherActor,
@@ -192,10 +203,11 @@ float APSEnemy::TakeDamage(
 	else
 	{
 		BlackboardComp->SetValueAsBool(TEXT("bIsHit"), true);
+		BlackboardComp->SetValueAsVector(TEXT("TargetLastKnownLocation"), DamageCauser->GetActorLocation());
+		BlackboardComp->SetValueAsBool(TEXT("bIsInvestigating"), true);
+		//PSPlayerHUDWidget class Function Call
+		OnHit.Broadcast(this, ActualDamage);
 	}
-	//PSPlayerHUDWidget class Function Call
-	OnHit.Broadcast(this, ActualDamage);
-
 	return ActualDamage;
 }
 
