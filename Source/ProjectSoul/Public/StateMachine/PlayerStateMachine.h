@@ -11,6 +11,7 @@ class UPlayerAttackState;
 class UPlayerDodgeState;
 class UPlayerHitState;
 class UPlayerDieState;
+class UPlayerThrowState;
 class APSCharacter;
 
 UCLASS()
@@ -41,6 +42,8 @@ public:
 
 	UPlayerHitState* GetHitState() const;
 
+	UPlayerThrowState* GetThrowState() const;
+
 	UPlayerDieState* GetDieState() const;
 
 protected:
@@ -58,6 +61,9 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr <UPlayerHitState> HitState;
+
+	UPROPERTY()
+	TObjectPtr <UPlayerThrowState> ThrowState;
 
 	UPROPERTY()
 	TObjectPtr <UPlayerDieState> DieState;

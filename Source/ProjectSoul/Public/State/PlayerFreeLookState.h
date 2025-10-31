@@ -36,5 +36,7 @@ public:
 
 	virtual void Hit() override;
 
+	virtual void Throw() override;
+
 	virtual void Die() override;
 };

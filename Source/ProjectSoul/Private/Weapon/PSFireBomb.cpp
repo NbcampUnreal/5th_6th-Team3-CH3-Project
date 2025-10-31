@@ -22,19 +22,10 @@ APSFireBomb::APSFireBomb() :
 	if (StaticMesh)
 	{
 		StaticMesh->SetupAttachment(FireBombCollision);
-		
 		StaticMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
 	
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
-	if (ProjectileMovement)
-	{
-		ProjectileMovement->InitialSpeed = 1500.0f;
-		ProjectileMovement->MaxSpeed = 1500.0f;
-		ProjectileMovement->bRotationFollowsVelocity = true;
-		ProjectileMovement->ProjectileGravityScale = 1.0f; //Gravity
-	}
-
 }
 
 void APSFireBomb::BeginPlay()
@@ -43,12 +34,14 @@ void APSFireBomb::BeginPlay()
 }
 
 void APSFireBomb::OnHit(
-	UPrimitiveComponent* HitComp, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, FVector NormalImpulse,
-	const FHitResult& Hit)
+	UPrimitiveComponent* HitComp,
+	AActor* OtherActor,
+	UPrimitiveComponent* OtherComp,
+	FVector NormalImpulse,
+	const FHitResult& Hit
+)
 {
-	UE_LOG(LogTemp, Warning, TEXT("On hit"));
-
+	UE_LOG(LogTemp, Warning, TEXT("Bomb: On hit"));
 
 	if (!OtherActor || OtherActor == this || OtherActor == GetOwner())
 	{
@@ -95,3 +88,17 @@ void APSFireBomb::OnHit(
 	Destroy();
 }
 
+void APSFireBomb::Init(const FVector& Direction)
+{
+	if (!ProjectileMovement)
+	{
+		return;
+	}
+
+	ProjectileMovement->InitialSpeed = 800.0f;
+	ProjectileMovement->MaxSpeed = 800.0f;
+	ProjectileMovement->bRotationFollowsVelocity = true;
+	ProjectileMovement->ProjectileGravityScale = 1.0f;
+
+	ProjectileMovement->Velocity = Direction * ProjectileMovement->InitialSpeed;
+}
