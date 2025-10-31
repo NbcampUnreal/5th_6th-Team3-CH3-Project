@@ -82,9 +82,9 @@ void APSBossEnemy::Skill1Attack()
 	{
 		Projectile->ProjectileMovement->bIsHomingProjectile = false;
 		Projectile->ProjectileMovement->ProjectileGravityScale = 0.0f;
-		Projectile->ProjectileMovement->InitialSpeed = 8000.f;
-		Projectile->ProjectileMovement->MaxSpeed = 8000.f;
-		Projectile->ProjectileMovement->Velocity = FVector(0.f, 0.f, -8000.f);
+		Projectile->ProjectileMovement->InitialSpeed = 3000.f;
+		Projectile->ProjectileMovement->MaxSpeed = 3000.f;
+		Projectile->ProjectileMovement->Velocity = FVector(0.f, 0.f, -3000.f);
 		Projectile->SetLifeSpan(3.0f);
 
 		UE_LOG(LogTemp, Warning, TEXT("Skill1 Falling Projectile Spawned."));
