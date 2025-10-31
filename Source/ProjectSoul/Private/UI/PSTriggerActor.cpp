@@ -17,6 +17,7 @@ APSTriggerActor::APSTriggerActor()
 void APSTriggerActor::BeginPlay()
 {
 	BossTrigger->OnComponentBeginOverlap.AddDynamic(this, &APSTriggerActor::TriggerOn);
+	BossTrigger->OnComponentEndOverlap.AddDynamic(this, &APSTriggerActor::TriggerOff);
 }
 
 
@@ -28,6 +29,15 @@ void APSTriggerActor::TriggerOn(
 	bool bFromSweep,
 	const FHitResult& SweepResult)
 {
-	OnTrigger.Broadcast();
+	OnTrigger.Broadcast(true);
+}
+
+void APSTriggerActor::TriggerOff(
+	UPrimitiveComponent* OverlappedComponent, 
+	AActor* OtherActor, 
+	UPrimitiveComponent* OtherComp, 
+	int32 OtherBodyIndex)
+{
+	OnTrigger.Broadcast(false);
 }
 
