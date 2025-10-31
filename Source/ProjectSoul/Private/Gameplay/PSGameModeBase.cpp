@@ -1,9 +1,13 @@
 #include "Gameplay/PSGameModeBase.h"
 #include "Gameplay/PSGameStateBase.h"
 #include "Enemy/PSEnemy.h"
+#include "Enemy/PSEnemyAIcontroller.h"
+#include "EngineUtils.h" 
 #include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
 #include "TimerManager.h"
+#include "Perception/AIPerceptionComponent.h"
+#include "Perception/AISenseConfig_Sight.h"
 #include "UI/PSUIManagerSubsystem.h"
 
 APSGameModeBase::APSGameModeBase()

@@ -16,9 +16,9 @@ APSEnemyAIController::APSEnemyAIController()
 	SetPerceptionComponent(*AIPerception);
 
 	SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("SightConfig"));
-	SightConfig->SightRadius = 600.0f;
+	SightConfig->SightRadius = 1000.0f;
 	SightConfig->LoseSightRadius = 1000.0f;
-	SightConfig->PeripheralVisionAngleDegrees = 90.0f;
+	SightConfig->PeripheralVisionAngleDegrees = 100.0f;
 	SightConfig->SetMaxAge(1.0f);
 	SightConfig->AutoSuccessRangeFromLastSeenLocation = 0.0f;
 	SightConfig->DetectionByAffiliation.bDetectEnemies = true;

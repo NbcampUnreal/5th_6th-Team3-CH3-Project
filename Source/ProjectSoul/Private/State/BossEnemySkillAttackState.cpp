@@ -70,7 +70,7 @@ void UBossEnemySkillAttackState::OnMontageEnded(UAnimMontage* Montage, bool bInt
                 BlackboardComp->SetValueAsBool(TEXT("bCollSkill"), false);
                 UE_LOG(LogTemp, Warning, TEXT("Boss Skill cooldown finished."));
             }),
-        10.f,
+        5.f,
         false
     );
 

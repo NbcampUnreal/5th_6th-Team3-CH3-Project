@@ -1,6 +1,7 @@
 #include "State/EnemyDieState.h"
 #include "Enemy/PSEnemy.h"
 #include "Enemy/PSEnemyAIController.h"
+#include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 void UEnemyDieState::OnEnter()
@@ -18,40 +19,42 @@ void UEnemyDieState::OnEnter()
     UAnimInstance* Anim = Enemy->GetMesh()->GetAnimInstance();
     Anim->StopAllMontages(0.1f);
 
-    Enemy->GetWorldTimerManager().SetTimer(
-        RagdollTimer,
-        [Enemy]()
-        {
-            Enemy->GetCharacterMovement()->DisableMovement();
-
-            USkeletalMeshComponent* Mesh = Enemy->GetMesh();
-            if (Mesh)
+    UWorld* World = Enemy->GetWorld();
+    if (World)
+    {
+        World->GetTimerManager().SetTimer(
+            RagdollTimer,
+            [World, Enemy]()
             {
-                Mesh->SetCollisionProfileName(TEXT("Ragdoll"));
-                Mesh->SetSimulatePhysics(true);
-                Mesh->WakeAllRigidBodies();
-                Mesh->SetAllBodiesBelowSimulatePhysics(TEXT("pelvis"), true);
-                Mesh->bBlendPhysics = true;
-            }
+                if (IsValid(Enemy))
+                {
+                    Enemy->GetCharacterMovement()->DisableMovement();
 
-            UE_LOG(LogTemp, Warning, TEXT("Ragdoll Activated!"));
-        },
-        0.8f,
-        false 
-    );
+                    if (UCapsuleComponent* Capsule = Enemy->GetCapsuleComponent())
+                    {
+                        Capsule->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+                    }
 
-    Enemy->GetWorldTimerManager().SetTimer(
-        DestroyTimerHandle,
-        [Enemy]()
-        {
-            if (IsValid(Enemy))
-            {
-                Enemy->Destroy();
-            }
-        },
-        3.0f,
-        false
-    );
+                    if (USkeletalMeshComponent* Mesh = Enemy->GetMesh())
+                    {
+                        Mesh->SetSimulatePhysics(true);
+                        Mesh->SetAllBodiesBelowSimulatePhysics(TEXT("pelvis"), true);
+                    }
+
+                    UE_LOG(LogTemp, Warning, TEXT(" Ragdoll Activated"));
+                }
+                if (IsValid(World) && IsValid(Enemy))
+                {
+                    World->GetTimerManager().SetTimerForNextTick([Enemy]()
+                        {
+                            Enemy->SetLifeSpan(3.0f);
+                        });
+                }
+            },
+            0.8f,
+            false
+        );
+    }
 }
 
 void UEnemyDieState::OnExit()
