@@ -27,6 +27,9 @@ void UEnemyDieState::OnEnter()
             USkeletalMeshComponent* Mesh = Enemy->GetMesh();
             if (Mesh)
             {
+                Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+                Mesh->SetCollisionResponseToAllChannels(ECR_Ignore);
+
                 Mesh->SetCollisionProfileName(TEXT("Ragdoll"));
                 Mesh->SetSimulatePhysics(true);
                 Mesh->WakeAllRigidBodies();

@@ -4,6 +4,8 @@
 #include "Enemy/PSEnemy.h"
 #include "PSBossEnemy.generated.h"
 
+class APSBossProjectileBase;
+
 UCLASS()
 class PROJECTSOUL_API APSBossEnemy : public APSEnemy
 {
@@ -36,6 +38,9 @@ protected:
 	virtual UStateMachineBase* CreateStateMachine() override;
 
 protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Skill")
+	TSubclassOf<APSBossProjectileBase> ProjectileClass;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Montage")
 	TObjectPtr<UAnimMontage> Skill_1_Montage;
 
