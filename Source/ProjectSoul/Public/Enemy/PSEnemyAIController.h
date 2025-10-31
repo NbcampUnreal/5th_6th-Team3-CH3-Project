@@ -25,6 +25,10 @@ public:
 
 	UBlackboardComponent* GetBlackboardComp() const;
 
+	UAIPerceptionComponent* GetAIPerception() const { return AIPerception; }
+
+	UAISenseConfig_Sight* GetSightConfig() const { return SightConfig; }
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI")
 	UAIPerceptionComponent* AIPerception;
