@@ -6,6 +6,7 @@ APSGameStateBase::APSGameStateBase()
     bIsGameOver = false;
     bIsGameClear = false;
     CurrentScore = 0;
+    RemainingEnemies = 0;
 }
 
 void APSGameStateBase::AddScore(int32 Amount)

@@ -20,9 +20,13 @@ void APSGameModeBase::BeginPlay()
 
     TArray<AActor*> FoundEnemies;
     UGameplayStatics::GetAllActorsOfClass(GetWorld(), APSEnemy::StaticClass(), FoundEnemies);
-    RemainingEnemies = FoundEnemies.Num();
 
-    UE_LOG(LogTemp, Warning, TEXT("Enemy Count: %d"), RemainingEnemies);
+    APSGameStateBase* PSState = GetGameState<APSGameStateBase>();
+    if (PSState)
+    {
+        PSState->RemainingEnemies = FoundEnemies.Num();
+        UE_LOG(LogTemp, Warning, TEXT("Enemy Count: %d"), PSState->RemainingEnemies);
+    }
 }
 
 void APSGameModeBase::StartGame()
@@ -93,8 +97,12 @@ void APSGameModeBase::OnEnemyKilled(int32 EnemyScore)
 {
     AddPlayerScore(EnemyScore);
 
-    RemainingEnemies--;
-    UE_LOG(LogTemp, Warning, TEXT("Enemy Dead | Remaining: %d"), RemainingEnemies);
+    APSGameStateBase* PSState = GetGameState<APSGameStateBase>();
+    if (PSState)
+    {
+        PSState->RemainingEnemies--;
+        UE_LOG(LogTemp, Warning, TEXT("Enemy Dead | Remaining: %d"), PSState->RemainingEnemies);
+    }
 
     CheckClearCondition();
 }
@@ -107,7 +115,8 @@ void APSGameModeBase::OnPlayerKilled()
 
 void APSGameModeBase::CheckClearCondition()
 {
-    if (RemainingEnemies <= 0)
+    APSGameStateBase* PSState = GetGameState<APSGameStateBase>();
+    if (PSState && PSState->RemainingEnemies <= 0)
     {
         UE_LOG(LogTemp, Warning, TEXT("All Enemies Dead - Mission Clear!"));
         EndGame(true);
