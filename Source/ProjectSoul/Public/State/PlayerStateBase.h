@@ -41,6 +41,8 @@ public:
 
 	virtual void Hit();
 
+	virtual void Throw();
+
 	virtual void Die();
 
 protected:
