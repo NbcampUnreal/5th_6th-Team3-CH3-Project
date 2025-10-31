@@ -4,8 +4,7 @@
 #include "GameFramework/Actor.h"
 #include "PSTriggerActor.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnTrigger);
-//DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnTrigger, AActor*, Monster, float, Damage);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnTrigger, AActor*, Monster, bool, bIsAreaIn);
 
 class UBoxComponent;
 
@@ -22,7 +21,7 @@ protected:
 
 public:
 	UPROPERTY(BlueprintAssignable, Category = "Event")
-	FOnTrigger OnTrigger;
+	FOnTrigger OnTrigger; 
 
 private:
 	UFUNCTION()
@@ -34,8 +33,17 @@ private:
 		bool bFromSweep,
 		const FHitResult& SweepResult);
 
+	UFUNCTION()
+	void TriggerOff(
+		UPrimitiveComponent* OverlappedComponent,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex);
+
 private:
 	UPROPERTY(EditAnywhere, Category = "Tirgger")
 	UBoxComponent* BossTrigger;
 
+	UPROPERTY()
+	TArray<AActor*> TriggerOnMonsters;
 };

@@ -150,12 +150,21 @@ void UPSPlayerHUDWidget::ShowHitWidget(AActor* LockOnMonster, float Damage)
 	HitWidgetInstance->ShowHitWidget(LockOnMonster, Damage);
 }
 
-void UPSPlayerHUDWidget::ShowBossStatusWidget() 
+void UPSPlayerHUDWidget::ShowBossStatusWidget(AActor* BossMonster, bool bIsAreaIn)
 {
-	UE_LOG(LogTemp, Warning, TEXT("ShowBossStatusWidget On"));
-	BossStatsVerticalBox->SetVisibility(ESlateVisibility::Visible);
-	BossName->SetText(FText::FromString(FString::Printf(TEXT(""))));
-	BossHPBar->SetPercent(1.0f);
+	if (bIsAreaIn)
+	{
+		BossStatsVerticalBox->SetVisibility(ESlateVisibility::Visible);
+		if (BossMonster)
+		{
+			BossName->SetText(FText::FromString(FString::Printf(TEXT("%s"), *BossMonster->GetName())));
+			BossHPBar->SetPercent(1.0f);
+		}
+	}
+	else
+	{
+		BossStatsVerticalBox->SetVisibility(ESlateVisibility::Hidden);
+	}
 }
 
 void UPSPlayerHUDWidget::HiddenBossStatusWidget()
