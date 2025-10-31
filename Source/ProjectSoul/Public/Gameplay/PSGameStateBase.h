@@ -24,6 +24,9 @@ public:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Game")
     int32 CurrentScore;
 
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Game")
+    int32 RemainingEnemies;
+
 public:
     UFUNCTION(BlueprintCallable, Category = "Game")
     void AddScore(int32 Amount);
