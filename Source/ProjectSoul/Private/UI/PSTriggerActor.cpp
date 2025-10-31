@@ -1,5 +1,6 @@
 #include "UI/PSTriggerActor.h"
 #include "UI/PSPlayerHUDWidget.h"
+#include "Enemy/PSEnemy.h"
 #include "Components/BoxComponent.h"
 
 APSTriggerActor::APSTriggerActor()
@@ -29,7 +30,16 @@ void APSTriggerActor::TriggerOn(
 	bool bFromSweep,
 	const FHitResult& SweepResult)
 {
-	OnTrigger.Broadcast(true);
+	BossTrigger->GetOverlappingActors(TriggerOnMonsters, APSEnemy::StaticClass());
+	if (TriggerOnMonsters.Num() > 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("TriggerActor : Find Monster"));
+		OnTrigger.Broadcast(TriggerOnMonsters[0], true);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("TriggerActor : Not Find Monster"));
+	}
 }
 
 void APSTriggerActor::TriggerOff(
@@ -38,6 +48,10 @@ void APSTriggerActor::TriggerOff(
 	UPrimitiveComponent* OtherComp, 
 	int32 OtherBodyIndex)
 {
-	OnTrigger.Broadcast(false);
+	for (int i = 0; i < TriggerOnMonsters.Num(); i++)
+	{
+		TriggerOnMonsters[i] = nullptr;
+	}
+	OnTrigger.Broadcast(nullptr, false);
 }
 

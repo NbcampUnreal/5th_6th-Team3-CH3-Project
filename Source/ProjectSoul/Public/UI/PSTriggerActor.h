@@ -4,7 +4,7 @@
 #include "GameFramework/Actor.h"
 #include "PSTriggerActor.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTrigger, bool, bIsAreaIn);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnTrigger, AActor*, Monster, bool, bIsAreaIn);
 
 class UBoxComponent;
 
@@ -44,4 +44,6 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Tirgger")
 	UBoxComponent* BossTrigger;
 
+	UPROPERTY()
+	TArray<AActor*> TriggerOnMonsters;
 };
