@@ -19,6 +19,7 @@ void UEnemyIdleState::OnEnter()
     FRotator SpawnRot = BlackboardComp->GetValueAsRotator(TEXT("SpawnRotation"));
 
     Enemy->SetActorRotation(SpawnRot);
+    EnemyAIController->SetControlRotation(SpawnRot);
 }
 
 void UEnemyIdleState::OnExit()

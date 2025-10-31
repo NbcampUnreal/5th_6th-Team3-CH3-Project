@@ -18,4 +18,6 @@ public:
 
 private:
 	FOnMontageEnded EndDelegate;
+
+	FTimerHandle CoolTimerHandle;
 };

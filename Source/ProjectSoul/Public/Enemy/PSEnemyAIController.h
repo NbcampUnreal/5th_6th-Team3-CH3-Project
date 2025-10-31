@@ -21,6 +21,8 @@ public:
 
 	float GetAttackRange();
 
+	float GetSkillAttackRange();
+
 	UBlackboardComponent* GetBlackboardComp() const;
 
 protected:
@@ -39,6 +41,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attack")
 	float AttackRange;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attack")
+	float SkillAttackRange;
 
 protected:
 	virtual void OnPossess(APawn* InPawn) override;

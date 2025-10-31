@@ -7,7 +7,7 @@ void UEnemyDieState::OnEnter()
 {
     Super::OnEnter();
     UE_LOG(LogTemp, Warning, TEXT("Enemy : Die state."));
-    APSEnemy* Enemy = Cast<APSEnemy>(GetEnemyCharacter());//inefficiency
+    APSEnemy* Enemy = Cast<APSEnemy>(GetEnemyCharacter());
     if (!Enemy) return;
     Enemy->SetIsDead(true);
 
@@ -15,17 +15,30 @@ void UEnemyDieState::OnEnter()
     if (AIController)
         AIController->StopMovement();
 
-    Enemy->GetCharacterMovement()->DisableMovement();
+    UAnimInstance* Anim = Enemy->GetMesh()->GetAnimInstance();
+    Anim->StopAllMontages(0.1f);
 
-    USkeletalMeshComponent* Mesh = Enemy->GetMesh();
-    if (Mesh)
-    {
-        Mesh->SetCollisionProfileName(TEXT("Ragdoll"));
-        Mesh->SetSimulatePhysics(true);
-        Mesh->WakeAllRigidBodies();
-        Mesh->SetAllBodiesBelowSimulatePhysics(TEXT("pelvis"), true);
-        Mesh->bBlendPhysics = true;
-    }
+    Enemy->GetWorldTimerManager().SetTimer(
+        RagdollTimer,
+        [Enemy]()
+        {
+            Enemy->GetCharacterMovement()->DisableMovement();
+
+            USkeletalMeshComponent* Mesh = Enemy->GetMesh();
+            if (Mesh)
+            {
+                Mesh->SetCollisionProfileName(TEXT("Ragdoll"));
+                Mesh->SetSimulatePhysics(true);
+                Mesh->WakeAllRigidBodies();
+                Mesh->SetAllBodiesBelowSimulatePhysics(TEXT("pelvis"), true);
+                Mesh->bBlendPhysics = true;
+            }
+
+            UE_LOG(LogTemp, Warning, TEXT("Ragdoll Activated!"));
+        },
+        0.8f,
+        false 
+    );
 
     Enemy->GetWorldTimerManager().SetTimer(
         DestroyTimerHandle,

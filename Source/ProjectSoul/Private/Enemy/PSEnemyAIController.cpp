@@ -5,9 +5,12 @@
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
 #include "Kismet/GameplayStatics.h"
+#include "BehaviorTree/BlackboardComponent.h"
+#include "BehaviorTree/BehaviorTreeComponent.h"
 
 APSEnemyAIController::APSEnemyAIController()
-	:AttackRange(200.0f)
+	:AttackRange(200.0f),
+	SkillAttackRange(400.0f)
 {
 	AIPerception = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AIPerception"));
 	SetPerceptionComponent(*AIPerception);
@@ -98,7 +101,13 @@ void APSEnemyAIController::StartBehaviorTree()
 		RunBehaviorTree(BehaviorTreeAsset);
 	}
 }
+
 float APSEnemyAIController::GetAttackRange()
 {
 	return AttackRange;
+}
+
+float APSEnemyAIController::GetSkillAttackRange()
+{
+	return SkillAttackRange;
 }
