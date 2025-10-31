@@ -28,11 +28,6 @@ UPSUIManagerSubsystem::UPSUIManagerSubsystem()
 	{
 		GameOverWidgetClass = GameOverWidgetBPClass.Class;
 	}
-
-	if (APSGameModeBase* PSGameMode = Cast<APSGameModeBase>(UGameplayStatics::GetGameMode(this)))
-	{
-		PSGameMode->OnGameOver.AddDynamic(this, &UPSUIManagerSubsystem::ShowCurrentWidget);
-	}
 }
 
 void UPSUIManagerSubsystem::ShowCurrentWidget(bool bIsGameOver)
