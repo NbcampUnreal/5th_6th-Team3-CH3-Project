@@ -33,6 +33,14 @@ void UPlayerHitState::OnExit()
 	UE_LOG(LogTemp, Warning, TEXT("Player: Exit Hit State"));
 }
 
+void UPlayerHitState::Look(const FVector2D& Value)
+{
+	if (UPlayerStateMachine* PSM = GetPlayerStateMachine())
+	{
+		PSM->GetPrevState()->Look(Value);
+	}
+}
+
 void UPlayerHitState::Die()
 {
 	if (UPlayerStateMachine* PSM = GetPlayerStateMachine())

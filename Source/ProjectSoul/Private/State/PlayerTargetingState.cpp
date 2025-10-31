@@ -3,6 +3,7 @@
 #include "State/PlayerDodgeState.h"
 #include "State/PlayerAttackState.h"
 #include "State/PlayerHitState.h"
+#include "State/PlayerThrowState.h"
 #include "State/PlayerDieState.h"
 #include "StateMachine/PlayerStateMachine.h"
 #include "Character/PSCharacter.h"
@@ -130,6 +131,15 @@ void UPlayerTargetingState::Hit()
 	{
 		PSM->SetPrevState(this);
 		PSM->ChangeState(PSM->GetHitState());
+	}
+}
+
+void UPlayerTargetingState::Throw()
+{
+	if (UPlayerStateMachine* PSM = GetPlayerStateMachine())
+	{
+		PSM->SetPrevState(this);
+		PSM->ChangeState(PSM->GetThrowState());
 	}
 }
 

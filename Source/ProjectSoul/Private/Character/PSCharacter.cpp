@@ -12,9 +12,10 @@
 #include "State/PlayerAttackState.h"
 #include "State/PlayerDodgeState.h"
 #include "State/PlayerHitState.h"
+#include "State/PlayerThrowState.h"
 #include "Weapon/PSWeaponBase.h"
 #include "Enemy/PSEnemy.h"
-#include "Engine/DamageEvents.h"
+#include "Weapon/PSFireBomb.h"
 
 APSCharacter::APSCharacter()
 	: NormalWalkSpeed(600.0f),
@@ -168,6 +169,11 @@ void APSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 				{
 					EnhancedInput->BindAction(PlayerController->AttackAction, ETriggerEvent::Triggered, this, &APSCharacter::Attack);
 				}
+
+				if (PlayerController->ThrowAction)
+				{
+					EnhancedInput->BindAction(PlayerController->ThrowAction, ETriggerEvent::Triggered, this, &APSCharacter::Throw);
+				}
 			}
 		}
 	}
@@ -231,9 +237,7 @@ void APSCharacter::StopSprint(const FInputActionValue& Value)
 
 void APSCharacter::Lock(const FInputActionValue& Value)
 {
-	FindTargetActor();
-
-	if (StateMachine && CurrentTarget)
+	if (StateMachine)
 	{
 		StateMachine->GetCurrentState()->Lock();
 	}
@@ -270,6 +274,14 @@ void APSCharacter::Attack(const FInputActionValue& Value)
 	if (StateMachine)
 	{
 		StateMachine->GetCurrentState()->Attack();
+	}
+}
+
+void APSCharacter::Throw(const FInputActionValue& Value)
+{
+	if (StateMachine)
+	{
+		StateMachine->GetCurrentState()->Throw();
 	}
 }
 
@@ -523,6 +535,11 @@ UAnimMontage* APSCharacter::GetHitMontage() const
 	return HitMontage;
 }
 
+UAnimMontage* APSCharacter::GetThrowMontage() const
+{
+	return ThrowMontage;
+}
+
 FVector2D APSCharacter::GetLastMoveInput() const
 {
 	return LastMoveInput;
@@ -583,6 +600,16 @@ void APSCharacter::OnAttackEndNotify()
 	}
 }
 
+void APSCharacter::OnEnableWeaponCollisionNotify()
+{
+	EquippedRightWeapon->EnableWeaponCollision();
+}
+
+void APSCharacter::OnDisableWeaponCollisionNotify()
+{
+	EquippedRightWeapon->DisableWeaponCollision();
+}
+
 void APSCharacter::OnDodgeEndNotify()
 {
 	if (StateMachine && StateMachine->GetDodgeState())
@@ -599,12 +626,54 @@ void APSCharacter::OnHitEndNotify()
 	}
 }
 
-void APSCharacter::OnEnableWeaponCollisionNotify()
+void APSCharacter::OnThrowObjectNotify()
 {
-	EquippedRightWeapon->EnableWeaponCollision();
+	UE_LOG(LogTemp, Warning, TEXT("Player: Throw Object Notify"));
+
+	if (ThrowObjectClass)
+	{
+		FVector HandLocation = GetMesh()->GetSocketLocation(FName("RightHand"));
+		FRotator ActorRotation = GetActorRotation();
+		ActorRotation.Pitch = 0.0f;
+
+		FVector ForwardVector = ActorRotation.Vector();
+		FVector SpawnLocation = HandLocation + ForwardVector * 50.0f;
+
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = this;
+		SpawnParams.Instigator = GetInstigator();
+
+		AActor* ThrownObject = GetWorld()->SpawnActor<AActor>(
+			ThrowObjectClass,
+			SpawnLocation,
+			ActorRotation,
+			SpawnParams
+		);
+
+		if (ThrownObject)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Player: Spawned throw object: %s"), *ThrownObject->GetName());
+
+			if (APSFireBomb* Bomb = Cast<APSFireBomb>(ThrownObject))
+			{
+				FVector LaunchDir = ActorRotation.Vector();
+				LaunchDir.Z += 0.5f;
+				LaunchDir.Normalize();
+
+				Bomb->Init(LaunchDir);
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("Player: Failed to spawn throw object"));
+		}
+	}
 }
 
-void APSCharacter::OnDisableWeaponCollisionNotify()
+void APSCharacter::OnThrowEndNotify()
 {
-	EquippedRightWeapon->DisableWeaponCollision();
+	if (StateMachine && StateMachine->GetThrowState())
+	{
+		StateMachine->GetThrowState()->ThrowEnd();
+	}
 }

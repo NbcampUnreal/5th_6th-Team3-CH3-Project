@@ -1,34 +1,24 @@
-#include "State/PlayerAttackState.h"
-#include "State/PlayerFreeLookState.h"
-#include "State/PlayerTargetingState.h"
+#include "State/PlayerThrowState.h"
 #include "State/PlayerHitState.h"
 #include "State/PlayerDieState.h"
 #include "StateMachine/PlayerStateMachine.h"
 #include "Character/PSCharacter.h"
 
-void UPlayerAttackState::OnEnter()
+void UPlayerThrowState::OnEnter()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Player: Enter Attack State"));
+	UE_LOG(LogTemp, Warning, TEXT("Player: Enter Throw State"));
 
 	if (APSCharacter* Character = GetPlayerCharacter())
 	{
-		Character->SetIsSprinting(false);
-		Character->bUseControllerRotationYaw = false;
-
-		Character->ConsumeStaminaForAttack();
-		Character->PlayAnimMontage(Character->GetAttackMontage());
+		Character->PlayAnimMontage(Character->GetThrowMontage());
 	}
 }
 
-void UPlayerAttackState::OnUpdate(float DeltaTime)
+void UPlayerThrowState::OnUpdate(float DeltaTime)
 {
-	if (UPlayerStateMachine* PSM = GetPlayerStateMachine())
-	{
-		PSM->GetPrevState()->OnUpdate(DeltaTime);
-	}
 }
 
-void UPlayerAttackState::OnExit()
+void UPlayerThrowState::OnExit()
 {
 	if (APSCharacter* Character = GetPlayerCharacter())
 	{
@@ -41,10 +31,10 @@ void UPlayerAttackState::OnExit()
 		}
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("Player: Exit Attack State"));
+	UE_LOG(LogTemp, Warning, TEXT("Player: Exit Throw State"));
 }
 
-void UPlayerAttackState::Look(const FVector2D& Value)
+void UPlayerThrowState::Look(const FVector2D& Value)
 {
 	if (UPlayerStateMachine* PSM = GetPlayerStateMachine())
 	{
@@ -52,7 +42,7 @@ void UPlayerAttackState::Look(const FVector2D& Value)
 	}
 }
 
-void UPlayerAttackState::Hit()
+void UPlayerThrowState::Hit()
 {
 	if (UPlayerStateMachine* PSM = GetPlayerStateMachine())
 	{
@@ -60,7 +50,7 @@ void UPlayerAttackState::Hit()
 	}
 }
 
-void UPlayerAttackState::Die()
+void UPlayerThrowState::Die()
 {
 	if (UPlayerStateMachine* PSM = GetPlayerStateMachine())
 	{
@@ -68,9 +58,9 @@ void UPlayerAttackState::Die()
 	}
 }
 
-void UPlayerAttackState::AttackEnd()
+void UPlayerThrowState::ThrowEnd()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Player: Call Attack End"));
+	UE_LOG(LogTemp, Warning, TEXT("Player: Call Throw End"));
 
 	if (UPlayerStateMachine* PSM = GetPlayerStateMachine())
 	{

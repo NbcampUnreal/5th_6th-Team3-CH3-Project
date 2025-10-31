@@ -58,6 +58,10 @@ void UPlayerStateBase::Hit()
 {
 }
 
+void UPlayerStateBase::Throw()
+{
+}
+
 void UPlayerStateBase::Die()
 {
 }
