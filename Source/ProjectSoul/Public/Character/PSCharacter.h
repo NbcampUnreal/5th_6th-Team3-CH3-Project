@@ -41,20 +41,26 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Stats")
 	void RestoreAllStats();
 
-	UFUNCTION(BlueprintCallable, Category = "Notify")
+	UFUNCTION(BlueprintCallable, Category = "Notify|Attack")
 	void OnAttackEndNotify();
 
-	UFUNCTION(BlueprintCallable, Category = "Notify")
-	void OnDodgeEndNotify();
-
-	UFUNCTION(BlueprintCallable, Category = "Notify")
-	void OnHitEndNotify();
-
-	UFUNCTION(BlueprintCallable, Category = "Notify")
+	UFUNCTION(BlueprintCallable, Category = "Notify|Attack")
 	void OnEnableWeaponCollisionNotify();
 
-	UFUNCTION(BlueprintCallable, Category = "Notify")
+	UFUNCTION(BlueprintCallable, Category = "Notify|Attack")
 	void OnDisableWeaponCollisionNotify();
+
+	UFUNCTION(BlueprintCallable, Category = "Notify|Dodge")
+	void OnDodgeEndNotify();
+
+	UFUNCTION(BlueprintCallable, Category = "Notify|Hit")
+	void OnHitEndNotify();
+
+	UFUNCTION(BlueprintCallable, Category = "Notify|Throw")
+	void OnThrowObjectNotify();
+
+	UFUNCTION(BlueprintCallable, Category = "Notify|Throw")
+	void OnThrowEndNotify();
 
 	UFUNCTION(BlueprintPure, Category = "Targeting")
 	bool GetIsTargeting() const;
@@ -87,6 +93,8 @@ public:
 
 	UAnimMontage* GetHitMontage() const;
 
+	UAnimMontage* GetThrowMontage() const;
+
 	FVector2D GetLastMoveInput() const;
 
 	void SetCurrentTarget(APSEnemy* NewTarget);
@@ -102,6 +110,8 @@ public:
 	void ConsumeStaminaForDodge();
 
 	void Heal(float Amount);
+
+	void FindTargetActor();
 
 protected:
 	virtual void BeginPlay() override;
@@ -136,9 +146,10 @@ protected:
 	UFUNCTION()
 	void Attack(const FInputActionValue& Value);
 
+	UFUNCTION()
+	void Throw(const FInputActionValue& Value);
+
 private:
-	void FindTargetActor();
-	
 	void ConsumeStaminaForSprint();
 
 	void StartStaminaRegen();
@@ -205,14 +216,20 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Targeting")
 	float MaxTargetDistance;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dodge")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Montage")
 	TObjectPtr<UAnimMontage> DodgeMontage;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Montage")
 	TObjectPtr<UAnimMontage> AttackMontage;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hit")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Montage")
 	TObjectPtr<UAnimMontage> HitMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Montage")
+	TObjectPtr<UAnimMontage> ThrowMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Object")
+	TSubclassOf<AActor> ThrowObjectClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stats|Stamina")
 	float AttackStaminaCost;

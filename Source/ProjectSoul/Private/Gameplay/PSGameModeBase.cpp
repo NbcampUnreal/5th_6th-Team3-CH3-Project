@@ -43,6 +43,14 @@ void APSGameModeBase::StartGame()
     }
 
     UE_LOG(LogTemp, Warning, TEXT("Game Start"));
+    if (UGameInstance* GameInstance = GetGameInstance())
+    {
+        if (UPSUIManagerSubsystem* UIManager = GameInstance->GetSubsystem<UPSUIManagerSubsystem>())
+        {
+            OnGameOver.AddDynamic(UIManager, &UPSUIManagerSubsystem::ShowCurrentWidget);
+        }
+    }
+    OnGameOver.Broadcast(bIsGameOver);
 }
 
 void APSGameModeBase::EndGame(bool bIsClear)
@@ -62,10 +70,13 @@ void APSGameModeBase::EndGame(bool bIsClear)
     }
 
     UE_LOG(LogTemp, Warning, TEXT("Game Over | Result: %s"), bIsClear ? TEXT("CLEAR") : TEXT("FAIL"));
+    OnGameOver.Broadcast(bIsGameOver);
 
-    FTimerHandle RestartTimer;
+    UPSUIManagerSubsystem* UIManagerSubsystem = GetGameInstance()->GetSubsystem<UPSUIManagerSubsystem>();
+    UIManagerSubsystem->ShowCurrentWidget(true);
+    /*FTimerHandle RestartTimer;
     GetWorldTimerManager().SetTimer(RestartTimer, this,
-        &APSGameModeBase::RestartGame, RestartDelay, false);
+        &APSGameModeBase::RestartGame, RestartDelay, false);*/
 }
 
 void APSGameModeBase::RestartGame()

@@ -1,47 +1,72 @@
 #include "UI/PSPlayerHUDWidget.h"
 #include "UI/PSMonsterHitWidget.h"
+#include "UI/PSTriggerActor.h"
 #include "Components/ProgressBar.h"
 #include "Components/SizeBox.h"
 #include "Components/Image.h"
+#include "Components/VerticalBox.h"
+#include "Components/TextBlock.h"
 #include "Components/CanvasPanelSlot.h"
 #include "Character/PSCharacter.h"
-#include "Blueprint/WidgetLayoutLibrary.h"
-
 #include "Enemy/PSEnemy.h"
+#include "Enemy/PSBossEnemy.h"
+#include "Blueprint/WidgetLayoutLibrary.h"
 #include "Kismet/GameplayStatics.h"
+
 
 void UPSPlayerHUDWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 
-	LockOnTarget = nullptr;
 	SizeBoxMultiplier = 3.0f;
+	HiddenBossStatusWidget();
+	//RunTime Load
+	UClass* WidgetClass = LoadClass<UUserWidget>(nullptr, TEXT("/Game/Blueprints/UI/WBP_PSMonsterHitWidget.WBP_PSMonsterHitWidget_C"));
+	if (WidgetClass)
+	{
+		MonsterHitWidgetClass = WidgetClass;
+	}
+}
+
+void UPSPlayerHUDWidget::NativePreConstruct()
+{
+	Super::NativePreConstruct();
+
+	LockOnTarget = nullptr;
 	bLockOn = false;
+	LockOnImage->SetVisibility(ESlateVisibility::Hidden);
 
 	if (APSCharacter* PSCharacter = GetCharacter())
 	{
 		PSCharacter->OnHPChanged.AddDynamic(this, &UPSPlayerHUDWidget::OnUpdateHPBar);
 		PSCharacter->OnMPChanged.AddDynamic(this, &UPSPlayerHUDWidget::OnUpdateMPBar);
 		PSCharacter->OnStaminaChanged.AddDynamic(this, &UPSPlayerHUDWidget::OnUpdateStaminaBar);
-	
-		PSCharacter->OnEnemyTarget.AddDynamic(this, &UPSPlayerHUDWidget::ShowLockOn);
+
+		PSCharacter->OnEnemyTarget.AddDynamic(this, &UPSPlayerHUDWidget::ShowLockOnWidget);
 	}
 
-	APSEnemy* Enemy = Cast<APSEnemy>(UGameplayStatics::GetActorOfClass(GetWorld(), APSEnemy::StaticClass()));
-	if (Enemy)
+	TArray<AActor*> FoundEnemies;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APSEnemy::StaticClass(), FoundEnemies);
+	for (AActor* Mosnter : FoundEnemies)
 	{
-		// HUD에 등록 함수 제공
-		Enemy->OnHit.AddDynamic(this, &UPSPlayerHUDWidget::ShowHitWidget);
+		APSEnemy* Enemy = Cast<APSEnemy>(Mosnter);
+		if (Enemy)
+		{
+			Enemy->OnHit.AddDynamic(this, &UPSPlayerHUDWidget::ShowHitWidget);
+			
+			if (APSBossEnemy* Boss = Cast<APSBossEnemy>(Enemy))
+			{
+				Boss->OnHit.AddDynamic(this, &UPSPlayerHUDWidget::OnUpdateBossHPBar);
+			}
+		}
 	}
 
-
-	LockOnImage->SetVisibility(ESlateVisibility::Hidden);
-
-	//RunTime Load
-	UClass* WidgetClass = LoadClass<UUserWidget>(nullptr,TEXT("/Game/Blueprints/UI/WBP_PSMonsterHitWidget.WBP_PSMonsterHitWidget_C"));
-	if (WidgetClass)
+	if (AActor* Actor = UGameplayStatics::GetActorOfClass(GetWorld(), APSTriggerActor::StaticClass()))
 	{
-		MonsterHitWidgetClass = WidgetClass;
+		if (APSTriggerActor* TriggerActor = Cast<APSTriggerActor>(Actor))
+		{
+			TriggerActor->OnTrigger.AddDynamic(this, &UPSPlayerHUDWidget::ShowBossStatusWidget);
+		}
 	}
 }
 //player Delegate add
@@ -86,7 +111,7 @@ void UPSPlayerHUDWidget::OnUpdateStaminaBar(float CurrentValue, float MaxValue)
 	}
 }
 //player Delegate add
-void UPSPlayerHUDWidget::ShowLockOn(AActor* CurrentTarget)
+void UPSPlayerHUDWidget::ShowLockOnWidget(AActor* CurrentTarget)
 {
 	if (CurrentTarget)
 	{
@@ -105,30 +130,46 @@ void UPSPlayerHUDWidget::ShowLockOn(AActor* CurrentTarget)
 	else
 	{
 		bLockOn = false;
-		HiddenLockOn();
+		HiddenLockOnWidget();
 	}
 }
 
-void UPSPlayerHUDWidget::HiddenLockOn()
+void UPSPlayerHUDWidget::HiddenLockOnWidget()
 {
 	LockOnImage->SetVisibility(ESlateVisibility::Hidden);
 	GetWorld()->GetTimerManager().ClearTimer(LockOnPositionHandle);
 	LockOnTarget = nullptr;
 }
 
-
+//Enemy Delegate add
 void UPSPlayerHUDWidget::ShowHitWidget(AActor* LockOnMonster, float Damage)
 {
-	UE_LOG(LogTemp, Warning, TEXT("ShowHit Test"));
 	APlayerController* PC = GetWorld()->GetFirstPlayerController();
 
 	UPSMonsterHitWidget* HitWidgetInstance = CreateWidget<UPSMonsterHitWidget>(PC, MonsterHitWidgetClass);
 	HitWidgetInstance->ShowHitWidget(LockOnMonster, Damage);
 }
 
-void UPSPlayerHUDWidget::HiddenHit()
+void UPSPlayerHUDWidget::ShowBossStatusWidget() 
 {
+	UE_LOG(LogTemp, Warning, TEXT("ShowBossStatusWidget On"));
+	BossStatsVerticalBox->SetVisibility(ESlateVisibility::Visible);
+	BossName->SetText(FText::FromString(FString::Printf(TEXT(""))));
+	BossHPBar->SetPercent(1.0f);
+}
 
+void UPSPlayerHUDWidget::HiddenBossStatusWidget()
+{
+	BossStatsVerticalBox->SetVisibility(ESlateVisibility::Hidden);
+}
+//Enemy Delegate add
+void UPSPlayerHUDWidget::OnUpdateBossHPBar(AActor* Monster, float Damage)
+{
+	APSEnemy* BossMonster = Cast<APSEnemy>(Monster);
+	if (BossHPBar)
+	{
+		BossHPBar->SetPercent(BossMonster->GetEnemyStats().GetHealthPercent());
+	}
 }
 
 void UPSPlayerHUDWidget::UpdateLockOnPosition()

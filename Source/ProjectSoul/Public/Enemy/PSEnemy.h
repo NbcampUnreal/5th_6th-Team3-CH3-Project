@@ -8,6 +8,7 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHit, AActor*, Monster, float, Damage);
 
 class UEnemyStateMachine;
+class UStateMachineBase;
 class UWidgetComponent;
 class UBoxComponent;
 
@@ -35,13 +36,15 @@ public:
 
 	void SetIsDead(bool bIsdead);
 
-	UEnemyStateMachine* GetStateMachine();
+	virtual UStateMachineBase* GetStateMachine();
 
 	UAnimMontage* GetAttackMontage() const;
 
 	UAnimMontage* GetDieMontage() const;
 
 	UAnimMontage* GetHitMontage() const;
+
+	FEnemyStats GetEnemyStats() const;
 
 	UFUNCTION(BlueprintPure, Category = "Dead")
 	virtual bool GetIsDead() const;
@@ -61,6 +64,8 @@ protected:
 	virtual void BeginPlay() override;
 
 	virtual void Tick(float DeltaTime) override;
+
+	virtual UStateMachineBase* CreateStateMachine();
 
 private:
 	void UpdateHealthWidget();
@@ -88,7 +93,7 @@ protected:
 	FName AttachSocketNameR;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Targeting")
-	TObjectPtr<UEnemyStateMachine> StateMachine;
+	TObjectPtr<UStateMachineBase> StateMachine;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
 	TObjectPtr<UWidgetComponent> HealthWidgetComponent;
@@ -107,6 +112,18 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Move")
 	float ChaseSpeed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Collision")
+	FVector WeaponR_BoxExtent = FVector(29.0f, 129.0f, 12.0f);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Collision")
+	FVector WeaponR_RelativeLocation = FVector(0.0f, 97.0f, 0.0f);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Collision")
+	FVector WeaponL_BoxExtent = FVector(29.0f, 129.0f, 12.0f);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Collision")
+	FVector WeaponL_RelativeLocation = FVector(0.0f, 97.0f, 0.0f);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Montage")
 	TObjectPtr<UAnimMontage> AttackMontage;

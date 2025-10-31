@@ -17,4 +17,6 @@ private:
 	FOnMontageEnded EndDelegate;
 
 	FTimerHandle DestroyTimerHandle;
+
+	FTimerHandle RagdollTimer;
 };

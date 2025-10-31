@@ -1,6 +1,8 @@
 #include "UI/PSUIManagerSubsystem.h"
 #include "Blueprint/UserWidget.h"
 #include "UI/PSPlayerHUDWidget.h"
+#include "Gameplay/PSGameModeBase.h"
+#include "Kismet/GameplayStatics.h"
 
 UPSUIManagerSubsystem::UPSUIManagerSubsystem()
 {

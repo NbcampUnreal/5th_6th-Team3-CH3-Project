@@ -4,6 +4,8 @@
 #include "GameFramework/GameModeBase.h"
 #include "PSGameModeBase.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGameOver, bool, IsClear);
+
 UCLASS()
 class PROJECTSOUL_API APSGameModeBase : public AGameModeBase
 {
@@ -33,6 +35,12 @@ public:
 protected:
     virtual void BeginPlay() override;
 
+
+public:
+    UPROPERTY(BlueprintAssignable)
+    FOnGameOver OnGameOver;
+
+protected:
     UPROPERTY(VisibleAnywhere, Category = "Game")
     bool bIsGamePlaying;
 

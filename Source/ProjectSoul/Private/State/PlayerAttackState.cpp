@@ -13,6 +13,8 @@ void UPlayerAttackState::OnEnter()
 	if (APSCharacter* Character = GetPlayerCharacter())
 	{
 		Character->SetIsSprinting(false);
+		Character->bUseControllerRotationYaw = false;
+
 		Character->ConsumeStaminaForAttack();
 		Character->PlayAnimMontage(Character->GetAttackMontage());
 	}
@@ -20,6 +22,10 @@ void UPlayerAttackState::OnEnter()
 
 void UPlayerAttackState::OnUpdate(float DeltaTime)
 {
+	if (UPlayerStateMachine* PSM = GetPlayerStateMachine())
+	{
+		PSM->GetPrevState()->OnUpdate(DeltaTime);
+	}
 }
 
 void UPlayerAttackState::OnExit()

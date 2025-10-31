@@ -13,7 +13,7 @@
 
 UBTTask_SetState::UBTTask_SetState()
 {
-    NodeName = TEXT("Set FSM State");
+    NodeName = TEXT("Set Enemy FSM State");
 }
 
 EBTNodeResult::Type UBTTask_SetState::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
@@ -26,7 +26,7 @@ EBTNodeResult::Type UBTTask_SetState::ExecuteTask(UBehaviorTreeComponent& OwnerC
 	if (!EnemyChar)
 		return EBTNodeResult::Failed;
 
-	UEnemyStateMachine* StateMachine = EnemyChar->GetStateMachine();
+	UEnemyStateMachine* StateMachine = Cast<UEnemyStateMachine>(EnemyChar->GetStateMachine());
 	if (!StateMachine)
 		return EBTNodeResult::Failed;
 

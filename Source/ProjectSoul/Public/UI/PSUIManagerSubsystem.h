@@ -14,6 +14,7 @@ class PROJECTSOUL_API UPSUIManagerSubsystem : public UGameInstanceSubsystem
 public:
 	UPSUIManagerSubsystem();
 
+	UFUNCTION()
 	void ShowCurrentWidget(bool bIsGameOver);
 
 private:

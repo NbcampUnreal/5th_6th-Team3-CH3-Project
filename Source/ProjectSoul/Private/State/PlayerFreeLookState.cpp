@@ -3,6 +3,7 @@
 #include "State/PlayerDodgeState.h"
 #include "State/PlayerAttackState.h"
 #include "State/PlayerHitState.h"
+#include "State/PlayerThrowState.h"
 #include "State/PlayerDieState.h"
 #include "Character/PSCharacter.h"
 #include "StateMachine/PlayerStateMachine.h"
@@ -101,6 +102,13 @@ void UPlayerFreeLookState::Lock()
 {
 	if (APSCharacter* Character = GetPlayerCharacter())
 	{
+		Character->FindTargetActor();
+
+		if (!Character->GetCurrentTarget())
+		{
+			return;
+		}
+
 		if (UPlayerStateMachine* PSM = GetPlayerStateMachine())
 		{
 			Character->SetIsTargeting(true);
@@ -127,6 +135,15 @@ void UPlayerFreeLookState::Hit()
 	{
 		PSM->SetPrevState(this);
 		PSM->ChangeState(PSM->GetHitState());
+	}
+}
+
+void UPlayerFreeLookState::Throw()
+{
+	if (UPlayerStateMachine* PSM = GetPlayerStateMachine())
+	{
+		PSM->SetPrevState(this);
+		PSM->ChangeState(PSM->GetThrowState());
 	}
 }
 

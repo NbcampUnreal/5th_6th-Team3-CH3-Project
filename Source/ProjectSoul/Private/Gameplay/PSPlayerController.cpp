@@ -1,6 +1,7 @@
 #include "Gameplay/PSPlayerController.h"
 #include "Blueprint/UserWidget.h"
 #include "EnhancedInputSubsystems.h"
+#include "UI/PSUIManagerSubsystem.h"
 
 APSPlayerController::APSPlayerController()
 {

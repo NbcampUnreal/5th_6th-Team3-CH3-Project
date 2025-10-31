@@ -7,7 +7,8 @@
 class USizeBox;
 class UProgressBar;
 class UImage;
-class UOverlay;
+class UTextBlock;
+class UVerticalBox;
 class APSCharacter;
 
 UCLASS()
@@ -15,12 +16,11 @@ class PROJECTSOUL_API UPSPlayerHUDWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
-public:
-	UFUNCTION()
-	void ShowHitWidget(AActor* LockOnMonster, float Damage);
 
 protected:
 	virtual void NativeOnInitialized() override;
+
+	virtual void NativePreConstruct() override;
 
 private:
 	UFUNCTION()
@@ -33,20 +33,26 @@ private:
 	void OnUpdateStaminaBar(float CurrentValue, float MaxValue);
 
 	UFUNCTION()
-	void ShowLockOn(AActor* LockOnMonster);
+	void ShowLockOnWidget(AActor* LockOnMonster);
 
-	void HiddenLockOn();
+	UFUNCTION()
+	void ShowHitWidget(AActor* LockOnMonster, float Damage);
+
+	UFUNCTION()
+	void ShowBossStatusWidget();
+
+	UFUNCTION()
+	void OnUpdateBossHPBar(AActor* Boss, float Damage);
+
+	void HiddenBossStatusWidget();
+
+	void HiddenLockOnWidget();
 
 	void UpdateLockOnPosition();
-
-	//void ShowHit(AActor* LockOnMonster);
-
-	void HiddenHit();
 
 	APSCharacter* GetCharacter();
 
 public:
-	//test
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
 	TSubclassOf<UUserWidget> MonsterHitWidgetClass;
 
@@ -71,6 +77,17 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UImage> LockOnImage;
+
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UVerticalBox> BossStatsVerticalBox;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> BossName;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UProgressBar> BossHPBar;
+
 
 	FTimerHandle LockOnPositionHandle;
 	AActor* LockOnTarget;

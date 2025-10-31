@@ -12,7 +12,6 @@ class UEnemyIdleState;
 class UEnemyInvestigateState;
 class UEnemyReturnState;
 class UEnemyHitState;
-class APSEnemy;
 
 UCLASS()
 class PROJECTSOUL_API UEnemyStateMachine : public UStateMachineBase
@@ -25,8 +24,6 @@ public:
 	virtual void OnUpdate(float DeltaTime) override;
 
 	UEnemyStateBase* GetCurrentState() const;
-
-	APSEnemy* GetOwnerEnemy() const;
 
 	UEnemyChaseState* GetChaseState() const;
 

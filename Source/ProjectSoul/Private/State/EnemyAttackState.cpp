@@ -2,12 +2,13 @@
 #include "Enemy/PSEnemy.h"
 #include "Enemy/PSEnemyAIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Navigation/PathFollowingComponent.h"
 
 void UEnemyAttackState::OnEnter()
 {
     Super::OnEnter();
     UE_LOG(LogTemp, Warning, TEXT("Enemy : Attack state."));
-    ACharacter* Enemy = GetEnemyCharacter();//inefficiency
+    ACharacter* Enemy = GetEnemyCharacter();
     if (!Enemy) return;
     AAIController* EnemyAIController = Cast<AAIController>(Enemy->GetController());
     UBlackboardComponent* BlackboardComp = EnemyAIController ? EnemyAIController->GetBlackboardComponent() : nullptr;
@@ -18,8 +19,16 @@ void UEnemyAttackState::OnEnter()
     }
     BlackboardComp->SetValueAsBool(TEXT("bIsAttacking"), true);
     AActor* Target = Cast<AActor>(BlackboardComp->GetValueAsObject(TEXT("TargetActor")));
-    EnemyAIController->SetFocus(Target);
+    if (Target)
+    {
+        FVector ToTarget = (Target->GetActorLocation() - Enemy->GetActorLocation()).GetSafeNormal2D();
+        FRotator LookRot = FRotationMatrix::MakeFromX(ToTarget).Rotator();
+        LookRot.Pitch = 0.f;
+        LookRot.Roll = 0.f;
 
+        Enemy->SetActorRotation(LookRot);
+        EnemyAIController->SetControlRotation(LookRot);
+    }
     UAnimInstance* Anim = Enemy->GetMesh()->GetAnimInstance();
     UAnimMontage* Montage = Cast<APSEnemy>(Enemy) ->GetAttackMontage();
     Anim->Montage_Play(Montage);
@@ -35,7 +44,7 @@ void UEnemyAttackState::OnExit()
 void UEnemyAttackState::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
     
-    ACharacter* Enemy = GetEnemyCharacter();//inefficiency
+    ACharacter* Enemy = GetEnemyCharacter();
     if (!Enemy) return;
     AAIController* EnemyAIController = Cast<AAIController>(Enemy->GetController());
     UBlackboardComponent* BlackboardComp = EnemyAIController ? EnemyAIController->GetBlackboardComponent() : nullptr;

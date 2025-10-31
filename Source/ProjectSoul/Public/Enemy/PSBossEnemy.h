@@ -14,17 +14,26 @@ public:
 
 	void ShowHealthWidget(bool bShow);
 
+	UAnimMontage* GetAttack1Montage() const;
+
+	UAnimMontage* GetAttack2Montage() const;
+
+	UAnimMontage* GetSkill1Montage() const;
+
+	UAnimMontage* GetSkill2Montage() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Notify")
+	void Skill1Attack();
+
+	UFUNCTION(BlueprintCallable, Category = "Notify")
+	void Skill2Attack();
+
 protected:
 	virtual void BeginPlay();
 
 	virtual void Tick(float DeltaTime) override;
 
-private:
-	void UpdateHealthWidget();
-
-	void ShowHitHealthWidget();
-
-	void HiddenHitHealthWidget();
+	virtual UStateMachineBase* CreateStateMachine() override;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Montage")

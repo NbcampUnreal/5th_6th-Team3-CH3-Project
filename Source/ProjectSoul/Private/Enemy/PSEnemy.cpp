@@ -12,6 +12,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Components/BoxComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "BehaviorTree/BehaviorTreeComponent.h"
 
 APSEnemy::APSEnemy()
 	: Attack(20), 
@@ -49,7 +50,7 @@ APSEnemy::APSEnemy()
 void APSEnemy::BeginPlay()
 {
 	Super::BeginPlay();
-	StateMachine = NewObject<UEnemyStateMachine>(this);
+	StateMachine = CreateStateMachine();
 	if (StateMachine)
 	{
 		StateMachine->Initialize(this);
@@ -72,15 +73,19 @@ void APSEnemy::BeginPlay()
 	}
 	if (WeaponCollisionR)
 	{
+		WeaponCollisionR->SetRelativeLocation(WeaponR_RelativeLocation);
+		WeaponCollisionR->SetBoxExtent(WeaponR_BoxExtent);
 		WeaponCollisionR->RegisterComponent();
 		WeaponCollisionR->OnComponentBeginOverlap.AddDynamic(this, &APSEnemy::OnWeaponOverlap);
 	}
 	if (WeaponCollisionL)
 	{
-
+		WeaponCollisionL->SetRelativeLocation(WeaponL_RelativeLocation);
+		WeaponCollisionL->SetBoxExtent(WeaponL_BoxExtent);
 		WeaponCollisionL->RegisterComponent();
 		WeaponCollisionL->OnComponentBeginOverlap.AddDynamic(this, &APSEnemy::OnWeaponOverlap);
 	}
+	DisableWeaponCollisionNotify();
 }
 
 void APSEnemy::Tick(float DeltaTime)
@@ -132,7 +137,13 @@ void APSEnemy::OnWeaponOverlap(
 	{
 		return;
 	}
+	AAIController* EnemyAIController = Cast<AAIController>(this->GetController());
+	UBlackboardComponent* BlackboardComp = EnemyAIController ? EnemyAIController->GetBlackboardComponent() : nullptr;
 
+	if (EnemyAIController == nullptr || BlackboardComp == nullptr)
+	{
+		return;
+	}
 	DamagedActors.Add(OtherActor);
 	UGameplayStatics::ApplyDamage(
 		OtherActor,
@@ -143,7 +154,12 @@ void APSEnemy::OnWeaponOverlap(
 	);
 }
 
-UEnemyStateMachine* APSEnemy::GetStateMachine()
+UStateMachineBase* APSEnemy::CreateStateMachine()
+{
+	return NewObject<UEnemyStateMachine>(this);
+}
+
+UStateMachineBase* APSEnemy::GetStateMachine()
 {
 	return StateMachine;
 }
@@ -167,8 +183,10 @@ float APSEnemy::TakeDamage(
 	EnemyStats.Health.AdjustValue(-DamageAmount);
 	UpdateHealthWidget();
 	ShowHitHealthWidget();
+
 	UE_LOG(LogTemp, Warning, TEXT("Enemy take damage %.0f from %s"), DamageAmount, *DamageCauser->GetName());
 	UE_LOG(LogTemp, Warning, TEXT("Enemy Remain Health: %.0f / %.0f"), EnemyStats.Health.GetCurrent(), EnemyStats.Health.GetMax());
+
 	AAIController* EnemyAIController = Cast<AAIController>(this->GetController());
 	UBlackboardComponent* BlackboardComp = EnemyAIController ? EnemyAIController->GetBlackboardComponent() : nullptr;
 
@@ -187,11 +205,13 @@ float APSEnemy::TakeDamage(
 	else
 	{
 		BlackboardComp->SetValueAsBool(TEXT("bIsHit"), true);
+		BlackboardComp->SetValueAsVector(TEXT("TargetLastKnownLocation"), DamageCauser->GetActorLocation());
+		BlackboardComp->SetValueAsBool(TEXT("bIsInvestigating"), true);
+		//PSPlayerHUDWidget class Function Call
+		OnHit.Broadcast(this, DamageAmount);
 	}
-	//PSPlayerHUDWidget class Function Call
-	OnHit.Broadcast(this, ActualDamage);
 
-	return ActualDamage;
+	return DamageAmount;
 }
 
 //Lock On Call
@@ -264,6 +284,11 @@ UAnimMontage* APSEnemy::GetDieMontage() const
 UAnimMontage* APSEnemy::GetHitMontage() const
 {
 	return HitMontage;
+}
+
+FEnemyStats APSEnemy::GetEnemyStats() const
+{
+	return EnemyStats;
 }
 
 void APSEnemy::EnableWeaponCollisionNotify()

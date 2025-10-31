@@ -8,7 +8,7 @@ void UEnemyInvestigateState::OnEnter()
 {
     Super::OnEnter();
     UE_LOG(LogTemp, Warning, TEXT("Enemy : Investigate state."));
-    ACharacter* Enemy = GetEnemyCharacter();//inefficiency
+    ACharacter* Enemy = GetEnemyCharacter();
     if (!Enemy) return;
     Cast<APSEnemy>(Enemy)->SetMovementSpeed(Cast<APSEnemy>(Enemy)->GetWalkSpeed());
     AAIController* EnemyAIController = Cast<AAIController>(Enemy->GetController());

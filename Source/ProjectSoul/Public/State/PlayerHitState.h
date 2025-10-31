@@ -16,6 +16,8 @@ public:
 
 	virtual void OnExit() override;
 
+	virtual void Look(const FVector2D& Value) override;
+
 	virtual void Die() override;
 
 	UFUNCTION(BlueprintCallable)
