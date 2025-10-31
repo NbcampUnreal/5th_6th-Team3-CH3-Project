@@ -9,6 +9,10 @@ void UPSGameOverWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 
+	TotalScoreText = Cast<UTextBlock>(GetWidgetFromName(TEXT("TotalScoreText")));
+	ClearOrDieText = Cast<UTextBlock>(GetWidgetFromName(TEXT("ClearOrDieText")));
+	MainMenuButton->SetVisibility(ESlateVisibility::Hidden);
+	ReStartButton->SetVisibility(ESlateVisibility::Hidden);
 	MainMenuButton->OnClicked.AddDynamic(this, &UPSGameOverWidget::MainMenuButtonClick);
 	ReStartButton->OnClicked.AddDynamic(this, &UPSGameOverWidget::RestartButtonClick);
 }
@@ -20,9 +24,6 @@ void UPSGameOverWidget::NativePreConstruct()
 
 void UPSGameOverWidget::UpdateUI()
 {
-	TotalScoreText = Cast<UTextBlock>(GetWidgetFromName(TEXT("TotalScoreText")));
-	ClearOrDieText = Cast<UTextBlock>(GetWidgetFromName(TEXT("ClearOrDieText")));
-
 	APSGameStateBase* GameStateBase = Cast<APSGameStateBase>(GetWorld()->GetGameState());
 	if (GameStateBase)
 	{

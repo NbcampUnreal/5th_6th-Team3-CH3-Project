@@ -40,5 +40,11 @@ private:
 	UPROPERTY()
 	UUserWidget* GameOverWidgetInstance;
 
-	
+	UPROPERTY(EditAnywhere, Category = "Widget")
+	TSubclassOf<UUserWidget> LoadingWidgetClass;
+	UPROPERTY()
+	UUserWidget* LoadingWidgetInstance;
+
+	FTimerHandle FadeInTimer;
+	float FadeInTime;
 };
