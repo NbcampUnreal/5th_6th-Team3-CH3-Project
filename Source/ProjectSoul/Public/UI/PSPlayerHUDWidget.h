@@ -39,7 +39,7 @@ private:
 	void ShowHitWidget(AActor* LockOnMonster, float Damage);
 
 	UFUNCTION()
-	void ShowBossStatusWidget();
+	void ShowBossStatusWidget(AActor* BossMonster, bool bIsAreaIn);
 
 	UFUNCTION()
 	void OnUpdateBossHPBar(AActor* Boss, float Damage);
