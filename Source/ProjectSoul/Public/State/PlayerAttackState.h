@@ -33,8 +33,6 @@ public:
 
 private:
 	int32 CurrentComboIndex = 0;
-
 	bool bCanNextCombo = false;
-
 	bool bDoNextCombo = false;
 };

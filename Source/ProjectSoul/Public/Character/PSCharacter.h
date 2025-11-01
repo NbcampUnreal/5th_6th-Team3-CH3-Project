@@ -164,6 +164,9 @@ protected:
 	void Throw(const FInputActionValue& Value);
 
 private:
+	UFUNCTION()
+	void OnTargetDie(AActor* DeadTarget);
+
 	void ConsumeStaminaForSprint();
 
 	void StartStaminaRegen();
@@ -171,6 +174,8 @@ private:
 	void StopStaminaRegen();
 
 	void RegenStamina();
+
+	void TargetUnlock();
 
 	void OnDie();
 
@@ -273,9 +278,10 @@ private:
 
 	bool bIsTargeting;
 
-	bool bIsDead;
-
 	FVector2D LastMoveInput;
-
 	bool bIsInvulnerable;
+
+	FTimerHandle EnemyDeadTimer;
+
+	bool bIsDead;
 };

@@ -8,6 +8,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "StateMachine/PlayerStateMachine.h"
+#include "State/PlayerTargetingState.h"
 #include "State/PlayerStateBase.h"
 #include "State/PlayerAttackState.h"
 #include "State/PlayerDodgeState.h"
@@ -408,6 +409,28 @@ void APSCharacter::Heal(float Amount)
 	OnHPChanged.Broadcast(PlayerStats.Health.GetCurrent(), PlayerStats.Health.GetMax());
 }
 
+void APSCharacter::OnTargetDie(AActor* DeadTarget)
+{
+	if (CurrentTarget == DeadTarget)
+	{
+		GetWorldTimerManager().SetTimer(
+			EnemyDeadTimer,
+			this,
+			&APSCharacter::TargetUnlock,
+			1.0f,
+			false
+		);
+	}
+}
+
+void APSCharacter::TargetUnlock()
+{
+	if (StateMachine)
+	{
+		StateMachine->GetTargetingState()->Unlock();
+	}
+}
+
 void APSCharacter::ConsumeStaminaForSprint()
 {
 	StopStaminaRegen();
@@ -565,7 +588,18 @@ FVector2D APSCharacter::GetLastMoveInput() const
 
 void APSCharacter::SetCurrentTarget(APSEnemy* NewTarget)
 {
+	if (CurrentTarget)
+	{
+		CurrentTarget->OnEnemyDie.RemoveDynamic(this, &APSCharacter::OnTargetDie);
+	}
+
 	CurrentTarget = NewTarget;
+	if (CurrentTarget)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Bind OnEnemyDie Event"));
+		CurrentTarget->OnEnemyDie.AddDynamic(this, &APSCharacter::OnTargetDie);
+	}
+
 	OnEnemyTarget.Broadcast(CurrentTarget);
 }
 
