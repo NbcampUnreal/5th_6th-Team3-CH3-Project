@@ -50,6 +50,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Notify|Attack")
 	void OnDisableWeaponCollisionNotify();
 
+	UFUNCTION(BlueprintCallable, Category = "Notify|Attack")
+	void OnNextComboWindowNotify();
+
+	UFUNCTION(BlueprintCallable, Category = "Notify|Attack")
+	void OnStartNextComboNotify();
+
 	UFUNCTION(BlueprintCallable, Category = "Notify|Dodge")
 	void OnDodgeEndNotify();
 
@@ -95,7 +101,7 @@ public:
 
 	UAnimMontage* GetDodgeMontage() const;
 
-	UAnimMontage* GetAttackMontage() const;
+	UAnimMontage* GetAttackMontage(int32 Index) const;
 
 	UAnimMontage* GetHitMontage() const;
 
@@ -168,6 +174,8 @@ private:
 
 	void OnDie();
 
+	bool IsFalling() const;
+
 public:
 	UPROPERTY(BlueprintAssignable, Category = "Event")
 	FOnHPChanged OnHPChanged;
@@ -228,7 +236,7 @@ protected:
 	TObjectPtr<UAnimMontage> DodgeMontage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Montage")
-	TObjectPtr<UAnimMontage> AttackMontage;
+	TArray<TObjectPtr<UAnimMontage>> AttackMontage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Montage")
 	TObjectPtr<UAnimMontage> HitMontage;

@@ -254,7 +254,7 @@ void APSCharacter::Unlock(const FInputActionValue& Value)
 
 void APSCharacter::Dodge(const FInputActionValue& Value)
 {
-	if (PlayerStats.Stamina.IsZero())
+	if (PlayerStats.Stamina.IsZero() || IsFalling())
 	{
 		return;
 	}
@@ -267,7 +267,7 @@ void APSCharacter::Dodge(const FInputActionValue& Value)
 
 void APSCharacter::Attack(const FInputActionValue& Value)
 {
-	if (PlayerStats.Stamina.IsZero())
+	if (PlayerStats.Stamina.IsZero() || IsFalling())
 	{
 		return;
 	}
@@ -280,6 +280,11 @@ void APSCharacter::Attack(const FInputActionValue& Value)
 
 void APSCharacter::Throw(const FInputActionValue& Value)
 {
+	if (IsFalling())
+	{
+		return;
+	}
+
 	if (StateMachine)
 	{
 		StateMachine->GetCurrentState()->Throw();
@@ -478,6 +483,11 @@ void APSCharacter::OnDie()
 	}
 }
 
+bool APSCharacter::IsFalling() const
+{
+	return GetCharacterMovement()->IsFalling();
+}
+
 float APSCharacter::GetHealthPercent() const
 {
 	return PlayerStats.GetHealthPercent();
@@ -533,9 +543,9 @@ UAnimMontage* APSCharacter::GetDodgeMontage() const
 	return DodgeMontage;
 }
 
-UAnimMontage* APSCharacter::GetAttackMontage() const
+UAnimMontage* APSCharacter::GetAttackMontage(int32 Index) const
 {
-	return AttackMontage;
+	return AttackMontage[Index];
 }
 
 UAnimMontage* APSCharacter::GetHitMontage() const
@@ -621,6 +631,22 @@ void APSCharacter::OnEnableWeaponCollisionNotify()
 void APSCharacter::OnDisableWeaponCollisionNotify()
 {
 	EquippedRightWeapon->DisableWeaponCollision();
+}
+
+void APSCharacter::OnNextComboWindowNotify()
+{
+	if (StateMachine && StateMachine->GetAttackState())
+	{
+		StateMachine->GetAttackState()->NextComboWindow();
+	}
+}
+
+void APSCharacter::OnStartNextComboNotify()
+{
+	if (StateMachine && StateMachine->GetAttackState())
+	{
+		StateMachine->GetAttackState()->StartNextCombo();
+	}
 }
 
 void APSCharacter::OnDodgeEndNotify()
