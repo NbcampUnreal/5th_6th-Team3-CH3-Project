@@ -74,6 +74,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Notify|Throw")
 	void OnThrowEndNotify();
 
+	UFUNCTION(BlueprintCallable, Category = "Notify|Sound")
+	void OnPlayFootstepSoundNotify();
+
 	UFUNCTION(BlueprintPure, Category = "Targeting")
 	bool GetIsTargeting() const;
 
@@ -266,6 +269,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stats|Stamina")
 	float StaminaRegenRate;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sound")
+	TObjectPtr<USoundBase> FootstepSound;
 
 private:
 	FTimerHandle SprintStaminaTimer;

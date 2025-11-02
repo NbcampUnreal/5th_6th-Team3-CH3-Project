@@ -2,11 +2,12 @@
 #include "EnhancedInputComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/SphereComponent.h"
-#include "Gameplay/PSPlayerController.h"
-#include "Gameplay/PSGameModeBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Gameplay/PSPlayerController.h"
+#include "Gameplay/PSGameModeBase.h"
+#include "Gameplay/PSAudioManagerSubsystem.h"
 #include "StateMachine/PlayerStateMachine.h"
 #include "State/PlayerTargetingState.h"
 #include "State/PlayerStateBase.h"
@@ -15,8 +16,8 @@
 #include "State/PlayerHitState.h"
 #include "State/PlayerThrowState.h"
 #include "Weapon/PSWeaponBase.h"
-#include "Enemy/PSEnemy.h"
 #include "Weapon/PSFireBomb.h"
+#include "Enemy/PSEnemy.h"
 
 APSCharacter::APSCharacter()
 	: NormalWalkSpeed(600.0f),
@@ -764,5 +765,16 @@ void APSCharacter::OnThrowEndNotify()
 	if (StateMachine && StateMachine->GetThrowState())
 	{
 		StateMachine->GetThrowState()->ThrowEnd();
+	}
+}
+
+void APSCharacter::OnPlayFootstepSoundNotify()
+{
+	if (FootstepSound)
+	{
+		if (UPSAudioManagerSubsystem* Audio = GetGameInstance()->GetSubsystem<UPSAudioManagerSubsystem>())
+		{
+			Audio->PlaySFX(FootstepSound, GetActorLocation(), 0.5f);
+		}
 	}
 }
