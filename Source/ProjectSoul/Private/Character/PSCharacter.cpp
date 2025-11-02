@@ -774,7 +774,40 @@ void APSCharacter::OnPlayFootstepSoundNotify()
 	{
 		if (UPSAudioManagerSubsystem* Audio = GetGameInstance()->GetSubsystem<UPSAudioManagerSubsystem>())
 		{
-			Audio->PlaySFX(FootstepSound, GetActorLocation(), 0.5f);
+			Audio->PlaySFX(FootstepSound, GetActorLocation(), 0.3f);
+		}
+	}
+}
+
+void APSCharacter::OnPlayAttackSoundNotify()
+{
+	if (EquippedRightWeapon->GetAttackSound())
+	{
+		if (UPSAudioManagerSubsystem* Audio = GetGameInstance()->GetSubsystem<UPSAudioManagerSubsystem>())
+		{
+			Audio->PlaySFX(EquippedRightWeapon->GetAttackSound(), GetActorLocation(), 0.7f);
+		}
+	}
+}
+
+void APSCharacter::OnPlayJumpSoundNotify()
+{
+	if (JumpSound)
+	{
+		if (UPSAudioManagerSubsystem* Audio = GetGameInstance()->GetSubsystem<UPSAudioManagerSubsystem>())
+		{
+			Audio->PlaySFX(JumpSound, GetActorLocation(), 0.7f);
+		}
+	}
+}
+
+void APSCharacter::OnPlayLandSoundNotify()
+{
+	if (LandSound)
+	{
+		if (UPSAudioManagerSubsystem* Audio = GetGameInstance()->GetSubsystem<UPSAudioManagerSubsystem>())
+		{
+			Audio->PlaySFX(LandSound, GetActorLocation(), 0.7f);
 		}
 	}
 }

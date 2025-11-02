@@ -77,6 +77,15 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Notify|Sound")
 	void OnPlayFootstepSoundNotify();
 
+	UFUNCTION(BlueprintCallable, Category = "Notify|Sound")
+	void OnPlayAttackSoundNotify();
+
+	UFUNCTION(BlueprintCallable, Category = "Notify|Sound")
+	void OnPlayJumpSoundNotify();
+
+	UFUNCTION(BlueprintCallable, Category = "Notify|Sound")
+	void OnPlayLandSoundNotify();
+
 	UFUNCTION(BlueprintPure, Category = "Targeting")
 	bool GetIsTargeting() const;
 
@@ -272,6 +281,12 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sound")
 	TObjectPtr<USoundBase> FootstepSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sound")
+	TObjectPtr<USoundBase> JumpSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sound")
+	TObjectPtr<USoundBase> LandSound;
 
 private:
 	FTimerHandle SprintStaminaTimer;
