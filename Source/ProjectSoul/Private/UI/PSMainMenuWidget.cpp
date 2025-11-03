@@ -15,7 +15,7 @@ void UPSMainMenuWidget::NativeOnInitialized()
 
 void UPSMainMenuWidget::StartButtonClick()
 {
-	GetGameInstance()->GetSubsystem<UPSUIManagerSubsystem>()->LevelLoading("MainLevel");
+	GetGameInstance()->GetSubsystem<UPSUIManagerSubsystem>()->LevelLoading("Demonstration");
 	RemoveFromParent();
 }
 
