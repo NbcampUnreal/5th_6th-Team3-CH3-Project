@@ -65,7 +65,7 @@ void APSBossEnemy::Skill1Attack()
 		return;
 
 	FVector TargetLocation = Target->GetActorLocation();
-	FVector SpawnLocation = TargetLocation + FVector(0.f, 0.f, 1000.f); 
+	FVector SpawnLocation = TargetLocation + FVector(0.f, 0.f, 300.f); 
 	FRotator SpawnRotation = FRotator(-90.f, 0.f, 0.f);
 
 	FActorSpawnParameters Params;
@@ -82,9 +82,9 @@ void APSBossEnemy::Skill1Attack()
 	{
 		Projectile->ProjectileMovement->bIsHomingProjectile = false;
 		Projectile->ProjectileMovement->ProjectileGravityScale = 0.0f;
-		Projectile->ProjectileMovement->InitialSpeed = 3000.f;
-		Projectile->ProjectileMovement->MaxSpeed = 3000.f;
-		Projectile->ProjectileMovement->Velocity = FVector(0.f, 0.f, -3000.f);
+		Projectile->ProjectileMovement->InitialSpeed = 1500.f;
+		Projectile->ProjectileMovement->MaxSpeed = 1500.f;
+		Projectile->ProjectileMovement->Velocity = FVector(0.f, 0.f, -1500.f);
 		Projectile->SetLifeSpan(3.0f);
 
 		UE_LOG(LogTemp, Warning, TEXT("Skill1 Falling Projectile Spawned."));
@@ -100,7 +100,10 @@ void APSBossEnemy::Skill2Attack()
 	AActor* Target = Cast<AActor>(BlackboardComp->GetValueAsObject(TEXT("TargetActor")));
 	if (!Target || !ProjectileClass) return;
 
-	FVector SpawnLocation = GetActorLocation() + GetActorForwardVector() * 150.f + FVector(0, 0, 80.f);
+	FVector SocketLocation = GetMesh()->GetSocketLocation(TEXT("hand_l"));
+	FRotator SocketRotation = GetMesh()->GetSocketRotation(TEXT("hand_l"));
+
+	FVector SpawnLocation = SocketLocation + SocketRotation.Vector() * 100.f;
 	FRotator SpawnRotation = (Target->GetActorLocation() - SpawnLocation).Rotation();
 
 	FActorSpawnParameters Params;

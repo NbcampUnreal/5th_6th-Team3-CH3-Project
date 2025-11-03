@@ -16,6 +16,7 @@ void UBossEnemyAttackState::OnEnter()
     {
         return;
     }
+    Cast<APSEnemyAIController>(EnemyAIController)->SetSightAngle(180.0f);
     BlackboardComp->SetValueAsBool(TEXT("bIsAttacking"), true);
     UAnimInstance* Anim = Enemy->GetMesh()->GetAnimInstance();
     AActor* Target = Cast<AActor>(BlackboardComp->GetValueAsObject(TEXT("TargetActor")));

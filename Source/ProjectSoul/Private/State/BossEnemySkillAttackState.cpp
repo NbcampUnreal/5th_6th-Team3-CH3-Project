@@ -16,6 +16,7 @@ void UBossEnemySkillAttackState::OnEnter()
     {
         return;
     }
+    Cast<APSEnemyAIController>(EnemyAIController)->SetSightAngle(180.0f);
     UAnimInstance* Anim = Enemy->GetMesh()->GetAnimInstance();
     AActor* Target = Cast<AActor>(BlackboardComp->GetValueAsObject(TEXT("TargetActor")));
     if (Target)
