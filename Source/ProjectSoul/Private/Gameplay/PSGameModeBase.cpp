@@ -9,6 +9,7 @@
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
 #include "UI/PSUIManagerSubsystem.h"
+#include "Gameplay/PSAudioManagerSubsystem.h"
 
 APSGameModeBase::APSGameModeBase()
 {
@@ -30,6 +31,11 @@ void APSGameModeBase::BeginPlay()
     {
         PSState->RemainingEnemies = FoundEnemies.Num();
         UE_LOG(LogTemp, Warning, TEXT("Enemy Count: %d"), PSState->RemainingEnemies);
+    }
+
+    if (UPSAudioManagerSubsystem* Audio = GetGameInstance()->GetSubsystem<UPSAudioManagerSubsystem>())
+    {
+        Audio->PlayBGM(0.4f);
     }
 }
 
