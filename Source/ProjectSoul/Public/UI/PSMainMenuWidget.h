@@ -24,9 +24,7 @@ private:
 	UFUNCTION()
 	void EndButtonClick();
 
-public:
-
-protected:
+	
 
 private:
 	UPROPERTY(meta = (BindWidget))

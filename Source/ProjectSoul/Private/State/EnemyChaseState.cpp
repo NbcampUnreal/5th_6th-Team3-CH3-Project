@@ -26,7 +26,7 @@ void UEnemyChaseState::OnEnter()
     {
         return;
     }
-
+    Cast<APSEnemyAIController>(EnemyAIController)->SetSightAngle(180.0f);
     UBlackboardComponent* BlackboardComp = EnemyAIController->GetBlackboardComponent();
     if (!BlackboardComp)
     {
