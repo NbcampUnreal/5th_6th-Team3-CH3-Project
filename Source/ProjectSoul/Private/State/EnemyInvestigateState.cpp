@@ -18,8 +18,7 @@ void UEnemyInvestigateState::OnEnter()
     {
         return;
     }
-
-
+    BlackboardComp->SetValueAsBool(TEXT("bInSkillRange"), false);
     FVector TargetLastKnownLocation = BlackboardComp->GetValueAsVector(TEXT("TargetLastKnownLocation"));
     if (TargetLastKnownLocation.IsNearlyZero())
     {
