@@ -25,7 +25,6 @@ void APSBossProjectileBase::BeginPlay()
 	Super::BeginPlay();
 	if (CollisionComp)
 	{
-		CollisionComp->InitSphereRadius(15.f);
 		CollisionComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 		CollisionComp->SetCollisionObjectType(ECC_GameTraceChannel1);
 		CollisionComp->SetCollisionResponseToAllChannels(ECR_Ignore);
@@ -38,8 +37,8 @@ void APSBossProjectileBase::BeginPlay()
 	if (ProjectileMovement)
 	{
 		ProjectileMovement->UpdatedComponent = CollisionComp;
-		ProjectileMovement->InitialSpeed = 400.f;
-		ProjectileMovement->MaxSpeed = 8000.f;
+		ProjectileMovement->InitialSpeed = 250.f;
+		ProjectileMovement->MaxSpeed = 1500.f;
 		ProjectileMovement->bRotationFollowsVelocity = true;
 		ProjectileMovement->ProjectileGravityScale = 0.f;
 	}
@@ -64,7 +63,6 @@ void APSBossProjectileBase::OnProjectileOverlap(
 			nullptr,
 			this,
 			UDamageType::StaticClass());
-		Destroy();
 	}
 }
 

@@ -46,7 +46,10 @@ protected:
 	UPROPERTY(BlueprintAssignable) FOnBossDefeated OnBossDefeated;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Skill")
-	TSubclassOf<APSBossProjectileBase> ProjectileClass;
+	TSubclassOf<APSBossProjectileBase> ProjectileClass1;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Skill")
+	TSubclassOf<APSBossProjectileBase> ProjectileClass2;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Montage")
 	TObjectPtr<UAnimMontage> Skill_1_Montage;

@@ -13,7 +13,8 @@ void UEnemyHitState::OnEnter()
         return;
     }
     AAIController* EnemyAIController = Cast<AAIController>(Enemy->GetController());
-    if (!EnemyAIController)
+    UBlackboardComponent* BlackboardComp = EnemyAIController ? EnemyAIController->GetBlackboardComponent() : nullptr;
+    if (EnemyAIController == nullptr || BlackboardComp == nullptr)
     {
         return;
     }

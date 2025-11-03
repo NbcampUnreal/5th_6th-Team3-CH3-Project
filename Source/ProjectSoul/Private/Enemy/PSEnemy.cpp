@@ -192,8 +192,6 @@ float APSEnemy::TakeDamage(
 
 	if (EnemyStats.Health.IsZero())
 	{
-		BlackboardComp->SetValueAsBool(TEXT("bIsAttacking"), false);
-		BlackboardComp->SetValueAsBool(TEXT("bInAttackRange"), false);
 		BlackboardComp->SetValueAsBool(TEXT("bIsDead"), true);
 		UE_LOG(LogTemp, Warning, TEXT("Enemy Death"));
 
