@@ -29,13 +29,15 @@ protected:
 private :
 	void UpdateUI();
 
-private:
-	UPROPERTY(meta = (BindWidget))
+
+public:
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	UButton* MainMenuButton;
 
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	UButton* ReStartButton;
 
+private:
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* TotalScoreText;
 

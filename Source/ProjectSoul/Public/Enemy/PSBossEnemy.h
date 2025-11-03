@@ -42,8 +42,11 @@ protected:
 
 	virtual UStateMachineBase* CreateStateMachine() override;
 
-protected:
+public:
+
 	UPROPERTY(BlueprintAssignable) FOnBossDefeated OnBossDefeated;
+
+protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Skill")
 	TSubclassOf<APSBossProjectileBase> ProjectileClass1;
