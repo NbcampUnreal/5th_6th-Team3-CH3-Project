@@ -17,6 +17,8 @@ class PROJECTSOUL_API APSEnemyAIController : public AAIController
 public:
 	APSEnemyAIController();
 
+	void SetSightAngle(float NewAngle);
+
 	void StartBehaviorTree();
 
 	float GetAttackRange();

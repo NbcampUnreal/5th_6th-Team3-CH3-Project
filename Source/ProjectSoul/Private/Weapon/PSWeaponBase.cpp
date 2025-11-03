@@ -76,6 +76,11 @@ void APSWeaponBase::OnWeaponOverlap(
     UE_LOG(LogTemp, Warning, TEXT("%s Damaged: %f"), *OtherActor->GetName(), AttackPower);
 }
 
+USoundBase* APSWeaponBase::GetAttackSound() const
+{
+    return AttackSound;
+}
+
 void APSWeaponBase::EnableWeaponCollision()
 {
     WeaponCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly); 

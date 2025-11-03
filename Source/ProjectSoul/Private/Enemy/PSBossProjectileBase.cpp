@@ -26,8 +26,13 @@ void APSBossProjectileBase::BeginPlay()
 	if (CollisionComp)
 	{
 		CollisionComp->InitSphereRadius(15.f);
-		CollisionComp->SetCollisionProfileName("BlockAllDynamic");
-		CollisionComp->OnComponentHit.AddDynamic(this, &APSBossProjectileBase::OnHit);
+		CollisionComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		CollisionComp->SetCollisionObjectType(ECC_GameTraceChannel1);
+		CollisionComp->SetCollisionResponseToAllChannels(ECR_Ignore);
+		CollisionComp->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+		CollisionComp->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Overlap);
+
+		CollisionComp->OnComponentBeginOverlap.AddDynamic(this, &APSBossProjectileBase::OnProjectileOverlap);
 		RootComponent = CollisionComp;
 	}
 	if (ProjectileMovement)
@@ -40,24 +45,24 @@ void APSBossProjectileBase::BeginPlay()
 	}
 }
 
-void APSBossProjectileBase::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+void APSBossProjectileBase::OnProjectileOverlap(
+	UPrimitiveComponent* OverlappedComp,
+	AActor* OtherActor,
+	UPrimitiveComponent* OtherComp,
+	int32 OtherBodyIndex,
+	bool bFromSweep,
+	const FHitResult& SweepResult)
 {
-	if (OtherActor && OtherActor != GetOwner())
+	if (!OtherActor || OtherActor == GetOwner()) return;
+
+	if (OtherActor->ActorHasTag(TEXT("Player")))
 	{
-		if (!OtherActor->ActorHasTag("Player"))
-		{
-			return;
-		}
-		if (OtherActor->ActorHasTag("Enemy"))
-		{
-			return;
-		}
+		UE_LOG(LogTemp, Warning, TEXT("Hit Player!"));
 		UGameplayStatics::ApplyDamage(
-			OtherActor, 
-			Damage, 
-			nullptr, 
-			this, 
+			OtherActor,
+			Damage,
+			nullptr,
+			this,
 			UDamageType::StaticClass());
 		Destroy();
 	}
