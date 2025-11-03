@@ -7,7 +7,7 @@
 class USoundBase;
 class UAudioComponent;
 
-UCLASS()
+UCLASS(EditInlineNew, BlueprintType, Blueprintable)
 class PROJECTSOUL_API UPSAudioManagerSubsystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
@@ -15,14 +15,23 @@ class PROJECTSOUL_API UPSAudioManagerSubsystem : public UGameInstanceSubsystem
 public:
 	UPSAudioManagerSubsystem();
 
+    virtual void Initialize(FSubsystemCollectionBase& Collection) override;
+
     UFUNCTION(BlueprintCallable, Category = "Audio")
     void PlaySFX(USoundBase* Sound, FVector Location, float Volume = 1.0f);
 
     UFUNCTION(BlueprintCallable, Category = "Audio")
-    void PlayBGM(USoundBase* Sound, float FadeInTime = 1.f);
+    void PlayBGM(float FadeInTime = 1.f);
 
     UFUNCTION(BlueprintCallable, Category = "Audio")
     void StopBGM(float FadeOutTime = 1.0f);
+
+protected:
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Audio")
+    TObjectPtr<USoundBase> DefaultBGM;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Audio")
+    TObjectPtr<USoundAttenuation> DefaultAttenuation;
 
 private:
     UPROPERTY()
