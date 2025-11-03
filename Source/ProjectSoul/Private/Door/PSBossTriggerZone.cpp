@@ -20,23 +20,33 @@ APSBossTriggerZone::APSBossTriggerZone()
 		TriggerBox->OnComponentBeginOverlap.AddDynamic(this, &APSBossTriggerZone::OnPlayerEnter);
 	}
 
+	bBossDefeated = false;
 }
 
 
 void APSBossTriggerZone::BeginPlay()
 {
 	Super::BeginPlay();
-	// 보스 바인딩
-	//if (BossActor)
-	//{
-	//	APSBossEnemy* Boss = Cast<APSBossEnemy>(BossActor);
-	//	if (Boss)
-	//	{
-	//		Boss->OnBossDefeated.AddDynamic(this, &APSBossTriggerZone::OnBossDefeated);
-	//	}
-	//}
 
-	OnBossDefeated();
+	OpenDoor();
+
+	if (BossActor)
+	{
+		APSBossEnemy* Boss = Cast<APSBossEnemy>(BossActor);
+		if (Boss)
+		{
+			Boss->OnBossDefeated.AddDynamic(this, &APSBossTriggerZone::OnBossDefeated);
+		}
+	}
+
+	if (bBossDefeated)
+	{
+		if (BossDoor)
+		{
+			BossDoor->SetLocked(false);
+			BossDoor->OpenDoor();
+		}
+	}
 	
 }
 
@@ -46,8 +56,7 @@ void APSBossTriggerZone::OnPlayerEnter(
 {
 	if (APSCharacter* Player = Cast<APSCharacter>(OtherActor))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Player entered Boss Room"));
-		if (BossDoor)
+		if (BossDoor && !bBossDefeated)
 		{
 			BossDoor->CloseDoor();
 			BossDoor->SetLocked(true);
@@ -59,11 +68,18 @@ void APSBossTriggerZone::OnBossDefeated()
 {
 	if (BossDoor)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Door Open"));
-		BossDoor->SetLocked(false);
-		BossDoor->OpenDoor();
+		OpenDoor();
+		bBossDefeated = true;
 	}
 }
+
+void APSBossTriggerZone::OpenDoor()
+{
+	BossDoor->SetLocked(false);
+	BossDoor->OpenDoor();
+}
+
+
 
 
 

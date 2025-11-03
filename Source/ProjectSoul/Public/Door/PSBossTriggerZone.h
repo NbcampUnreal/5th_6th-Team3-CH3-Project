@@ -28,6 +28,9 @@ protected:
 	UFUNCTION()
 	void OnBossDefeated();
 
+	UFUNCTION()
+	void OpenDoor();
+
 
 protected:
 	
@@ -39,6 +42,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BossRoom")
 	AActor* BossActor;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BossRoom")
+	bool bBossDefeated;
 	
 
 };
