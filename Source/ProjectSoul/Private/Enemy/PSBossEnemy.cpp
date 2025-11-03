@@ -27,6 +27,17 @@ void APSBossEnemy::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
+void APSBossEnemy::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	if (EndPlayReason == EEndPlayReason::Destroyed)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Boss Die."));
+		OnBossDefeated.Broadcast();
+	}
+}
+
 UStateMachineBase* APSBossEnemy::CreateStateMachine()
 {
 	return NewObject<UBossEnemyStateMachine>(this);

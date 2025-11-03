@@ -5,6 +5,9 @@
 #include "PSBossEnemy.generated.h"
 
 class APSBossProjectileBase;
+class FOnBossDefeated;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnBossDefeated);
 
 UCLASS()
 class PROJECTSOUL_API APSBossEnemy : public APSEnemy
@@ -35,9 +38,13 @@ protected:
 
 	virtual void Tick(float DeltaTime) override;
 
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
 	virtual UStateMachineBase* CreateStateMachine() override;
 
 protected:
+	UPROPERTY(BlueprintAssignable) FOnBossDefeated OnBossDefeated;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Skill")
 	TSubclassOf<APSBossProjectileBase> ProjectileClass;
 
