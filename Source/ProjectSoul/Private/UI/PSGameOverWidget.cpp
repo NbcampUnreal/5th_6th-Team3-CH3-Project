@@ -9,7 +9,9 @@
 void UPSGameOverWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
+
 	GameOverFadeInTime = 3.0f;
+	
 	MainMenuButton->OnClicked.AddDynamic(this, &UPSGameOverWidget::MainMenuButtonClick);
 	ReStartButton->OnClicked.AddDynamic(this, &UPSGameOverWidget::RestartButtonClick);
 }
@@ -21,10 +23,6 @@ void UPSGameOverWidget::NativePreConstruct()
 
 void UPSGameOverWidget::UpdateUI()
 {
-	SetRenderOpacity(0.0f);
-	MainMenuButton->SetVisibility(ESlateVisibility::Hidden);
-	ReStartButton->SetVisibility(ESlateVisibility::Hidden);
-
 	APSGameStateBase* GameStateBase = Cast<APSGameStateBase>(GetWorld()->GetGameState());
 	if (GameStateBase)
 	{
@@ -46,6 +44,10 @@ void UPSGameOverWidget::UpdateUI()
 
 void UPSGameOverWidget::WidgetFadeIn()
 {
+	SetRenderOpacity(0.0f);
+	MainMenuButton->SetVisibility(ESlateVisibility::Hidden);
+	ReStartButton->SetVisibility(ESlateVisibility::Hidden);
+
 	GetWorld()->GetTimerManager().SetTimer(
 		GameOverFadeInTimer,
 		[this]()
@@ -77,8 +79,6 @@ void UPSGameOverWidget::MainMenuButtonClick()
 
 void UPSGameOverWidget::RestartButtonClick()
 {
-	GetGameInstance()->GetSubsystem<UPSUIManagerSubsystem>()->LevelLoading("MainLevel");
-	/*APSGameModeBase* GameModeBase = Cast<APSGameModeBase>(GetWorld()->GetAuthGameMode());
-	GameModeBase->RestartGame();*/
+	GetGameInstance()->GetSubsystem<UPSUIManagerSubsystem>()->LevelLoading("Demonstration");
 	RemoveFromParent();
 }
