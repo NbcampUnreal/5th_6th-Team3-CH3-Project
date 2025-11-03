@@ -34,10 +34,10 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "BossRoom|Component")
 	UBoxComponent* TriggerBox;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "BossRoom")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BossRoom")
 	APSBossRoomDoor* BossDoor;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "BossRoom")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BossRoom")
 	AActor* BossActor;
 	
 

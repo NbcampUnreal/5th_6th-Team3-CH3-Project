@@ -52,8 +52,10 @@ void APSBossRoomDoor::BeginPlay()
 
 void APSBossRoomDoor::OpenDoor()
 {
-	if (bIsLocked) //잠겨 있다면
+	if (bIsLocked)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Door Locked!"));
+
 		return;
 	}
 
@@ -62,6 +64,7 @@ void APSBossRoomDoor::OpenDoor()
 	RightDoor->SetRelativeRotation(RightOpenRot);
 
 	DoorBlocker->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	bIsLocked = false;
 }
 
 void APSBossRoomDoor::CloseDoor()
@@ -71,6 +74,7 @@ void APSBossRoomDoor::CloseDoor()
 	RightDoor->SetRelativeRotation(RightClosedRot);
 
 	DoorBlocker->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	bIsLocked = true;
 }
 
 void APSBossRoomDoor::SetLocked(bool bLocked)
