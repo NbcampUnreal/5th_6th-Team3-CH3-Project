@@ -28,8 +28,6 @@ void APSBossTriggerZone::BeginPlay()
 {
 	Super::BeginPlay();
 
-	OpenDoor();
-
 	if (BossActor)
 	{
 		APSBossEnemy* Boss = Cast<APSBossEnemy>(BossActor);
