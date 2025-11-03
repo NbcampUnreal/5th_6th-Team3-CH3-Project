@@ -6,6 +6,7 @@
 #include "PSEnemy.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHit, AActor*, Monster, float, Damage);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemyDie, AActor*, DeadActor);
 
 class UEnemyStateMachine;
 class UStateMachineBase;
@@ -78,6 +79,9 @@ private:
 public:
 	UPROPERTY(BlueprintAssignable, Category = "Event")
 	FOnHit OnHit;
+
+	UPROPERTY(BlueprintAssignable, Category = "Event")
+	FOnEnemyDie OnEnemyDie;
 
 protected:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Weapon")

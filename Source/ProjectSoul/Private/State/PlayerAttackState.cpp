@@ -10,13 +10,16 @@ void UPlayerAttackState::OnEnter()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Player: Enter Attack State"));
 
+	bCanNextCombo = false;
+	bDoNextCombo = false;
+
 	if (APSCharacter* Character = GetPlayerCharacter())
 	{
 		Character->SetIsSprinting(false);
 		Character->bUseControllerRotationYaw = false;
 
 		Character->ConsumeStaminaForAttack();
-		Character->PlayAnimMontage(Character->GetAttackMontage());
+		Character->PlayAnimMontage(Character->GetAttackMontage(CurrentComboIndex));
 	}
 }
 
@@ -36,7 +39,11 @@ void UPlayerAttackState::OnExit()
 		{
 			if (AnimInst->IsAnyMontagePlaying())
 			{
-				AnimInst->StopAllMontages(0.1f);
+				if (!bDoNextCombo)
+				{
+					AnimInst->StopAllMontages(0.1f);
+					CurrentComboIndex = 0;
+				}
 			}
 		}
 	}
@@ -60,6 +67,15 @@ void UPlayerAttackState::Hit()
 	}
 }
 
+void UPlayerAttackState::Attack()
+{
+	if (bCanNextCombo)
+	{
+		bCanNextCombo = false;
+		bDoNextCombo = true;
+	}
+}
+
 void UPlayerAttackState::Die()
 {
 	if (UPlayerStateMachine* PSM = GetPlayerStateMachine())
@@ -68,12 +84,31 @@ void UPlayerAttackState::Die()
 	}
 }
 
+void UPlayerAttackState::NextComboWindow()
+{
+	bCanNextCombo = true;
+}
+
+void UPlayerAttackState::StartNextCombo()
+{
+	if (bDoNextCombo)
+	{
+		if (UPlayerStateMachine* PSM = GetPlayerStateMachine())
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Player: Start Next Combo"));
+			CurrentComboIndex++;
+			PSM->ChangeState(this);
+		}
+	}
+}
+
 void UPlayerAttackState::AttackEnd()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Player: Call Attack End"));
-
+	
 	if (UPlayerStateMachine* PSM = GetPlayerStateMachine())
 	{
+		CurrentComboIndex = 0;
 		PSM->ChangeState(PSM->GetPrevState());
 	}
 }
