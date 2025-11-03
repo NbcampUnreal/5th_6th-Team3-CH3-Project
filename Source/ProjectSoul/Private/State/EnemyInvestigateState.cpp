@@ -18,6 +18,7 @@ void UEnemyInvestigateState::OnEnter()
     {
         return;
     }
+    Cast<APSEnemyAIController>(EnemyAIController)->SetSightAngle(100.0f);
     BlackboardComp->SetValueAsBool(TEXT("bInSkillRange"), false);
     FVector TargetLastKnownLocation = BlackboardComp->GetValueAsVector(TEXT("TargetLastKnownLocation"));
     if (TargetLastKnownLocation.IsNearlyZero())

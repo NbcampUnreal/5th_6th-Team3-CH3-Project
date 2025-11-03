@@ -17,6 +17,7 @@ void UEnemyAttackState::OnEnter()
     {
         return;
     }
+    Cast<APSEnemyAIController>(EnemyAIController)->SetSightAngle(180.0f);
     BlackboardComp->SetValueAsBool(TEXT("bIsAttacking"), true);
     AActor* Target = Cast<AActor>(BlackboardComp->GetValueAsObject(TEXT("TargetActor")));
     if (Target)
