@@ -17,12 +17,21 @@ public:
 	UFUNCTION()
 	void ShowCurrentWidget(bool bIsGameOver);
 
+	void LevelLoading(FName LevelName);
+	
+
 private:
+	UFUNCTION()
+	void OpenLevel();
+
 	void ShowMainMenuUI();
 
 	void ShowPlayerHUD();
 
 	void ShowGameOverUI();
+
+	void ShowLoadingUI();
+
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Widget")
@@ -45,6 +54,5 @@ private:
 	UPROPERTY()
 	UUserWidget* LoadingWidgetInstance;
 
-	FTimerHandle FadeInTimer;
-	float FadeInTime;
+	FName OpenLevelName;
 };
