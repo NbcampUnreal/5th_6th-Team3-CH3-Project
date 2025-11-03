@@ -356,6 +356,11 @@ void APSCharacter::FindTargetActor()
 
 		if (APSEnemy* Enemy = Cast<APSEnemy>(Actor))
 		{
+			if (Enemy->GetIsDead())
+			{
+				continue;
+			}
+
 			float Dist = FVector::Distance(Enemy->GetActorLocation(), GetActorLocation());
 			if (Dist < ClosestDist)
 			{

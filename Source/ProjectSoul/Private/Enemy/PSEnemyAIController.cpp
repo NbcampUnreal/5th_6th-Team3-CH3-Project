@@ -84,6 +84,8 @@ void APSEnemyAIController::OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimul
 	{
 		BlackboardComp->SetValueAsBool(TEXT("bCanSeeTarget"), false);
 		BlackboardComp->SetValueAsBool(TEXT("bIsInvestigating"), true);
+		BlackboardComp->SetValueAsBool(TEXT("bInSkillRange"), false);
+		BlackboardComp->SetValueAsBool(TEXT("bInAttackRange"), false);
 		BlackboardComp->SetValueAsVector(TEXT("TargetLastKnownLocation"), Actor->GetActorLocation());
 		BlackboardComp->ClearValue(TEXT("TargetActor"));
 	}
