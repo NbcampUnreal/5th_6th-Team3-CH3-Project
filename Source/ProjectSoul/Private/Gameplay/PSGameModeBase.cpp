@@ -72,12 +72,21 @@ void APSGameModeBase::EndGame(bool bIsClear)
         PSState->bIsGameOver = true;
         PSState->bIsGameClear = bIsClear;
     }
-
+    UWorld* World = GetWorld();
+    if (!World) return;
+    for (TActorIterator<APSEnemyAIController> It(World); It; ++It)
+    {
+        APSEnemyAIController* AICon = *It;
+        if (AICon && AICon->BrainComponent)
+        {
+            AICon->BrainComponent->StopLogic(TEXT("Game Over"));
+        }
+    }
     UE_LOG(LogTemp, Warning, TEXT("Game Over | Result: %s"), bIsClear ? TEXT("CLEAR") : TEXT("FAIL"));
     OnGameOver.Broadcast(bIsGameOver);
 
-    UPSUIManagerSubsystem* UIManagerSubsystem = GetGameInstance()->GetSubsystem<UPSUIManagerSubsystem>();
-    UIManagerSubsystem->ShowCurrentWidget(true);
+    /*UPSUIManagerSubsystem* UIManagerSubsystem = GetGameInstance()->GetSubsystem<UPSUIManagerSubsystem>();
+    UIManagerSubsystem->ShowCurrentWidget(true);*/
     /*FTimerHandle RestartTimer;
     GetWorldTimerManager().SetTimer(RestartTimer, this,
         &APSGameModeBase::RestartGame, RestartDelay, false);*/

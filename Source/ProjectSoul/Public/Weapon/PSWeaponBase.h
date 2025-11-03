@@ -5,6 +5,7 @@
 #include "PSWeaponBase.generated.h"
 
 class UBoxComponent;
+class USoundBase;
 
 UCLASS()
 class PROJECTSOUL_API APSWeaponBase : public AActor
@@ -31,6 +32,8 @@ public:
         bool bFromSweep,
         const FHitResult& SweepResult);
 
+    USoundBase* GetAttackSound() const;
+
 protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon|Component")
     USceneComponent* Scene;
@@ -55,4 +58,7 @@ protected:
 
     UPROPERTY()
     TSet<AActor*> DamagedActors;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon|Sound")
+	TObjectPtr<USoundBase> AttackSound;
 };

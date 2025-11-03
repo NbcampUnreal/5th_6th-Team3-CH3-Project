@@ -201,6 +201,8 @@ float APSEnemy::TakeDamage(
 		{
 			GM->OnEnemyKilled(Score);
 		}
+
+		OnEnemyDie.Broadcast(this);
 	}
 	else
 	{

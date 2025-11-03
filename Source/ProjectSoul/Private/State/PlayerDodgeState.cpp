@@ -15,7 +15,6 @@ void UPlayerDodgeState::OnEnter()
 
 		FVector DodgeDir = CalculateDodgeDirection();
 		FRotator DodgeRotation = DodgeDir.Rotation();
-		UE_LOG(LogTemp, Warning, TEXT("Player: Dodge Direction: %s"), *DodgeDir.ToString());
 		Character->SetActorRotation(DodgeRotation);
 
 		Character->SetIsSprinting(false);

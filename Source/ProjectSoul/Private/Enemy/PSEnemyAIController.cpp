@@ -89,6 +89,16 @@ void APSEnemyAIController::OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimul
 	}
 }
 
+void APSEnemyAIController::SetSightAngle(float NewAngle)
+{
+	if (SightConfig)
+	{
+		SightConfig->PeripheralVisionAngleDegrees = NewAngle;
+		GetPerceptionComponent()->RequestStimuliListenerUpdate();//now change
+		UE_LOG(LogTemp, Warning, TEXT("Sight angle changed to %.1f"), NewAngle);
+	}
+}
+
 UBlackboardComponent* APSEnemyAIController::GetBlackboardComp() const
 {
 	return BlackboardComp;

@@ -1,5 +1,6 @@
 #include "StateMachine/StateMachineBase.h"
 #include "State/StateBase.h"
+#include "State/PlayerAttackState.h"
 
 void UStateMachineBase::Initialize(ACharacter* InOwner)
 {
@@ -25,8 +26,14 @@ void UStateMachineBase::ChangeState(UStateBase* NewState)
 
 	if (NewState == CurrentState)
 	{
-		//UE_LOG(LogTemp, Warning, TEXT("Change to same state."));
-		return;
+		if (NewState->IsA(UPlayerAttackState::StaticClass()))
+		{
+			// Pass
+		}
+		else
+		{
+			return;
+		}
 	}
 
 	if (CurrentState)
