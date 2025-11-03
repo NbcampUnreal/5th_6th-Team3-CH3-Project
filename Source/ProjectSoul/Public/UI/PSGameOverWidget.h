@@ -13,18 +13,21 @@ class PROJECTSOUL_API UPSGameOverWidget : public UUserWidget
 	GENERATED_BODY()
 	
 public:
-	void UpdateUI();
+	void WidgetFadeIn();
 
 protected:
 	virtual void NativeOnInitialized() override;
+
 	virtual void NativePreConstruct() override;
 
-protected:
 	UFUNCTION()
 	void MainMenuButtonClick();
 
 	UFUNCTION()
 	void RestartButtonClick();
+
+private :
+	void UpdateUI();
 
 private:
 	UPROPERTY(meta = (BindWidget))
@@ -39,4 +42,8 @@ private:
 	UPROPERTY(meta = (BindWidget))
 
 	UTextBlock* ClearOrDieText;
+
+	FTimerHandle GameOverFadeInTimer;
+
+	float GameOverFadeInTime;
 };
