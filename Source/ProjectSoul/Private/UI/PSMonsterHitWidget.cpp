@@ -12,6 +12,13 @@ void UPSMonsterHitWidget::NativeOnInitialized()
 	bIsAddToViewport = false;
 }
 
+void UPSMonsterHitWidget::NativeConstruct()
+{
+	UFunction* PlayAnimFunc = FindFunction(FName("PlayHitAnim"));
+
+	ProcessEvent(PlayAnimFunc, nullptr);
+}
+
 void UPSMonsterHitWidget::SetDamageText(int Damage)
 {
 	UTextBlock* TextBlock = Cast<UTextBlock>(DamageText);

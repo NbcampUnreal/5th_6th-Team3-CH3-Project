@@ -82,6 +82,12 @@ void UPSPlayerHUDWidget::OnUpdateHPBar(float CurrentValue, float MaxValue)
 		float NewWidth = MaxValue * SizeBoxMultiplier;
 		HPBarContainer->SetWidthOverride(NewWidth);
 	}
+
+	if (HPBarBackImageContainer)
+	{
+		float NewWidth = MaxValue * SizeBoxMultiplier;
+		HPBarBackImageContainer->SetWidthOverride(NewWidth + 10);
+	}
 }
 //player Delegate add
 void UPSPlayerHUDWidget::OnUpdateMPBar(float CurrentValue, float MaxValue)
@@ -96,6 +102,12 @@ void UPSPlayerHUDWidget::OnUpdateMPBar(float CurrentValue, float MaxValue)
 		float NewWidth = MaxValue * SizeBoxMultiplier;
 		MPBarContainer->SetWidthOverride(NewWidth);
 	}
+
+	if (MPBarBackImageContainer)
+	{
+		float NewWidth = MaxValue * SizeBoxMultiplier;
+		MPBarBackImageContainer->SetWidthOverride(NewWidth + 10);
+	}
 }
 //player Delegate add
 void UPSPlayerHUDWidget::OnUpdateStaminaBar(float CurrentValue, float MaxValue)
@@ -108,6 +120,12 @@ void UPSPlayerHUDWidget::OnUpdateStaminaBar(float CurrentValue, float MaxValue)
 	{
 		float NewWidth = MaxValue * SizeBoxMultiplier;
 		StaminaBarContainer->SetWidthOverride(NewWidth);
+	}
+
+	if (StaminaBarBackImageContainer)
+	{
+		float NewWidth = MaxValue * SizeBoxMultiplier;
+		StaminaBarBackImageContainer->SetWidthOverride(NewWidth + 10);
 	}
 }
 //player Delegate add
