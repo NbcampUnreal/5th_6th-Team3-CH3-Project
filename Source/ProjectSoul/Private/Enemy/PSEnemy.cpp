@@ -201,7 +201,8 @@ float APSEnemy::TakeDamage(
 		{
 			GM->OnEnemyKilled(Score);
 		}
-
+		HiddenHitHealthWidget();
+		ShowHealthWidget(false);
 		OnEnemyDie.Broadcast(this);
 	}
 	else
@@ -216,7 +217,7 @@ float APSEnemy::TakeDamage(
 	return DamageAmount;
 }
 
-//Lock On Call
+//PlayerTargetingState::OnEnter() Call
 void APSEnemy::ShowHealthWidget(bool bShow)
 {
 	if (HealthWidgetComponent)
