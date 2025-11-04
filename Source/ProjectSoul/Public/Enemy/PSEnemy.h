@@ -33,11 +33,11 @@ public:
 		AController* EventInstigator,
 		AActor* DamageCauser) override;
 
+	virtual UStateMachineBase* GetStateMachine();
+
 	void ShowHealthWidget(bool bShow);
 
 	void SetIsDead(bool bIsdead);
-
-	virtual UStateMachineBase* GetStateMachine();
 
 	UAnimMontage* GetAttackMontage() const;
 
@@ -55,6 +55,12 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Notify")
 	virtual void EnableWeaponCollisionNotify();
+
+	UFUNCTION(BlueprintCallable, Category = "Notify")
+	void OnPlayEnemyAttackSoundNotify();
+
+	UFUNCTION(BlueprintCallable, Category = "Notify")
+	void OnPlayEnemyWalkSoundNotify();
 
 	UFUNCTION()
 	void OnWeaponOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
@@ -95,6 +101,12 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 	FName AttachSocketNameR;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sound")
+	TObjectPtr<USoundBase> WalkSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sound")
+	TObjectPtr<USoundBase> AttackSound;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Targeting")
 	TObjectPtr<UStateMachineBase> StateMachine;

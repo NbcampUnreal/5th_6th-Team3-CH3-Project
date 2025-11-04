@@ -23,6 +23,8 @@ public:
 
 	virtual void OnUpdate(float DeltaTime) override;
 
+	virtual void ChangeState(UStateBase* NewState) override;
+
 	UEnemyStateBase* GetCurrentState() const;
 
 	UEnemyChaseState* GetChaseState() const;

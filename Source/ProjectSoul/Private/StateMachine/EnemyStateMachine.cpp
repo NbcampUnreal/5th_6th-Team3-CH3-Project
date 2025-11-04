@@ -66,6 +66,66 @@ void UEnemyStateMachine::OnUpdate(float DeltaTime)
 	Super::OnUpdate(DeltaTime);
 }
 
+void UEnemyStateMachine::ChangeState(UStateBase* NewState)
+{
+	if (CurrentState && CurrentState->IsA(UEnemyHitState::StaticClass()))
+	{
+		ACharacter* Enemy = this->GetOwnerCharacter();
+		if (Enemy)
+		{
+			UAnimInstance* Anim = Enemy->GetMesh()->GetAnimInstance();
+			UAnimMontage* Montage = Cast<APSEnemy>(Enemy)->GetHitMontage();
+			if (Anim && Anim->Montage_IsPlaying(Montage))
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Blocked: Hit montage still playing."));
+				return;
+			}
+		}
+	}
+	if (!NewState)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Null state."));
+		return;
+	}
+
+	if (NewState->IsA(UEnemyHitState::StaticClass()))
+	{
+		if (CurrentState)
+		{
+			CurrentState->OnExit(); 
+		}
+
+		CurrentState = NewState;
+		CurrentState->OnEnter();    
+		return;
+	}
+
+	if (NewState == CurrentState && NewState->IsA(UEnemyHitState::StaticClass()))
+	{
+		CurrentState->OnExit();
+		CurrentState->OnEnter();
+		return;
+	}
+
+	if (NewState == CurrentState)
+	{
+		return;
+	}
+
+	if (CurrentState)
+	{
+		CurrentState->OnExit();
+	}
+
+	CurrentState = NewState;
+
+	if (CurrentState)
+	{
+		CurrentState->OnEnter();
+	}
+}
+
+
 UEnemyStateBase* UEnemyStateMachine::GetCurrentState() const
 {
 	return Cast<UEnemyStateBase>(CurrentState);
