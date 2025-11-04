@@ -135,6 +135,8 @@ public:
 
 	void ConsumeStaminaForDodge();
 
+	void ConsumeManaForThrow();
+
 	void Heal(float Amount);
 
 	void FindTargetActor();
@@ -278,6 +280,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stats|Stamina")
 	float StaminaRegenRate;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stats|Mana")
+	float ThrowManaCost;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sound")
 	TObjectPtr<USoundBase> FootstepSound;

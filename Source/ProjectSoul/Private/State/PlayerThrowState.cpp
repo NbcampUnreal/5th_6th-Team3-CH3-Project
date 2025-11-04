@@ -10,6 +10,9 @@ void UPlayerThrowState::OnEnter()
 
 	if (APSCharacter* Character = GetPlayerCharacter())
 	{
+		Character->SetIsSprinting(false);
+
+		Character->ConsumeManaForThrow();
 		Character->PlayAnimMontage(Character->GetThrowMontage());
 	}
 }

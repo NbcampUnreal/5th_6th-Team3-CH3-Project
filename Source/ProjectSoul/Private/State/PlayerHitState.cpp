@@ -10,6 +10,7 @@ void UPlayerHitState::OnEnter()
 	if (APSCharacter* Character = GetPlayerCharacter())
 	{
 		Character->SetIsSprinting(false);
+
 		Character->PlayAnimMontage(Character->GetHitMontage());
 	}
 }

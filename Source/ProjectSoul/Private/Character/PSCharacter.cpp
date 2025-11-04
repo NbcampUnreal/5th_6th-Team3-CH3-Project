@@ -282,7 +282,7 @@ void APSCharacter::Attack(const FInputActionValue& Value)
 
 void APSCharacter::Throw(const FInputActionValue& Value)
 {
-	if (IsFalling())
+	if (PlayerStats.Mana.IsZero() || IsFalling())
 	{
 		return;
 	}
@@ -402,6 +402,12 @@ void APSCharacter::ConsumeStaminaForDodge()
 
 	PlayerStats.Stamina.AdjustValue(-DodgeStaminaCost);
 	OnStaminaChanged.Broadcast(PlayerStats.Stamina.GetCurrent(), PlayerStats.Stamina.GetMax());
+}
+
+void APSCharacter::ConsumeManaForThrow()
+{
+	PlayerStats.Mana.AdjustValue(-ThrowManaCost);
+	OnMPChanged.Broadcast(PlayerStats.Mana.GetCurrent(), PlayerStats.Mana.GetMax());
 }
 
 void APSCharacter::Heal(float Amount)
