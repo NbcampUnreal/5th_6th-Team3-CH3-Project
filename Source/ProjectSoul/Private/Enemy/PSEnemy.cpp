@@ -91,14 +91,13 @@ void APSEnemy::BeginPlay()
 	}
 	if (GetCapsuleComponent()) 
 	{
-		UE_LOG(LogTemp, Warning, TEXT("aaaaaaaaa"));
 		GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Ignore);
 	}
 	if (GetMesh())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("bbbbbbbbbb"));
 		GetMesh()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Ignore);
 	}
+
 	DisableWeaponCollisionNotify();
 }
 

@@ -802,7 +802,7 @@ void APSCharacter::OnThrowObjectNotify()
 			if (APSFireBomb* Bomb = Cast<APSFireBomb>(ThrownObject))
 			{
 				FVector LaunchDir = ActorRotation.Vector();
-				LaunchDir.Z += 0.5f;
+				LaunchDir.Z += 0.2f;
 				LaunchDir.Normalize();
 
 				Bomb->Init(LaunchDir);
