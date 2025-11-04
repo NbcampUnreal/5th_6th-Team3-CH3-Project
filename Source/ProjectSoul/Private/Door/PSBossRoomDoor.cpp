@@ -79,6 +79,11 @@ void APSBossRoomDoor::OpenDoor()
 
 void APSBossRoomDoor::CloseDoor()
 {
+	if (bIsLocked)
+	{
+		return;
+	}
+
 	UE_LOG(LogTemp, Warning, TEXT("Door Close"));
 	LeftDoor->SetRelativeRotation(LeftClosedRot);
 	RightDoor->SetRelativeRotation(RightClosedRot);
