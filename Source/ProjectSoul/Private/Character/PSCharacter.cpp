@@ -634,6 +634,11 @@ FVector2D APSCharacter::GetLastMoveInput() const
 	return LastMoveInput;
 }
 
+int32 APSCharacter::GetHealingPotionCount() const
+{
+	return HealingPotionCount;
+}
+
 void APSCharacter::SetCurrentTarget(APSEnemy* NewTarget)
 {
 	if (CurrentTarget)
@@ -825,8 +830,10 @@ void APSCharacter::OnThrowEndNotify()
 
 void APSCharacter::OnHealingNotify()
 {
-	HealingPotionCount--;
 	UE_LOG(LogTemp, Warning, TEXT("Player: %.1f Healing"), 50.f);
+
+	HealingPotionCount--;
+	OnPotionCountChanged.Broadcast(HealingPotionCount);
 	AddHealth(50.f);
 }
 

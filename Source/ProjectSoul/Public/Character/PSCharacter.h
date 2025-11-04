@@ -9,6 +9,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHPChanged, float, CurrentValue, 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnMPChanged, float, CurrentValue, float, MaxValue);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnStaminaChanged, float, CurrentValue, float, MaxValue);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemyTarget, AActor*, CurrentTarget);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPotionCountChanged, int32, PotionCount);
 
 class USpringArmComponent;
 class UCameraComponent;
@@ -132,6 +133,8 @@ public:
 
 	FVector2D GetLastMoveInput() const;
 
+	int32 GetHealingPotionCount() const;
+
 	void SetCurrentTarget(APSEnemy* NewTarget);
 
 	void SetIsTargeting(bool Value);
@@ -223,6 +226,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Event")
 	FOnEnemyTarget OnEnemyTarget;
+
+	UPROPERTY(BlueprintAssignable, Category = "Event")
+	FOnPotionCountChanged OnPotionCountChanged;
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
