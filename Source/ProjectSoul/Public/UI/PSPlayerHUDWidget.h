@@ -9,6 +9,7 @@ class UProgressBar;
 class UImage;
 class UTextBlock;
 class UVerticalBox;
+class UPSQuestTextWidget;
 class APSCharacter;
 
 UCLASS()
@@ -16,6 +17,11 @@ class PROJECTSOUL_API UPSPlayerHUDWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
+public:
+	UFUNCTION()
+	void QuestUpdateDelegate(AActor* UnUsed);
+
+	void QuestUpdate();
 
 protected:
 	virtual void NativeOnInitialized() override;
@@ -52,9 +58,12 @@ private:
 
 	APSCharacter* GetCharacter();
 
+	void CreateQuestText(FName QuestName);
+
+	void DeleteQuestText();
+
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
-	TSubclassOf<UUserWidget> MonsterHitWidgetClass;
+	
 
 private:
 	UPROPERTY(meta = (BindWidget))
@@ -65,6 +74,7 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<USizeBox> StaminaBarContainer;
+
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UProgressBar> HPBar;
@@ -98,6 +108,12 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<USizeBox> StaminaBarBackImageContainer;
 
+
+	TSubclassOf<UUserWidget> MonsterHitWidgetClass;
+
+	TSubclassOf<UUserWidget> QuestTextWidgetClass;
+
+	TMap<FName, UPSQuestTextWidget*> QuestMap;
 
 	FTimerHandle LockOnPositionHandle;
 	AActor* LockOnTarget;

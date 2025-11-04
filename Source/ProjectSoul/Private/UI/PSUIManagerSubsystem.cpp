@@ -38,7 +38,7 @@ UPSUIManagerSubsystem::UPSUIManagerSubsystem()
 		LoadingWidgetClass = LoadingWidgetBPClass.Class;
 	}
 }
-
+//GameModeBase::StartGame call
 void UPSUIManagerSubsystem::ShowCurrentWidget(bool bIsGameOver)
 {
 	FString CurrentMapName = GetWorld()->GetMapName();
@@ -53,6 +53,9 @@ void UPSUIManagerSubsystem::ShowCurrentWidget(bool bIsGameOver)
 	else 
 	{
 		ShowPlayerHUD();
+		ShowLoadingUI();
+		//test Quest
+		Cast<UPSPlayerHUDWidget>(PlayerHUDWidgetInstance)->QuestUpdate();
 	}
 }
 
@@ -132,18 +135,12 @@ void UPSUIManagerSubsystem::ShowGameOverUI()
 		}
 	}
 }
-
+//PSMainMenuWidget::StartButtonClick(), PSGameOverWidget::RestartButtonClick() call
 void UPSUIManagerSubsystem::LevelLoading(FName LevelName)
 {
-	ShowLoadingUI();
 	OpenLevelName = LevelName;
-
-	FLatentActionInfo LatentInfo;
-	LatentInfo.CallbackTarget = this;
-	LatentInfo.ExecutionFunction = FName("OpenLevel");
-	LatentInfo.Linkage = 0;
-	LatentInfo.UUID = __LINE__;
-	UGameplayStatics::LoadStreamLevel(this, LevelName, true, false, LatentInfo);
+	UE_LOG(LogTemp, Warning, TEXT("UIManagerSubsystem : LevelLoading Start"));
+	UGameplayStatics::OpenLevel(GetWorld(), OpenLevelName);
 }
 
 void UPSUIManagerSubsystem::ShowLoadingUI()
@@ -153,18 +150,15 @@ void UPSUIManagerSubsystem::ShowLoadingUI()
 		LoadingWidgetInstance = CreateWidget(GetGameInstance(), LoadingWidgetClass);
 	}
 	LoadingWidgetInstance->AddToViewport();
-}
 
-void UPSUIManagerSubsystem::OpenLevel()
-{
 	FTimerHandle DelayOpenLevelTimer;
 	GetWorld()->GetTimerManager().SetTimer(
 		DelayOpenLevelTimer,
 		[this]()
 		{
-			UGameplayStatics::OpenLevel(GetWorld(), OpenLevelName);
+			LoadingWidgetInstance->RemoveFromParent();
 		},
-		2.0f,
+		3.5f,
 		false
 	);
 }

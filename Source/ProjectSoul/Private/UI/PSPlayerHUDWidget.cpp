@@ -1,6 +1,7 @@
 #include "UI/PSPlayerHUDWidget.h"
 #include "UI/PSMonsterHitWidget.h"
 #include "UI/PSTriggerActor.h"
+#include "UI/PSQuestTextWidget.h"
 #include "Components/ProgressBar.h"
 #include "Components/SizeBox.h"
 #include "Components/Image.h"
@@ -10,9 +11,11 @@
 #include "Character/PSCharacter.h"
 #include "Enemy/PSEnemy.h"
 #include "Enemy/PSBossEnemy.h"
+#include "Gameplay/PSGameStateBase.h"
+#include "Quest/PSQuestManagerSubsystem.h"
+#include "Quest/PSQuestBase.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Kismet/GameplayStatics.h"
-
 
 void UPSPlayerHUDWidget::NativeOnInitialized()
 {
@@ -21,10 +24,15 @@ void UPSPlayerHUDWidget::NativeOnInitialized()
 	SizeBoxMultiplier = 3.0f;
 	HiddenBossStatusWidget();
 	//RunTime Load
-	UClass* WidgetClass = LoadClass<UUserWidget>(nullptr, TEXT("/Game/Blueprints/UI/WBP_PSMonsterHitWidget.WBP_PSMonsterHitWidget_C"));
-	if (WidgetClass)
+	UClass* BP_MonsterHitWidgetClass = LoadClass<UUserWidget>(nullptr, TEXT("/Game/Blueprints/UI/WBP_PSMonsterHitWidget.WBP_PSMonsterHitWidget_C"));
+	if (BP_MonsterHitWidgetClass)
 	{
-		MonsterHitWidgetClass = WidgetClass;
+		MonsterHitWidgetClass = BP_MonsterHitWidgetClass;
+	}
+	UClass* BP_QuestTextWidgetClass = LoadClass<UUserWidget>(nullptr, TEXT("/Game/Blueprints/UI/WBP_PSQuestTextWidget.WBP_PSQuestTextWidget_C"));
+	if (BP_QuestTextWidgetClass)
+	{
+		QuestTextWidgetClass = BP_QuestTextWidgetClass;
 	}
 }
 
@@ -53,7 +61,7 @@ void UPSPlayerHUDWidget::NativePreConstruct()
 		if (Enemy)
 		{
 			Enemy->OnHit.AddDynamic(this, &UPSPlayerHUDWidget::ShowHitWidget);
-			
+			Enemy->OnEnemyDie.AddDynamic(this, &UPSPlayerHUDWidget::QuestUpdateDelegate);
 			if (APSBossEnemy* Boss = Cast<APSBossEnemy>(Enemy))
 			{
 				Boss->OnHit.AddDynamic(this, &UPSPlayerHUDWidget::OnUpdateBossHPBar);
@@ -233,3 +241,55 @@ APSCharacter* UPSPlayerHUDWidget::GetCharacter()
 	return nullptr;
 }
 
+//APSEnemy : TakeDamage : OnEnemyDie Deldgate call
+void UPSPlayerHUDWidget::QuestUpdateDelegate(AActor* UnUsed)
+{
+	QuestUpdate();
+}
+//UPSUIManagerSubsystem test
+void UPSPlayerHUDWidget::QuestUpdate()
+{
+	UPSQuestManagerSubsystem* QuestManagerSubsystem = GetGameInstance()->GetSubsystem<UPSQuestManagerSubsystem>();
+	if (QuestManagerSubsystem->bIsQuestInit == false)
+	{
+		QuestManagerSubsystem->QuestInit();
+		QuestManagerSubsystem->bIsQuestInit = true;
+	}
+	QuestManagerSubsystem->UpdateQuest(QuestMap);
+
+	for (int i = 0; i < QuestManagerSubsystem->ActiveQuests.Num(); i++)
+	{
+		FName QuestName = QuestManagerSubsystem->ActiveQuests[i]->GetQuestName();
+		if (QuestMap.Find(QuestName) == nullptr)
+		{
+			CreateQuestText(QuestName);
+		}
+
+		if (QuestMap.Num() > 0)
+		{
+			UTextBlock* TextBlock = Cast<UTextBlock>(QuestMap[QuestName]->GetWidgetFromName(TEXT("QuestText")));
+			TextBlock->SetText(FText::FromString(QuestManagerSubsystem->ActiveQuests[i]->QuestTextUpdate()));
+		}
+	}
+}
+
+void UPSPlayerHUDWidget::CreateQuestText(FName QuestName)
+{
+	if (UPSQuestTextWidget* QuestTextWidget = CreateWidget<UPSQuestTextWidget>(this, QuestTextWidgetClass))
+	{
+		if (QuestTextWidget)
+		{
+			UVerticalBox* QuestsBox = Cast<UVerticalBox>(GetWidgetFromName(TEXT("QuestBox")));
+			if (QuestsBox)
+			{
+				QuestsBox->AddChild(QuestTextWidget);
+				QuestMap.Add(QuestName,QuestTextWidget);
+			}
+		}
+	}
+}
+
+void UPSPlayerHUDWidget::DeleteQuestText()
+{
+
+}
