@@ -1,16 +1,17 @@
 #include "Enemy/PSEnemy.h"
 #include "Enemy/PSEnemyAIController.h"
 #include "Gameplay/PSGameModeBase.h"
+#include "Gameplay/PSAudioManagerSubsystem.h"
 #include "Character/PSCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "StateMachine/EnemyStateMachine.h"
 #include "State/EnemyStateBase.h"
 #include "State/EnemyHitState.h"
+#include "UI/PSMonsterWidget.h"
 #include "Components/WidgetComponent.h"
 #include "Components/ProgressBar.h"
-#include "UI/PSMonsterWidget.h"
-#include "Kismet/GameplayStatics.h"
 #include "Components/BoxComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
 
@@ -200,6 +201,14 @@ float APSEnemy::TakeDamage(
 		if (APSGameModeBase* GM = Cast<APSGameModeBase>(UGameplayStatics::GetGameMode(this)))
 		{
 			GM->OnEnemyKilled(Score);
+		}
+
+		if (KillSound)
+		{
+			if (UPSAudioManagerSubsystem* Audio = GetGameInstance()->GetSubsystem<UPSAudioManagerSubsystem>())
+			{
+				Audio->PlaySFX(KillSound, GetActorLocation(), 0.7f);
+			}
 		}
 
 		OnEnemyDie.Broadcast(this);

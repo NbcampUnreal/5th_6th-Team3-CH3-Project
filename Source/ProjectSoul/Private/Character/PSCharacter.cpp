@@ -883,3 +883,14 @@ void APSCharacter::OnPlayLandSoundNotify()
 		}
 	}
 }
+
+void APSCharacter::OnPlayDodgeSoundNotify()
+{
+	if (DodgeSound)
+	{
+		if (UPSAudioManagerSubsystem* Audio = GetGameInstance()->GetSubsystem<UPSAudioManagerSubsystem>())
+		{
+			Audio->PlaySFX(DodgeSound, GetActorLocation(), 0.7f);
+		}
+	}
+}

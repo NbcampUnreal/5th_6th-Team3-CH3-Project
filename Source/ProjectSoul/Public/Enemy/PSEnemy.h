@@ -141,6 +141,9 @@ protected:
 	UPROPERTY()
 	TSet<AActor*> DamagedActors;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+	TObjectPtr<USoundBase> KillSound;
+
 private:
 	bool bIsDead;
 
