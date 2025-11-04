@@ -2,10 +2,10 @@
 
 #include "CoreMinimal.h"
 #include "State/PlayerStateBase.h"
-#include "PlayerHitState.generated.h"
+#include "PlayerHealState.generated.h"
 
 UCLASS()
-class PROJECTSOUL_API UPlayerHitState : public UPlayerStateBase
+class PROJECTSOUL_API UPlayerHealState : public UPlayerStateBase
 {
 	GENERATED_BODY()
 	
@@ -22,9 +22,11 @@ public:
 
 	virtual void Dodge() override;
 
+	virtual void Hit() override;
+
 	virtual void Die() override;
 
-	void HitEnd();
+	void HealEnd();
 
 private:
 	bool bCanDodge;

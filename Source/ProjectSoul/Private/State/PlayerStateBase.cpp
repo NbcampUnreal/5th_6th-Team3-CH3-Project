@@ -66,6 +66,10 @@ void UPlayerStateBase::Throw()
 {
 }
 
+void UPlayerStateBase::Heal()
+{
+}
+
 void UPlayerStateBase::Die()
 {
 }

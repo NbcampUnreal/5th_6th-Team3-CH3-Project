@@ -15,6 +15,7 @@
 #include "State/PlayerDodgeState.h"
 #include "State/PlayerHitState.h"
 #include "State/PlayerThrowState.h"
+#include "State/PlayerHealState.h"
 #include "Weapon/PSWeaponBase.h"
 #include "Weapon/PSFireBomb.h"
 #include "Enemy/PSEnemy.h"
@@ -22,6 +23,7 @@
 APSCharacter::APSCharacter()
 	: NormalWalkSpeed(600.0f),
 	SprintWalkSpeed(1200.0f),
+	HealingPotionCount(3),
 	bIsTargeting(false),
 	bIsSprinting(false),
 	bIsDead(false),
@@ -177,6 +179,11 @@ void APSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 				{
 					EnhancedInput->BindAction(PlayerController->ThrowAction, ETriggerEvent::Triggered, this, &APSCharacter::Throw);
 				}
+
+				if (PlayerController->HealAction)
+				{
+					EnhancedInput->BindAction(PlayerController->HealAction, ETriggerEvent::Triggered, this, &APSCharacter::Heal);
+				}
 			}
 		}
 	}
@@ -290,6 +297,25 @@ void APSCharacter::Throw(const FInputActionValue& Value)
 	if (StateMachine)
 	{
 		StateMachine->GetCurrentState()->Throw();
+	}
+}
+
+void APSCharacter::Heal(const FInputActionValue& Value)
+{
+	if (!RemainHealingPotion())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Player: No Potion Remaining."));
+		return;
+	}
+
+	if (IsFalling())
+	{
+		return;
+	}
+
+	if (StateMachine)
+	{
+		StateMachine->GetCurrentState()->Heal();
 	}
 }
 
@@ -410,7 +436,7 @@ void APSCharacter::ConsumeManaForThrow()
 	OnMPChanged.Broadcast(PlayerStats.Mana.GetCurrent(), PlayerStats.Mana.GetMax());
 }
 
-void APSCharacter::Heal(float Amount)
+void APSCharacter::AddHealth(float Amount)
 {
 	if (Amount <= 0.0f)
 	{
@@ -523,6 +549,11 @@ bool APSCharacter::IsFalling() const
 	return GetCharacterMovement()->IsFalling();
 }
 
+bool APSCharacter::RemainHealingPotion() const
+{
+	return HealingPotionCount > 0 ? true : false;
+}
+
 float APSCharacter::GetHealthPercent() const
 {
 	return PlayerStats.GetHealthPercent();
@@ -591,6 +622,11 @@ UAnimMontage* APSCharacter::GetHitMontage() const
 UAnimMontage* APSCharacter::GetThrowMontage() const
 {
 	return ThrowMontage;
+}
+
+UAnimMontage* APSCharacter::GetHealMontage() const
+{
+	return HealMontage;
 }
 
 FVector2D APSCharacter::GetLastMoveInput() const
@@ -780,6 +816,21 @@ void APSCharacter::OnThrowObjectNotify()
 }
 
 void APSCharacter::OnThrowEndNotify()
+{
+	if (StateMachine && StateMachine->GetThrowState())
+	{
+		StateMachine->GetThrowState()->ThrowEnd();
+	}
+}
+
+void APSCharacter::OnHealingNotify()
+{
+	HealingPotionCount--;
+	UE_LOG(LogTemp, Warning, TEXT("Player: %.1f Healing"), 50.f);
+	AddHealth(50.f);
+}
+
+void APSCharacter::OnHealEndNotify()
 {
 	if (StateMachine && StateMachine->GetThrowState())
 	{

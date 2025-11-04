@@ -77,6 +77,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Notify|Throw")
 	void OnThrowEndNotify();
 
+	UFUNCTION(BlueprintCallable, Category = "Notify|Healing")
+	void OnHealingNotify();
+
+	UFUNCTION(BlueprintCallable, Category = "Notify|Healing")
+	void OnHealEndNotify();
+
 	UFUNCTION(BlueprintCallable, Category = "Notify|Sound")
 	void OnPlayFootstepSoundNotify();
 
@@ -122,6 +128,8 @@ public:
 
 	UAnimMontage* GetThrowMontage() const;
 
+	UAnimMontage* GetHealMontage() const;
+
 	FVector2D GetLastMoveInput() const;
 
 	void SetCurrentTarget(APSEnemy* NewTarget);
@@ -140,7 +148,7 @@ public:
 
 	void ConsumeManaForThrow();
 
-	void Heal(float Amount);
+	void AddHealth(float Amount);
 
 	void FindTargetActor();
 
@@ -180,6 +188,9 @@ protected:
 	UFUNCTION()
 	void Throw(const FInputActionValue& Value);
 
+	UFUNCTION()
+	void Heal(const FInputActionValue& Value);
+
 private:
 	UFUNCTION()
 	void OnTargetDie(AActor* DeadTarget);
@@ -197,6 +208,8 @@ private:
 	void OnDie();
 
 	bool IsFalling() const;
+
+	bool RemainHealingPotion() const;
 
 public:
 	UPROPERTY(BlueprintAssignable, Category = "Event")
@@ -266,6 +279,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Montage")
 	TObjectPtr<UAnimMontage> ThrowMontage;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Montage")
+	TObjectPtr<UAnimMontage> HealMontage;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Object")
 	TSubclassOf<AActor> ThrowObjectClass;
 
@@ -313,4 +329,6 @@ private:
 	FTimerHandle EnemyDeadTimer;
 
 	bool bIsDead;
+
+	int32 HealingPotionCount;
 };

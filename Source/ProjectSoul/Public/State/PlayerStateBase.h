@@ -45,6 +45,8 @@ public:
 
 	virtual void Throw();
 
+	virtual void Heal();
+
 	virtual void Die();
 
 protected:

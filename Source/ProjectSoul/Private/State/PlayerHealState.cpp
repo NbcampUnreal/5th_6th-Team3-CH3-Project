@@ -1,12 +1,13 @@
+#include "State/PlayerHealState.h"
 #include "State/PlayerHitState.h"
 #include "State/PlayerDodgeState.h"
 #include "State/PlayerDieState.h"
 #include "StateMachine/PlayerStateMachine.h"
 #include "Character/PSCharacter.h"
 
-void UPlayerHitState::OnEnter()
+void UPlayerHealState::OnEnter()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Player: Enter Hit State"));
+	UE_LOG(LogTemp, Warning, TEXT("Player: Enter Heal State"));
 
 	bCanDodge = false;
 
@@ -14,15 +15,19 @@ void UPlayerHitState::OnEnter()
 	{
 		Character->SetIsSprinting(false);
 
-		Character->PlayAnimMontage(Character->GetHitMontage());
+		Character->PlayAnimMontage(Character->GetHealMontage());
 	}
 }
 
-void UPlayerHitState::OnUpdate(float DeltaTime)
+void UPlayerHealState::OnUpdate(float DeltaTime)
 {
+	if (UPlayerStateMachine* PSM = GetPlayerStateMachine())
+	{
+		PSM->GetPrevState()->OnUpdate(DeltaTime);
+	}
 }
 
-void UPlayerHitState::OnExit()
+void UPlayerHealState::OnExit()
 {
 	if (APSCharacter* Character = GetPlayerCharacter())
 	{
@@ -35,10 +40,10 @@ void UPlayerHitState::OnExit()
 		}
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("Player: Exit Hit State"));
+	UE_LOG(LogTemp, Warning, TEXT("Player: Exit Heal State"));
 }
 
-void UPlayerHitState::Look(const FVector2D& Value)
+void UPlayerHealState::Look(const FVector2D& Value)
 {
 	if (UPlayerStateMachine* PSM = GetPlayerStateMachine())
 	{
@@ -46,12 +51,12 @@ void UPlayerHitState::Look(const FVector2D& Value)
 	}
 }
 
-void UPlayerHitState::CanDodge()
+void UPlayerHealState::CanDodge()
 {
 	bCanDodge = true;
 }
 
-void UPlayerHitState::Dodge()
+void UPlayerHealState::Dodge()
 {
 	if (bCanDodge)
 	{
@@ -62,7 +67,15 @@ void UPlayerHitState::Dodge()
 	}
 }
 
-void UPlayerHitState::Die()
+void UPlayerHealState::Hit()
+{
+	if (UPlayerStateMachine* PSM = GetPlayerStateMachine())
+	{
+		PSM->ChangeState(PSM->GetHitState());
+	}
+}
+
+void UPlayerHealState::Die()
 {
 	if (UPlayerStateMachine* PSM = GetPlayerStateMachine())
 	{
@@ -70,10 +83,8 @@ void UPlayerHitState::Die()
 	}
 }
 
-void UPlayerHitState::HitEnd()
+void UPlayerHealState::HealEnd()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Player: Call Hit End"));
-
 	if (UPlayerStateMachine* PSM = GetPlayerStateMachine())
 	{
 		PSM->ChangeState(PSM->GetPrevState());
