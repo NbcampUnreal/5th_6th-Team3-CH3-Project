@@ -1,6 +1,7 @@
 #include "Door/PSBossRoomDoor.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/BoxComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 
 APSBossRoomDoor::APSBossRoomDoor()
@@ -65,6 +66,15 @@ void APSBossRoomDoor::OpenDoor()
 
 	DoorBlocker->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	bIsLocked = false;
+
+	if (DoorOpenSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(
+			GetWorld(),
+			DoorOpenSound,
+			GetActorLocation()
+		);
+	}
 }
 
 void APSBossRoomDoor::CloseDoor()
@@ -75,6 +85,16 @@ void APSBossRoomDoor::CloseDoor()
 
 	DoorBlocker->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	bIsLocked = true;
+
+
+	if (DoorCloseSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(
+			GetWorld(),
+			DoorCloseSound,
+			GetActorLocation()
+		);
+	}
 }
 
 void APSBossRoomDoor::SetLocked(bool bLocked)
