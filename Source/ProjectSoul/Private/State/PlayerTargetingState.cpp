@@ -4,6 +4,7 @@
 #include "State/PlayerAttackState.h"
 #include "State/PlayerHitState.h"
 #include "State/PlayerThrowState.h"
+#include "State/PlayerHealState.h"
 #include "State/PlayerDieState.h"
 #include "StateMachine/PlayerStateMachine.h"
 #include "Character/PSCharacter.h"
@@ -140,6 +141,15 @@ void UPlayerTargetingState::Throw()
 	{
 		PSM->SetPrevState(this);
 		PSM->ChangeState(PSM->GetThrowState());
+	}
+}
+
+void UPlayerTargetingState::Heal()
+{
+	if (UPlayerStateMachine* PSM = GetPlayerStateMachine())
+	{
+		PSM->SetPrevState(this);
+		PSM->ChangeState(PSM->GetHealState());
 	}
 }
 

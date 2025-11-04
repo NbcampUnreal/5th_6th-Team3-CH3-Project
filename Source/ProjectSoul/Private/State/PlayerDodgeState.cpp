@@ -11,13 +11,13 @@ void UPlayerDodgeState::OnEnter()
 
 	if (APSCharacter* Character = GetPlayerCharacter())
 	{
+		Character->SetIsSprinting(false);
 		Character->bUseControllerRotationYaw = false;
 
 		FVector DodgeDir = CalculateDodgeDirection();
 		FRotator DodgeRotation = DodgeDir.Rotation();
 		Character->SetActorRotation(DodgeRotation);
 
-		Character->SetIsSprinting(false);
 		Character->ConsumeStaminaForDodge();
 		Character->PlayAnimMontage(Character->GetDodgeMontage());
 	}

@@ -1,13 +1,13 @@
-#include "State/PlayerThrowState.h"
+#include "State/PlayerHealState.h"
 #include "State/PlayerHitState.h"
 #include "State/PlayerDodgeState.h"
 #include "State/PlayerDieState.h"
 #include "StateMachine/PlayerStateMachine.h"
 #include "Character/PSCharacter.h"
 
-void UPlayerThrowState::OnEnter()
+void UPlayerHealState::OnEnter()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Player: Enter Throw State"));
+	UE_LOG(LogTemp, Warning, TEXT("Player: Enter Heal State"));
 
 	bCanDodge = false;
 
@@ -15,16 +15,19 @@ void UPlayerThrowState::OnEnter()
 	{
 		Character->SetIsSprinting(false);
 
-		Character->ConsumeManaForThrow();
-		Character->PlayAnimMontage(Character->GetThrowMontage());
+		Character->PlayAnimMontage(Character->GetHealMontage());
 	}
 }
 
-void UPlayerThrowState::OnUpdate(float DeltaTime)
+void UPlayerHealState::OnUpdate(float DeltaTime)
 {
+	if (UPlayerStateMachine* PSM = GetPlayerStateMachine())
+	{
+		PSM->GetPrevState()->OnUpdate(DeltaTime);
+	}
 }
 
-void UPlayerThrowState::OnExit()
+void UPlayerHealState::OnExit()
 {
 	if (APSCharacter* Character = GetPlayerCharacter())
 	{
@@ -37,10 +40,10 @@ void UPlayerThrowState::OnExit()
 		}
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("Player: Exit Throw State"));
+	UE_LOG(LogTemp, Warning, TEXT("Player: Exit Heal State"));
 }
 
-void UPlayerThrowState::Look(const FVector2D& Value)
+void UPlayerHealState::Look(const FVector2D& Value)
 {
 	if (UPlayerStateMachine* PSM = GetPlayerStateMachine())
 	{
@@ -48,12 +51,12 @@ void UPlayerThrowState::Look(const FVector2D& Value)
 	}
 }
 
-void UPlayerThrowState::CanDodge()
+void UPlayerHealState::CanDodge()
 {
 	bCanDodge = true;
 }
 
-void UPlayerThrowState::Dodge()
+void UPlayerHealState::Dodge()
 {
 	if (bCanDodge)
 	{
@@ -64,7 +67,7 @@ void UPlayerThrowState::Dodge()
 	}
 }
 
-void UPlayerThrowState::Hit()
+void UPlayerHealState::Hit()
 {
 	if (UPlayerStateMachine* PSM = GetPlayerStateMachine())
 	{
@@ -72,7 +75,7 @@ void UPlayerThrowState::Hit()
 	}
 }
 
-void UPlayerThrowState::Die()
+void UPlayerHealState::Die()
 {
 	if (UPlayerStateMachine* PSM = GetPlayerStateMachine())
 	{
@@ -80,10 +83,8 @@ void UPlayerThrowState::Die()
 	}
 }
 
-void UPlayerThrowState::ThrowEnd()
+void UPlayerHealState::HealEnd()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Player: Call Throw End"));
-
 	if (UPlayerStateMachine* PSM = GetPlayerStateMachine())
 	{
 		PSM->ChangeState(PSM->GetPrevState());
