@@ -18,10 +18,16 @@ public:
 
 	virtual void Look(const FVector2D& Value) override;
 
+	virtual void CanDodge() override;
+
+	virtual void Dodge() override;
+
 	virtual void Hit() override;
 
 	virtual void Die() override;
 
-	UFUNCTION(BlueprintCallable)
 	void ThrowEnd();
+
+private:
+	bool bCanDodge;
 };

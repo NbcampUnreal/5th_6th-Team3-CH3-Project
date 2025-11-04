@@ -65,6 +65,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Notify|Dodge")
 	void OnInvulnerableEndNotify();
 
+	UFUNCTION(BlueprintCallable, Category = "Notify|Dodge")
+	void OnCanDodgeNotify();
+
 	UFUNCTION(BlueprintCallable, Category = "Notify|Hit")
 	void OnHitEndNotify();
 

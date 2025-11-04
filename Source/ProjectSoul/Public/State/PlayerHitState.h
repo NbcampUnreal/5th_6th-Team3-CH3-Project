@@ -20,6 +20,5 @@ public:
 
 	virtual void Die() override;
 
-	UFUNCTION(BlueprintCallable)
 	void HitEnd();
 };

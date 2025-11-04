@@ -37,6 +37,8 @@ public:
 
 	virtual void Unlock();
 
+	virtual void CanDodge();
+
 	virtual void Dodge();
 
 	virtual void Hit();

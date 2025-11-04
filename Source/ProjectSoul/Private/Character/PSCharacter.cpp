@@ -719,6 +719,14 @@ void APSCharacter::OnInvulnerableEndNotify()
 	}
 }
 
+void APSCharacter::OnCanDodgeNotify()
+{
+	if (StateMachine)
+	{
+		StateMachine->GetCurrentState()->CanDodge();
+	}
+}
+
 void APSCharacter::OnHitEndNotify()
 {
 	if (StateMachine && StateMachine->GetHitState())
