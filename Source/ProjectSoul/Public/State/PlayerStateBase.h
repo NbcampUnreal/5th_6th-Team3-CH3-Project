@@ -37,11 +37,15 @@ public:
 
 	virtual void Unlock();
 
+	virtual void CanDodge();
+
 	virtual void Dodge();
 
 	virtual void Hit();
 
 	virtual void Throw();
+
+	virtual void Heal();
 
 	virtual void Die();
 

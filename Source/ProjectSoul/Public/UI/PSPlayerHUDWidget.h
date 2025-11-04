@@ -44,6 +44,9 @@ private:
 	UFUNCTION()
 	void OnUpdateBossHPBar(AActor* Boss, float Damage);
 
+	UFUNCTION()
+	void OnUpdatePotionCount(int32 CurrentPotionCount);
+
 	void HiddenBossStatusWidget();
 
 	void HiddenLockOnWidget();
@@ -98,6 +101,11 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<USizeBox> StaminaBarBackImageContainer;
 
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UImage> PotionImage;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> PotionCountText;
 
 	FTimerHandle LockOnPositionHandle;
 	AActor* LockOnTarget;
