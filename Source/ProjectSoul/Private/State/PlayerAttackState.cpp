@@ -2,6 +2,7 @@
 #include "State/PlayerFreeLookState.h"
 #include "State/PlayerTargetingState.h"
 #include "State/PlayerHitState.h"
+#include "State/PlayerDodgeState.h"
 #include "State/PlayerDieState.h"
 #include "StateMachine/PlayerStateMachine.h"
 #include "Character/PSCharacter.h"
@@ -12,7 +13,8 @@ void UPlayerAttackState::OnEnter()
 
 	bCanNextCombo = false;
 	bDoNextCombo = false;
-
+	bCanDodge = false;
+	
 	if (APSCharacter* Character = GetPlayerCharacter())
 	{
 		Character->SetIsSprinting(false);
@@ -56,6 +58,22 @@ void UPlayerAttackState::Look(const FVector2D& Value)
 	if (UPlayerStateMachine* PSM = GetPlayerStateMachine())
 	{
 		PSM->GetPrevState()->Look(Value);
+	}
+}
+
+void UPlayerAttackState::CanDodge()
+{
+	bCanDodge = true;
+}
+
+void UPlayerAttackState::Dodge()
+{
+	if (bCanDodge)
+	{
+		if (UPlayerStateMachine* PSM = GetPlayerStateMachine())
+		{
+			PSM->ChangeState(PSM->GetDodgeState());
+		}
 	}
 }
 

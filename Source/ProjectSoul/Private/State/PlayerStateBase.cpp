@@ -50,6 +50,10 @@ void UPlayerStateBase::Unlock()
 {
 }
 
+void UPlayerStateBase::CanDodge()
+{
+}
+
 void UPlayerStateBase::Dodge()
 {
 }
@@ -59,6 +63,10 @@ void UPlayerStateBase::Hit()
 }
 
 void UPlayerStateBase::Throw()
+{
+}
+
+void UPlayerStateBase::Heal()
 {
 }
 

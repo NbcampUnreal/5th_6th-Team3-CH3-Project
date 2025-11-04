@@ -38,5 +38,7 @@ public:
 
 	virtual void Throw() override;
 
+	virtual void Heal() override;
+
 	virtual void Die() override;
 };

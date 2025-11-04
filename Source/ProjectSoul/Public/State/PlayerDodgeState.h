@@ -20,13 +20,10 @@ public:
 
 	virtual void Die() override;
 
-	UFUNCTION(BlueprintCallable)
 	void DodgeEnd();
 
-	UFUNCTION(BlueprintCallable)
 	void InvulnerableStart();
 
-	UFUNCTION(BlueprintCallable)
 	void InvulnerableEnd();
 
 private:
