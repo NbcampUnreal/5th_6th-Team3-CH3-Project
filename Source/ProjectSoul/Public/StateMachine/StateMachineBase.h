@@ -16,7 +16,7 @@ public:
 
 	virtual void OnUpdate(float DeltaTime);
 
-	void ChangeState(UStateBase* NewState);
+	virtual void ChangeState(UStateBase* NewState);
 
 	UStateBase* GetCurrentState() const;
 

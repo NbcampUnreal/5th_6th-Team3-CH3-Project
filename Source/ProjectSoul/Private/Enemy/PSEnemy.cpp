@@ -1,6 +1,7 @@
 #include "Enemy/PSEnemy.h"
 #include "Enemy/PSEnemyAIController.h"
 #include "Gameplay/PSGameModeBase.h"
+#include "Gameplay/PSAudioManagerSubsystem.h"
 #include "Character/PSCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "StateMachine/EnemyStateMachine.h"
@@ -8,6 +9,7 @@
 #include "State/EnemyHitState.h"
 #include "Components/WidgetComponent.h"
 #include "Components/ProgressBar.h"
+#include "Components/CapsuleComponent.h"
 #include "UI/PSMonsterWidget.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/BoxComponent.h"
@@ -84,6 +86,16 @@ void APSEnemy::BeginPlay()
 		WeaponCollisionL->SetBoxExtent(WeaponL_BoxExtent);
 		WeaponCollisionL->RegisterComponent();
 		WeaponCollisionL->OnComponentBeginOverlap.AddDynamic(this, &APSEnemy::OnWeaponOverlap);
+	}
+	if (GetCapsuleComponent()) 
+	{
+		UE_LOG(LogTemp, Warning, TEXT("aaaaaaaaa"));
+		GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Ignore);
+	}
+	if (GetMesh())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("bbbbbbbbbb"));
+		GetMesh()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Ignore);
 	}
 	DisableWeaponCollisionNotify();
 }
@@ -192,8 +204,6 @@ float APSEnemy::TakeDamage(
 
 	if (EnemyStats.Health.IsZero())
 	{
-		BlackboardComp->SetValueAsBool(TEXT("bIsAttacking"), false);
-		BlackboardComp->SetValueAsBool(TEXT("bInAttackRange"), false);
 		BlackboardComp->SetValueAsBool(TEXT("bIsDead"), true);
 		UE_LOG(LogTemp, Warning, TEXT("Enemy Death"));
 
@@ -207,9 +217,6 @@ float APSEnemy::TakeDamage(
 	else
 	{
 		BlackboardComp->SetValueAsBool(TEXT("bIsHit"), true);
-		BlackboardComp->SetValueAsVector(TEXT("TargetLastKnownLocation"), DamageCauser->GetActorLocation());
-		BlackboardComp->SetValueAsBool(TEXT("bIsInvestigating"), true);
-		
 	}
 	//PSPlayerHUDWidget class Function Call
 	OnHit.Broadcast(this, DamageAmount);
@@ -314,4 +321,26 @@ void APSEnemy::SetIsDead(bool bIsdead)
 bool APSEnemy::GetIsDead() const
 {
 	return bIsDead;
+}
+
+void APSEnemy::OnPlayEnemyAttackSoundNotify()
+{
+	if (AttackSound)
+	{
+		if (UPSAudioManagerSubsystem* Audio = GetGameInstance()->GetSubsystem<UPSAudioManagerSubsystem>())
+		{
+			Audio->PlaySFX(AttackSound, GetActorLocation(), 0.7f);
+		}
+	}
+}
+
+void APSEnemy::OnPlayEnemyWalkSoundNotify()
+{
+	if (WalkSound)
+	{
+		if (UPSAudioManagerSubsystem* Audio = GetGameInstance()->GetSubsystem<UPSAudioManagerSubsystem>())
+		{
+			Audio->PlaySFX(WalkSound, GetActorLocation(), 0.7f);
+		}
+	}
 }
