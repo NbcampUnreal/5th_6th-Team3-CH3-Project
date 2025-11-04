@@ -111,11 +111,6 @@ void APSCharacter::Tick(float DeltaTime)
 		return;
 	}
 
-	if (bIsSprinting)
-	{
-
-	}
-
 	if (StateMachine)
 	{
 		StateMachine->OnUpdate(DeltaTime);

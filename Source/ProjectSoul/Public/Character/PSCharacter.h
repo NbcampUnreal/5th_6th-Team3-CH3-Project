@@ -318,6 +318,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sound")
 	TObjectPtr<USoundBase> LandSound;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Healing")
+	int32 HealingPotionCount;
+
 private:
 	FTimerHandle SprintStaminaTimer;
 	float SprintStaminaTimerInterval;
@@ -335,6 +338,4 @@ private:
 	FTimerHandle EnemyDeadTimer;
 
 	bool bIsDead;
-
-	int32 HealingPotionCount;
 };
