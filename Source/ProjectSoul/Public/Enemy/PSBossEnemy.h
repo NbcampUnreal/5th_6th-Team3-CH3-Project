@@ -33,6 +33,18 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Notify")
 	void Skill2Attack();
 
+	UFUNCTION(BlueprintCallable, Category = "Notify")
+	void OnPlayEnemyAttack1SoundNotify();
+
+	UFUNCTION(BlueprintCallable, Category = "Notify")
+	void OnPlayEnemyAttack2SoundNotify();
+
+	UFUNCTION(BlueprintCallable, Category = "Notify")
+	void OnPlayEnemySkill1SoundNotify();
+
+	UFUNCTION(BlueprintCallable, Category = "Notify")
+	void OnPlayEnemySkill2SoundNotify();
+
 protected:
 	virtual void BeginPlay();
 
@@ -53,6 +65,18 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Skill")
 	TSubclassOf<APSBossProjectileBase> ProjectileClass2;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sound")
+	TObjectPtr<USoundBase> Attack1Sound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sound")
+	TObjectPtr<USoundBase> Attack2Sound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sound")
+	TObjectPtr<USoundBase> Skill1Sound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sound")
+	TObjectPtr<USoundBase> Skill2Sound;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Montage")
 	TObjectPtr<UAnimMontage> Skill_1_Montage;

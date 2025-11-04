@@ -2,6 +2,7 @@
 #include "Enemy/PSEnemyAIController.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Enemy/PSBossProjectileBase.h"
+#include "Gameplay/PSAudioManagerSubsystem.h"
 #include "Components/BoxComponent.h"
 #include "StateMachine/EnemyStateMachine.h"
 #include "StateMachine/BossEnemyStateMachine.h"
@@ -130,7 +131,51 @@ void APSBossEnemy::Skill2Attack()
 	if (Projectile)
 	{
 		Projectile->SetHomingTarget(Target);
-		Projectile->SetLifeSpan(6.0f);
+		Projectile->SetLifeSpan(4.5f);
 		UE_LOG(LogTemp, Warning, TEXT("Skill2 Homing Projectile Spawned."));
+	}
+}
+
+void APSBossEnemy::OnPlayEnemyAttack2SoundNotify()
+{
+	if (Attack2Sound)
+	{
+		if (UPSAudioManagerSubsystem* Audio = GetGameInstance()->GetSubsystem<UPSAudioManagerSubsystem>())
+		{
+			Audio->PlaySFX(Attack2Sound, GetActorLocation(), 0.7f);
+		}
+	}
+}
+
+void APSBossEnemy::OnPlayEnemyAttack1SoundNotify()
+{
+	if (Attack1Sound)
+	{
+		if (UPSAudioManagerSubsystem* Audio = GetGameInstance()->GetSubsystem<UPSAudioManagerSubsystem>())
+		{
+			Audio->PlaySFX(Attack1Sound, GetActorLocation(), 0.7f);
+		}
+	}
+}
+
+void APSBossEnemy::OnPlayEnemySkill1SoundNotify()
+{
+	if (Skill1Sound)
+	{
+		if (UPSAudioManagerSubsystem* Audio = GetGameInstance()->GetSubsystem<UPSAudioManagerSubsystem>())
+		{
+			Audio->PlaySFX(Skill1Sound, GetActorLocation(), 0.7f);
+		}
+	}
+}
+
+void APSBossEnemy::OnPlayEnemySkill2SoundNotify()
+{
+	if (Skill2Sound)
+	{
+		if (UPSAudioManagerSubsystem* Audio = GetGameInstance()->GetSubsystem<UPSAudioManagerSubsystem>())
+		{
+			Audio->PlaySFX(Skill2Sound, GetActorLocation(), 0.7f);
+		}
 	}
 }

@@ -18,10 +18,9 @@ void UEnemyHitState::OnEnter()
     {
         return;
     }
-    Cast<APSEnemyAIController>(EnemyAIController)->SetSightAngle(180.0f);
+    BlackboardComp->SetValueAsBool(TEXT("bIsHit"), false);
     UAnimInstance* Anim = Enemy->GetMesh()->GetAnimInstance();
     UAnimMontage* Montage = Cast<APSEnemy>(Enemy)->GetHitMontage();
-    Anim->StopAllMontages(0.1f);
     Anim->Montage_Play(Montage);
     EndDelegate.BindUObject(this, &UEnemyHitState::OnMontageEnded);
     Anim->Montage_SetEndDelegate(EndDelegate, Montage);
@@ -30,6 +29,22 @@ void UEnemyHitState::OnEnter()
 void UEnemyHitState::OnExit()
 {
     Super::OnExit();
+
+    ACharacter* Enemy = GetEnemyCharacter();
+    if (!Enemy)
+    {
+        return;
+    }
+    AAIController* EnemyAIController = Cast<AAIController>(Enemy->GetController());
+    UBlackboardComponent* BlackboardComp = EnemyAIController ? EnemyAIController->GetBlackboardComponent() : nullptr;
+    if (EnemyAIController == nullptr || BlackboardComp == nullptr)
+    {
+        return;
+    }
+    Cast<APSEnemyAIController>(EnemyAIController)->SetSightAngle(180.0f);
+    UAnimInstance* Anim = Enemy->GetMesh()->GetAnimInstance();
+    UAnimMontage* Montage = Cast<APSEnemy>(Enemy)->GetHitMontage();
+    Anim->StopAllMontages(0.1f);
 }
 
 void UEnemyHitState::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
@@ -44,5 +59,4 @@ void UEnemyHitState::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
     {
         return;
     }
-    BlackboardComp->SetValueAsBool(TEXT("bIsHit"), false);
 }

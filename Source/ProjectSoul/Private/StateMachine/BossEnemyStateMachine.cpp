@@ -1,5 +1,5 @@
 #include "StateMachine/BossEnemyStateMachine.h"
-#include "State/EnemyHitState.h"
+#include "State/BossEnemyHitState.h"
 #include "Enemy/PSBossEnemy.h"
 #include "State/BossEnemyAttackState.h"
 #include "State/BossEnemySkillAttackState.h"
@@ -55,7 +55,7 @@ void UBossEnemyStateMachine::Initialize(ACharacter* InOwner)
 		ReturnState->Initialize(this);
 	}
 
-	HitState = NewObject<UEnemyHitState>(this);
+	HitState = NewObject<UBossEnemyHitState>(this);
 	if (HitState)
 	{
 		HitState->Initialize(this);
@@ -113,7 +113,7 @@ UEnemyReturnState* UBossEnemyStateMachine::GetReturnState() const
 	return ReturnState;
 }
 
-UEnemyHitState* UBossEnemyStateMachine::GetHitState() const
+UBossEnemyHitState* UBossEnemyStateMachine::GetHitState() const
 {
 	return HitState;
 }
