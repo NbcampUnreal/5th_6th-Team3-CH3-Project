@@ -42,7 +42,6 @@ private:
 	UTextBlock* TotalScoreText;
 
 	UPROPERTY(meta = (BindWidget))
-
 	UTextBlock* ClearOrDieText;
 
 	FTimerHandle GameOverFadeInTimer;

@@ -3,11 +3,12 @@
 #include "Door/PSBossRoomDoor.h"
 #include "Enemy/PSBossEnemy.h"
 #include "Character/PSCharacter.h"
-
+#include "Gameplay/PSAudioManagerSubsystem.h"
+#include "Gameplay/PSGameModeBase.h"
+#include "Kismet/GameplayStatics.h"
 
 APSBossTriggerZone::APSBossTriggerZone()
 {
- 
 	PrimaryActorTick.bCanEverTick = false;
 
 	TriggerBox = CreateDefaultSubobject<UBoxComponent>(TEXT("TriggerBox"));
@@ -23,7 +24,6 @@ APSBossTriggerZone::APSBossTriggerZone()
 	bBossDefeated = false;
 }
 
-
 void APSBossTriggerZone::BeginPlay()
 {
 	Super::BeginPlay();
@@ -37,20 +37,20 @@ void APSBossTriggerZone::BeginPlay()
 		}
 	}
 
-	if (bBossDefeated)
+	if (APSGameModeBase* GameMode = Cast<APSGameModeBase>(UGameplayStatics::GetGameMode(GetWorld())))
 	{
-		if (BossDoor)
-		{
-			BossDoor->SetLocked(false);
-			BossDoor->OpenDoor();
-		}
+		GameMode->OnAllEnemiesDead.AddDynamic(this, &APSBossTriggerZone::OpenDoor);
 	}
-	
 }
 
 void APSBossTriggerZone::OnPlayerEnter(
-	UPrimitiveComponent* OverlappingComp, AActor* OtherActor, 
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+	UPrimitiveComponent* OverlappingComp,
+	AActor* OtherActor, 
+	UPrimitiveComponent* OtherComp,
+	int32 OtherBodyIndex,
+	bool bFromSweep, const
+	FHitResult& SweepResult
+)
 {
 	if (APSCharacter* Player = Cast<APSCharacter>(OtherActor))
 	{
@@ -58,6 +58,13 @@ void APSBossTriggerZone::OnPlayerEnter(
 		{
 			BossDoor->CloseDoor();
 			BossDoor->SetLocked(true);
+
+			if (UPSAudioManagerSubsystem* Audio = GetGameInstance()->GetSubsystem<UPSAudioManagerSubsystem>())
+			{
+				Audio->PlayBGM("Boss", 0.4f);
+			}
+
+			TriggerBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		}
 	}
 }
@@ -76,8 +83,3 @@ void APSBossTriggerZone::OpenDoor()
 	BossDoor->SetLocked(false);
 	BossDoor->OpenDoor();
 }
-
-
-
-
-

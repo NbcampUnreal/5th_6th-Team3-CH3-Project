@@ -96,6 +96,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Notify|Sound")
 	void OnPlayLandSoundNotify();
 
+	UFUNCTION(BlueprintCallable, Category = "Notify|Sound")
+	void OnPlayDodgeSoundNotify();
+
 	UFUNCTION(BlueprintPure, Category = "Targeting")
 	bool GetIsTargeting() const;
 
@@ -317,6 +320,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sound")
 	TObjectPtr<USoundBase> LandSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sound")
+	TObjectPtr<USoundBase> DodgeSound;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Healing")
 	int32 HealingPotionCount;

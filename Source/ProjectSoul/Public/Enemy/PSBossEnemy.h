@@ -56,7 +56,8 @@ protected:
 
 public:
 
-	UPROPERTY(BlueprintAssignable) FOnBossDefeated OnBossDefeated;
+	UPROPERTY(BlueprintAssignable)
+	FOnBossDefeated OnBossDefeated;
 
 protected:
 
