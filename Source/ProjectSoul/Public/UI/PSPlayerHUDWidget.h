@@ -89,6 +89,16 @@ private:
 	TObjectPtr<UProgressBar> BossHPBar;
 
 
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<USizeBox> HPBarBackImageContainer;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<USizeBox> MPBarBackImageContainer;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<USizeBox> StaminaBarBackImageContainer;
+
+
 	FTimerHandle LockOnPositionHandle;
 	AActor* LockOnTarget;
 
