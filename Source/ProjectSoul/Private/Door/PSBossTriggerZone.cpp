@@ -2,12 +2,14 @@
 #include "Components/BoxComponent.h"
 #include "Door/PSBossRoomDoor.h"
 #include "Enemy/PSBossEnemy.h"
+#include "Enemy/PSEnemyAIController.h"
 #include "Character/PSCharacter.h"
-
+#include "Gameplay/PSAudioManagerSubsystem.h"
+#include "Gameplay/PSGameModeBase.h"
+#include "Kismet/GameplayStatics.h"
 
 APSBossTriggerZone::APSBossTriggerZone()
 {
- 
 	PrimaryActorTick.bCanEverTick = false;
 
 	TriggerBox = CreateDefaultSubobject<UBoxComponent>(TEXT("TriggerBox"));
@@ -23,34 +25,24 @@ APSBossTriggerZone::APSBossTriggerZone()
 	bBossDefeated = false;
 }
 
-
 void APSBossTriggerZone::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (BossActor)
+	if (APSGameModeBase* GameMode = Cast<APSGameModeBase>(UGameplayStatics::GetGameMode(GetWorld())))
 	{
-		APSBossEnemy* Boss = Cast<APSBossEnemy>(BossActor);
-		if (Boss)
-		{
-			Boss->OnBossDefeated.AddDynamic(this, &APSBossTriggerZone::OnBossDefeated);
-		}
+		GameMode->OnAllEnemiesDead.AddDynamic(this, &APSBossTriggerZone::OpenDoor);
 	}
-
-	if (bBossDefeated)
-	{
-		if (BossDoor)
-		{
-			BossDoor->SetLocked(false);
-			BossDoor->OpenDoor();
-		}
-	}
-	
 }
 
 void APSBossTriggerZone::OnPlayerEnter(
-	UPrimitiveComponent* OverlappingComp, AActor* OtherActor, 
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+	UPrimitiveComponent* OverlappingComp,
+	AActor* OtherActor, 
+	UPrimitiveComponent* OtherComp,
+	int32 OtherBodyIndex,
+	bool bFromSweep, const
+	FHitResult& SweepResult
+)
 {
 	if (APSCharacter* Player = Cast<APSCharacter>(OtherActor))
 	{
@@ -58,6 +50,78 @@ void APSBossTriggerZone::OnPlayerEnter(
 		{
 			BossDoor->CloseDoor();
 			BossDoor->SetLocked(true);
+
+			if (UPSAudioManagerSubsystem* Audio = GetGameInstance()->GetSubsystem<UPSAudioManagerSubsystem>())
+			{
+				Audio->PlayBGM("Boss", 0.4f);
+			}
+
+			TriggerBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		}
+		if (BossClass && BossSpawnPoint)
+		{
+			FActorSpawnParameters SpawnParams;
+			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
+			APSBossEnemy* SpawnedBoss = GetWorld()->SpawnActor<APSBossEnemy>(
+				BossClass,
+				BossSpawnPoint->GetActorLocation(),
+				BossSpawnPoint->GetActorRotation(),
+				SpawnParams
+			);
+
+			if (SpawnedBoss)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Boss spawned and playing summon animation."));
+				SpawnedBoss->SetActorEnableCollision(false);
+				if (APSGameModeBase* GameMode = Cast<APSGameModeBase>(UGameplayStatics::GetGameMode(GetWorld())))
+				{
+					SpawnedBoss->OnBossDefeated.AddDynamic(GameMode, &APSGameModeBase::OnBossKilled);
+				}
+				if (AAIController* AI = Cast<AAIController>(SpawnedBoss->GetController()))
+				{
+					if (AI->GetBrainComponent())
+					{
+						AI->GetBrainComponent()->StopLogic(TEXT("Waiting for summon animation"));
+					}
+				}
+
+				UAnimInstance* Anim = SpawnedBoss->GetMesh()->GetAnimInstance();
+				if (Anim && SpawnedBoss->SpawnMontage)
+				{
+					float Duration = Anim->Montage_Play(SpawnedBoss->SpawnMontage);
+
+					FTimerHandle TimerHandle;
+					GetWorld()->GetTimerManager().SetTimer(
+						TimerHandle,
+						[SpawnedBoss]()
+						{
+							UE_LOG(LogTemp, Warning, TEXT("Boss summon animation ended activating boss."));
+							SpawnedBoss->SetActorEnableCollision(true);
+							if (AAIController* AI = Cast<AAIController>(SpawnedBoss->GetController()))
+							{
+								if (AI->GetBrainComponent())
+								{
+									AI->GetBrainComponent()->StartLogic();
+								}
+							}
+						},
+						Duration,
+						false
+					);
+				}
+				else
+				{
+					SpawnedBoss->SetActorEnableCollision(true);
+					if (AAIController* AI = Cast<AAIController>(SpawnedBoss->GetController()))
+					{
+						if (AI->GetBrainComponent())
+						{
+							AI->GetBrainComponent()->StartLogic();
+						}
+					}
+				}
+			}
 		}
 	}
 }
@@ -76,8 +140,3 @@ void APSBossTriggerZone::OpenDoor()
 	BossDoor->SetLocked(false);
 	BossDoor->OpenDoor();
 }
-
-
-
-
-

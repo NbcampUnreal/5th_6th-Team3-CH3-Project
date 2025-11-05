@@ -5,6 +5,7 @@
 #include "PSGameModeBase.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGameOver, bool, IsClear);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAllEnemiesDead);
 
 UCLASS()
 class PROJECTSOUL_API APSGameModeBase : public AGameModeBase
@@ -32,13 +33,23 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Game")
     void OnPlayerKilled();
 
+    UFUNCTION(BlueprintCallable, Category = "Game")
+    void OnBossKilled();
+
 protected:
     virtual void BeginPlay() override;
 
+private:
+	void StopAIController();
+
+	void StopPlayerInput();
 
 public:
     UPROPERTY(BlueprintAssignable)
     FOnGameOver OnGameOver;
+
+    UPROPERTY(BlueprintAssignable)
+    FOnAllEnemiesDead OnAllEnemiesDead;
 
 protected:
     UPROPERTY(VisibleAnywhere, Category = "Game")
@@ -50,7 +61,7 @@ protected:
     UPROPERTY(VisibleAnywhere, Category = "Game")
     int32 RemainingEnemies;
 
-    void CheckClearCondition();
+    void CheckCondition();
 
     UPROPERTY(EditAnywhere, Category = "Game")
     float RestartDelay = 3.0f;

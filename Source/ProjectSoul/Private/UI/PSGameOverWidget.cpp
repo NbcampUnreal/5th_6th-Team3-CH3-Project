@@ -9,22 +9,22 @@
 void UPSGameOverWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
+	
 	GameOverFadeInTime = 3.0f;
+
 	MainMenuButton->OnClicked.AddDynamic(this, &UPSGameOverWidget::MainMenuButtonClick);
 	ReStartButton->OnClicked.AddDynamic(this, &UPSGameOverWidget::RestartButtonClick);
 }
 
 void UPSGameOverWidget::NativePreConstruct()
 {
+	Super::NativePreConstruct();
+
 	UpdateUI();
 }
 
 void UPSGameOverWidget::UpdateUI()
 {
-	SetRenderOpacity(0.0f);
-	MainMenuButton->SetVisibility(ESlateVisibility::Hidden);
-	ReStartButton->SetVisibility(ESlateVisibility::Hidden);
-
 	APSGameStateBase* GameStateBase = Cast<APSGameStateBase>(GetWorld()->GetGameState());
 	if (GameStateBase)
 	{
@@ -35,10 +35,12 @@ void UPSGameOverWidget::UpdateUI()
 	{
 		if (GameState->bIsGameClear) 
 		{
+			ClearOrDieText->SetColorAndOpacity(FSlateColor(FLinearColor::White));
 			ClearOrDieText->SetText(FText::FromString(FString::Printf(TEXT("Game Clear"))));
 		}
 		else
 		{
+			ClearOrDieText->SetColorAndOpacity(FSlateColor(FLinearColor::Red));
 			ClearOrDieText->SetText(FText::FromString(FString::Printf(TEXT("YOU DIED"))));
 		}
 	}
@@ -46,6 +48,10 @@ void UPSGameOverWidget::UpdateUI()
 
 void UPSGameOverWidget::WidgetFadeIn()
 {
+	SetRenderOpacity(0.0f);
+	MainMenuButton->SetVisibility(ESlateVisibility::Hidden);
+	ReStartButton->SetVisibility(ESlateVisibility::Hidden);
+
 	GetWorld()->GetTimerManager().SetTimer(
 		GameOverFadeInTimer,
 		[this]()
@@ -77,8 +83,6 @@ void UPSGameOverWidget::MainMenuButtonClick()
 
 void UPSGameOverWidget::RestartButtonClick()
 {
-	GetGameInstance()->GetSubsystem<UPSUIManagerSubsystem>()->LevelLoading("MainLevel");
-	/*APSGameModeBase* GameModeBase = Cast<APSGameModeBase>(GetWorld()->GetAuthGameMode());
-	GameModeBase->RestartGame();*/
+	GetGameInstance()->GetSubsystem<UPSUIManagerSubsystem>()->LevelLoading("Demonstration");
 	RemoveFromParent();
 }

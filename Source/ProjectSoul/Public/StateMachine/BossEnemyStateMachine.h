@@ -12,7 +12,7 @@ class UEnemyDieState;
 class UEnemyIdleState;
 class UEnemyInvestigateState;
 class UEnemyReturnState;
-class UEnemyHitState;
+class UBossEnemyHitState;
 
 UCLASS()
 class PROJECTSOUL_API UBossEnemyStateMachine : public UStateMachineBase
@@ -40,7 +40,7 @@ public:
 
 	UEnemyReturnState* GetReturnState() const;
 
-	UEnemyHitState* GetHitState() const;
+	UBossEnemyHitState* GetHitState() const;
 
 protected:
 	UPROPERTY()
@@ -65,5 +65,5 @@ protected:
 	TObjectPtr <UEnemyReturnState> ReturnState;
 
 	UPROPERTY()
-	TObjectPtr <UEnemyHitState> HitState;
+	TObjectPtr <UBossEnemyHitState> HitState;
 };

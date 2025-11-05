@@ -2,6 +2,7 @@
 #include "Enemy/PSEnemyAIController.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Enemy/PSBossProjectileBase.h"
+#include "Gameplay/PSAudioManagerSubsystem.h"
 #include "Components/BoxComponent.h"
 #include "StateMachine/EnemyStateMachine.h"
 #include "StateMachine/BossEnemyStateMachine.h"
@@ -72,18 +73,18 @@ void APSBossEnemy::Skill1Attack()
 	UBlackboardComponent* BlackboardComp = EnemyAIController ? EnemyAIController->GetBlackboardComponent() : nullptr;
 	AActor* Target = Cast<AActor>(BlackboardComp ? BlackboardComp->GetValueAsObject(TEXT("TargetActor")) : nullptr);
 
-	if (!Target || !ProjectileClass)
+	if (!Target || !ProjectileClass1)
 		return;
 
 	FVector TargetLocation = Target->GetActorLocation();
-	FVector SpawnLocation = TargetLocation + FVector(0.f, 0.f, 300.f); 
+	FVector SpawnLocation = TargetLocation + FVector(0.f, 0.f, 270.f); 
 	FRotator SpawnRotation = FRotator(-90.f, 0.f, 0.f);
 
 	FActorSpawnParameters Params;
 	Params.Instigator = GetInstigator(); 
 
 	APSBossProjectileBase* Projectile = GetWorld()->SpawnActor<APSBossProjectileBase>(
-		ProjectileClass,
+		ProjectileClass1,
 		SpawnLocation,
 		SpawnRotation,
 		Params
@@ -109,7 +110,7 @@ void APSBossEnemy::Skill2Attack()
 	AAIController* EnemyAIController = Cast<AAIController>(this->GetController());
 	UBlackboardComponent* BlackboardComp = EnemyAIController ? EnemyAIController->GetBlackboardComponent() : nullptr;
 	AActor* Target = Cast<AActor>(BlackboardComp->GetValueAsObject(TEXT("TargetActor")));
-	if (!Target || !ProjectileClass) return;
+	if (!Target || !ProjectileClass2) return;
 
 	FVector SocketLocation = GetMesh()->GetSocketLocation(TEXT("hand_l"));
 	FRotator SocketRotation = GetMesh()->GetSocketRotation(TEXT("hand_l"));
@@ -122,7 +123,7 @@ void APSBossEnemy::Skill2Attack()
 	Params.Instigator = GetInstigator();
 
 	APSBossProjectileBase* Projectile = GetWorld()->SpawnActor<APSBossProjectileBase>(
-		ProjectileClass, 
+		ProjectileClass2, 
 		SpawnLocation, 
 		SpawnRotation, 
 		Params);
@@ -130,7 +131,51 @@ void APSBossEnemy::Skill2Attack()
 	if (Projectile)
 	{
 		Projectile->SetHomingTarget(Target);
-		Projectile->SetLifeSpan(5.0f);
+		Projectile->SetLifeSpan(3.5f);
 		UE_LOG(LogTemp, Warning, TEXT("Skill2 Homing Projectile Spawned."));
+	}
+}
+
+void APSBossEnemy::OnPlayEnemyAttack2SoundNotify()
+{
+	if (Attack2Sound)
+	{
+		if (UPSAudioManagerSubsystem* Audio = GetGameInstance()->GetSubsystem<UPSAudioManagerSubsystem>())
+		{
+			Audio->PlaySFX(Attack2Sound, GetActorLocation(), 0.7f);
+		}
+	}
+}
+
+void APSBossEnemy::OnPlayEnemyAttack1SoundNotify()
+{
+	if (Attack1Sound)
+	{
+		if (UPSAudioManagerSubsystem* Audio = GetGameInstance()->GetSubsystem<UPSAudioManagerSubsystem>())
+		{
+			Audio->PlaySFX(Attack1Sound, GetActorLocation(), 0.7f);
+		}
+	}
+}
+
+void APSBossEnemy::OnPlayEnemySkill1SoundNotify()
+{
+	if (Skill1Sound)
+	{
+		if (UPSAudioManagerSubsystem* Audio = GetGameInstance()->GetSubsystem<UPSAudioManagerSubsystem>())
+		{
+			Audio->PlaySFX(Skill1Sound, GetActorLocation(), 0.7f);
+		}
+	}
+}
+
+void APSBossEnemy::OnPlayEnemySkill2SoundNotify()
+{
+	if (Skill2Sound)
+	{
+		if (UPSAudioManagerSubsystem* Audio = GetGameInstance()->GetSubsystem<UPSAudioManagerSubsystem>())
+		{
+			Audio->PlaySFX(Skill2Sound, GetActorLocation(), 0.7f);
+		}
 	}
 }

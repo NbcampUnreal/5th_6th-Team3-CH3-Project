@@ -18,6 +18,8 @@ public:
 
 protected:
 	virtual void NativeOnInitialized() override;
+
+	virtual void NativeConstruct() override;
 	
 private:
 	void SetDamageText(int Damage);
@@ -26,15 +28,15 @@ private:
 
 private:
 	UPROPERTY(meta = (BindWidget))
-	UCanvasPanel* HitCanvasPanel;
+	TObjectPtr<UCanvasPanel> HitCanvasPanel;
 
 	UPROPERTY(meta = (BindWidget))
-	UImage* HitMarkerImage;
+	TObjectPtr<UImage> HitMarkerImage;
 
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* DamageText;
+	TObjectPtr<UTextBlock> DamageText;
 
-	AActor* TargetMonster;
+	TObjectPtr<AActor> TargetMonster;
 
 	FTimerHandle HitPositionTimer;
 	FTimerHandle HitEndTimer;

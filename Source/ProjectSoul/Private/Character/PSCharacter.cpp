@@ -15,6 +15,7 @@
 #include "State/PlayerDodgeState.h"
 #include "State/PlayerHitState.h"
 #include "State/PlayerThrowState.h"
+#include "State/PlayerHealState.h"
 #include "Weapon/PSWeaponBase.h"
 #include "Weapon/PSFireBomb.h"
 #include "Enemy/PSEnemy.h"
@@ -22,6 +23,7 @@
 APSCharacter::APSCharacter()
 	: NormalWalkSpeed(600.0f),
 	SprintWalkSpeed(1200.0f),
+	HealingPotionCount(3),
 	bIsTargeting(false),
 	bIsSprinting(false),
 	bIsDead(false),
@@ -109,11 +111,6 @@ void APSCharacter::Tick(float DeltaTime)
 		return;
 	}
 
-	if (bIsSprinting)
-	{
-
-	}
-
 	if (StateMachine)
 	{
 		StateMachine->OnUpdate(DeltaTime);
@@ -176,6 +173,11 @@ void APSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 				if (PlayerController->ThrowAction)
 				{
 					EnhancedInput->BindAction(PlayerController->ThrowAction, ETriggerEvent::Triggered, this, &APSCharacter::Throw);
+				}
+
+				if (PlayerController->HealAction)
+				{
+					EnhancedInput->BindAction(PlayerController->HealAction, ETriggerEvent::Triggered, this, &APSCharacter::Heal);
 				}
 			}
 		}
@@ -282,7 +284,7 @@ void APSCharacter::Attack(const FInputActionValue& Value)
 
 void APSCharacter::Throw(const FInputActionValue& Value)
 {
-	if (IsFalling())
+	if (PlayerStats.Mana.IsZero() || IsFalling())
 	{
 		return;
 	}
@@ -290,6 +292,25 @@ void APSCharacter::Throw(const FInputActionValue& Value)
 	if (StateMachine)
 	{
 		StateMachine->GetCurrentState()->Throw();
+	}
+}
+
+void APSCharacter::Heal(const FInputActionValue& Value)
+{
+	if (!RemainHealingPotion())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Player: No Potion Remaining."));
+		return;
+	}
+
+	if (IsFalling())
+	{
+		return;
+	}
+
+	if (StateMachine)
+	{
+		StateMachine->GetCurrentState()->Heal();
 	}
 }
 
@@ -381,6 +402,11 @@ void APSCharacter::FindTargetActor()
 	UE_LOG(LogTemp, Warning, TEXT("Player: Found enemy: %s"), *CurrentTarget->GetName());
 }
 
+APSWeaponBase* APSCharacter::GetEquippedRightWeapon() const
+{
+	return EquippedRightWeapon;
+}
+
 void APSCharacter::RestoreAllStats()
 {
 	PlayerStats.Health.RestoreFull();
@@ -404,7 +430,13 @@ void APSCharacter::ConsumeStaminaForDodge()
 	OnStaminaChanged.Broadcast(PlayerStats.Stamina.GetCurrent(), PlayerStats.Stamina.GetMax());
 }
 
-void APSCharacter::Heal(float Amount)
+void APSCharacter::ConsumeManaForThrow()
+{
+	PlayerStats.Mana.AdjustValue(-ThrowManaCost);
+	OnMPChanged.Broadcast(PlayerStats.Mana.GetCurrent(), PlayerStats.Mana.GetMax());
+}
+
+void APSCharacter::AddHealth(float Amount)
 {
 	if (Amount <= 0.0f)
 	{
@@ -499,22 +531,29 @@ void APSCharacter::RegenStamina()
 void APSCharacter::OnDie()
 {
 	bIsDead = true;
+	SetIsSprinting(false);
 	UE_LOG(LogTemp, Warning, TEXT("Player: Dead"));
 
 	if (StateMachine)
 	{
+		StateMachine->GetCurrentState()->Unlock();
 		StateMachine->GetCurrentState()->Die();
 	}
 
 	if (APSGameModeBase* GM = Cast<APSGameModeBase>(UGameplayStatics::GetGameMode(this)))
 	{
-		GM->EndGame(false);
+		GM->OnPlayerKilled();
 	}
 }
 
 bool APSCharacter::IsFalling() const
 {
 	return GetCharacterMovement()->IsFalling();
+}
+
+bool APSCharacter::RemainHealingPotion() const
+{
+	return HealingPotionCount > 0 ? true : false;
 }
 
 float APSCharacter::GetHealthPercent() const
@@ -587,9 +626,19 @@ UAnimMontage* APSCharacter::GetThrowMontage() const
 	return ThrowMontage;
 }
 
+UAnimMontage* APSCharacter::GetHealMontage() const
+{
+	return HealMontage;
+}
+
 FVector2D APSCharacter::GetLastMoveInput() const
 {
 	return LastMoveInput;
+}
+
+int32 APSCharacter::GetHealingPotionCount() const
+{
+	return HealingPotionCount;
 }
 
 void APSCharacter::SetCurrentTarget(APSEnemy* NewTarget)
@@ -713,6 +762,14 @@ void APSCharacter::OnInvulnerableEndNotify()
 	}
 }
 
+void APSCharacter::OnCanDodgeNotify()
+{
+	if (StateMachine)
+	{
+		StateMachine->GetCurrentState()->CanDodge();
+	}
+}
+
 void APSCharacter::OnHitEndNotify()
 {
 	if (StateMachine && StateMachine->GetHitState())
@@ -724,6 +781,7 @@ void APSCharacter::OnHitEndNotify()
 void APSCharacter::OnThrowObjectNotify()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Player: Throw Object Notify"));
+	ConsumeManaForThrow();
 
 	if (ThrowObjectClass)
 	{
@@ -752,7 +810,7 @@ void APSCharacter::OnThrowObjectNotify()
 			if (APSFireBomb* Bomb = Cast<APSFireBomb>(ThrownObject))
 			{
 				FVector LaunchDir = ActorRotation.Vector();
-				LaunchDir.Z += 0.5f;
+				LaunchDir.Z += 0.2f;
 				LaunchDir.Normalize();
 
 				Bomb->Init(LaunchDir);
@@ -766,6 +824,23 @@ void APSCharacter::OnThrowObjectNotify()
 }
 
 void APSCharacter::OnThrowEndNotify()
+{
+	if (StateMachine && StateMachine->GetThrowState())
+	{
+		StateMachine->GetThrowState()->ThrowEnd();
+	}
+}
+
+void APSCharacter::OnHealingNotify()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Player: %.1f Healing"), 50.f);
+
+	HealingPotionCount--;
+	OnPotionCountChanged.Broadcast(HealingPotionCount);
+	AddHealth(50.f);
+}
+
+void APSCharacter::OnHealEndNotify()
 {
 	if (StateMachine && StateMachine->GetThrowState())
 	{
@@ -813,6 +888,39 @@ void APSCharacter::OnPlayLandSoundNotify()
 		if (UPSAudioManagerSubsystem* Audio = GetGameInstance()->GetSubsystem<UPSAudioManagerSubsystem>())
 		{
 			Audio->PlaySFX(LandSound, GetActorLocation(), 0.7f);
+		}
+	}
+}
+
+void APSCharacter::OnPlayDodgeSoundNotify()
+{
+	if (DodgeSound)
+	{
+		if (UPSAudioManagerSubsystem* Audio = GetGameInstance()->GetSubsystem<UPSAudioManagerSubsystem>())
+		{
+			Audio->PlaySFX(DodgeSound, GetActorLocation(), 0.7f);
+		}
+	}
+}
+
+void APSCharacter::OnPlayHitSoundNotify()
+{
+	if (HitSound)
+	{
+		if (UPSAudioManagerSubsystem* Audio = GetGameInstance()->GetSubsystem<UPSAudioManagerSubsystem>())
+		{
+			Audio->PlaySFX(HitSound, GetActorLocation(), 0.4f);
+		}
+	}
+}
+
+void APSCharacter::OnPlayDieSoundNotify()
+{
+	if (DieSound)
+	{
+		if (UPSAudioManagerSubsystem* Audio = GetGameInstance()->GetSubsystem<UPSAudioManagerSubsystem>())
+		{
+			Audio->PlaySFX(DieSound, GetActorLocation(), 0.5f);
 		}
 	}
 }

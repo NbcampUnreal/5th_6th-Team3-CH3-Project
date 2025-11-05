@@ -40,6 +40,22 @@ void UEnemyAttackState::OnEnter()
 void UEnemyAttackState::OnExit()
 {
     Super::OnExit();
+    ACharacter* Enemy = GetEnemyCharacter();
+    if (!Enemy)
+    {
+        return;
+    }
+    Cast<APSEnemy>(Enemy)->DisableWeaponCollisionNotify();
+    AAIController* EnemyAIController = Cast<AAIController>(Enemy->GetController());
+    UBlackboardComponent* BlackboardComp = EnemyAIController ? EnemyAIController->GetBlackboardComponent() : nullptr;
+    if (EnemyAIController == nullptr || BlackboardComp == nullptr)
+    {
+        return;
+    }
+    Cast<APSEnemyAIController>(EnemyAIController)->SetSightAngle(180.0f);
+    UAnimInstance* Anim = Enemy->GetMesh()->GetAnimInstance();
+    UAnimMontage* Montage = Cast<APSEnemy>(Enemy)->GetHitMontage();
+    Anim->StopAllMontages(0.1f);
 }
 
 void UEnemyAttackState::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)

@@ -1,6 +1,7 @@
 #include "UI/PSUIManagerSubsystem.h"
 #include "UI/PSPlayerHUDWidget.h"
 #include "UI/PSGameOverWidget.h"
+#include "UI/PSQuestTextWidget.h"
 #include "Components/Button.h"
 #include "Blueprint/UserWidget.h"
 #include "Gameplay/PSGameModeBase.h"
@@ -38,21 +39,18 @@ UPSUIManagerSubsystem::UPSUIManagerSubsystem()
 		LoadingWidgetClass = LoadingWidgetBPClass.Class;
 	}
 }
-
-void UPSUIManagerSubsystem::ShowCurrentWidget(bool bIsGameOver)
+//GameModeBase::StartGame call
+void UPSUIManagerSubsystem::ShowCurrentWidget()
 {
 	FString CurrentMapName = GetWorld()->GetMapName();
 	if (CurrentMapName.Contains("MenuLevel"))
 	{
 		ShowMainMenuUI();
 	}
-	else if ( bIsGameOver )
-	{
-		ShowGameOverUI();
-	}
 	else 
 	{
 		ShowPlayerHUD();
+		ShowLoadingUI();
 	}
 }
 
@@ -132,18 +130,12 @@ void UPSUIManagerSubsystem::ShowGameOverUI()
 		}
 	}
 }
-
+//PSMainMenuWidget::StartButtonClick(), PSGameOverWidget::RestartButtonClick() call
 void UPSUIManagerSubsystem::LevelLoading(FName LevelName)
 {
-	ShowLoadingUI();
 	OpenLevelName = LevelName;
-
-	FLatentActionInfo LatentInfo;
-	LatentInfo.CallbackTarget = this;
-	LatentInfo.ExecutionFunction = FName("OpenLevel");
-	LatentInfo.Linkage = 0;
-	LatentInfo.UUID = __LINE__;
-	UGameplayStatics::LoadStreamLevel(this, LevelName, true, false, LatentInfo);
+	UE_LOG(LogTemp, Warning, TEXT("UIManagerSubsystem : LevelLoading Start"));
+	UGameplayStatics::OpenLevel(GetWorld(), OpenLevelName);
 }
 
 void UPSUIManagerSubsystem::ShowLoadingUI()
@@ -153,18 +145,41 @@ void UPSUIManagerSubsystem::ShowLoadingUI()
 		LoadingWidgetInstance = CreateWidget(GetGameInstance(), LoadingWidgetClass);
 	}
 	LoadingWidgetInstance->AddToViewport();
-}
 
-void UPSUIManagerSubsystem::OpenLevel()
-{
 	FTimerHandle DelayOpenLevelTimer;
 	GetWorld()->GetTimerManager().SetTimer(
 		DelayOpenLevelTimer,
 		[this]()
 		{
-			UGameplayStatics::OpenLevel(GetWorld(), OpenLevelName);
+			LoadingWidgetInstance->RemoveFromParent();
 		},
-		2.0f,
+		3.5f,
 		false
 	);
+}
+
+void UPSUIManagerSubsystem::QuestUIInit()
+{
+	APlayerController* PC = GetWorld()->GetFirstPlayerController();
+
+	if (!PlayerHUDWidgetInstance)
+	{
+		PlayerHUDWidgetInstance = CreateWidget(PC, PlayerHUDWidgetClass);
+	}
+
+	UPSPlayerHUDWidget* PlayerHUDWidget = Cast<UPSPlayerHUDWidget>(PlayerHUDWidgetInstance);
+	if (PlayerHUDWidget)
+	{
+		for (auto& Elem : PlayerHUDWidget->QuestMap)
+		{
+			if (IsValid(Elem.Value))
+			{
+				UPSQuestTextWidget* Widget = Elem.Value;
+				Widget->RemoveFromParent();
+			}
+		}
+
+		PlayerHUDWidget->QuestMap.Empty();
+		PlayerHUDWidget->QuestUpdate();
+	}
 }

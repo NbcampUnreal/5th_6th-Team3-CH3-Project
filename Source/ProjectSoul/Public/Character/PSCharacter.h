@@ -9,6 +9,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHPChanged, float, CurrentValue, 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnMPChanged, float, CurrentValue, float, MaxValue);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnStaminaChanged, float, CurrentValue, float, MaxValue);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemyTarget, AActor*, CurrentTarget);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPotionCountChanged, int32, PotionCount);
 
 class USpringArmComponent;
 class UCameraComponent;
@@ -65,6 +66,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Notify|Dodge")
 	void OnInvulnerableEndNotify();
 
+	UFUNCTION(BlueprintCallable, Category = "Notify|Dodge")
+	void OnCanDodgeNotify();
+
 	UFUNCTION(BlueprintCallable, Category = "Notify|Hit")
 	void OnHitEndNotify();
 
@@ -73,6 +77,12 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Notify|Throw")
 	void OnThrowEndNotify();
+
+	UFUNCTION(BlueprintCallable, Category = "Notify|Healing")
+	void OnHealingNotify();
+
+	UFUNCTION(BlueprintCallable, Category = "Notify|Healing")
+	void OnHealEndNotify();
 
 	UFUNCTION(BlueprintCallable, Category = "Notify|Sound")
 	void OnPlayFootstepSoundNotify();
@@ -85,6 +95,15 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Notify|Sound")
 	void OnPlayLandSoundNotify();
+
+	UFUNCTION(BlueprintCallable, Category = "Notify|Sound")
+	void OnPlayDodgeSoundNotify();
+
+	UFUNCTION(BlueprintCallable, Category = "Notify|Sound")
+	void OnPlayHitSoundNotify();
+
+	UFUNCTION(BlueprintCallable, Category = "Notify|Sound")
+	void OnPlayDieSoundNotify();
 
 	UFUNCTION(BlueprintPure, Category = "Targeting")
 	bool GetIsTargeting() const;
@@ -119,7 +138,11 @@ public:
 
 	UAnimMontage* GetThrowMontage() const;
 
+	UAnimMontage* GetHealMontage() const;
+
 	FVector2D GetLastMoveInput() const;
+
+	int32 GetHealingPotionCount() const;
 
 	void SetCurrentTarget(APSEnemy* NewTarget);
 
@@ -135,9 +158,13 @@ public:
 
 	void ConsumeStaminaForDodge();
 
-	void Heal(float Amount);
+	void ConsumeManaForThrow();
+
+	void AddHealth(float Amount);
 
 	void FindTargetActor();
+
+	APSWeaponBase* GetEquippedRightWeapon() const;
 
 protected:
 	virtual void BeginPlay() override;
@@ -175,6 +202,9 @@ protected:
 	UFUNCTION()
 	void Throw(const FInputActionValue& Value);
 
+	UFUNCTION()
+	void Heal(const FInputActionValue& Value);
+
 private:
 	UFUNCTION()
 	void OnTargetDie(AActor* DeadTarget);
@@ -193,6 +223,8 @@ private:
 
 	bool IsFalling() const;
 
+	bool RemainHealingPotion() const;
+
 public:
 	UPROPERTY(BlueprintAssignable, Category = "Event")
 	FOnHPChanged OnHPChanged;
@@ -205,6 +237,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Event")
 	FOnEnemyTarget OnEnemyTarget;
+
+	UPROPERTY(BlueprintAssignable, Category = "Event")
+	FOnPotionCountChanged OnPotionCountChanged;
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
@@ -261,6 +296,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Montage")
 	TObjectPtr<UAnimMontage> ThrowMontage;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Montage")
+	TObjectPtr<UAnimMontage> HealMontage;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Object")
 	TSubclassOf<AActor> ThrowObjectClass;
 
@@ -279,6 +317,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stats|Stamina")
 	float StaminaRegenRate;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stats|Mana")
+	float ThrowManaCost;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sound")
 	TObjectPtr<USoundBase> FootstepSound;
 
@@ -287,6 +328,18 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sound")
 	TObjectPtr<USoundBase> LandSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sound")
+	TObjectPtr<USoundBase> DodgeSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sound")
+	TObjectPtr<USoundBase> HitSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sound")
+	TObjectPtr<USoundBase> DieSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Healing")
+	int32 HealingPotionCount;
 
 private:
 	FTimerHandle SprintStaminaTimer;

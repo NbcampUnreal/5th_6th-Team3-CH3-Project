@@ -66,11 +66,7 @@ void APSHealingPotion::UseItem(APSCharacter* Player)
 		return;
 	}
 
-	Player->Heal(HealAmount);
+	Player->AddHealth(HealAmount);
 
 	Destroy();
-
 }
-
-
-

@@ -42,7 +42,7 @@ private:
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Tirgger")
-	UBoxComponent* BossTrigger;
+	TObjectPtr<UBoxComponent> BossTrigger;
 
 	UPROPERTY()
 	TArray<AActor*> TriggerOnMonsters;

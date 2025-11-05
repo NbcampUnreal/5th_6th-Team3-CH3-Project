@@ -29,19 +29,20 @@ protected:
 private :
 	void UpdateUI();
 
+
+public:
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+	TObjectPtr<UButton> MainMenuButton;
+
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+	TObjectPtr<UButton> ReStartButton;
+
 private:
 	UPROPERTY(meta = (BindWidget))
-	UButton* MainMenuButton;
+	TObjectPtr<UTextBlock> TotalScoreText;
 
 	UPROPERTY(meta = (BindWidget))
-	UButton* ReStartButton;
-
-	UPROPERTY(meta = (BindWidget))
-	UTextBlock* TotalScoreText;
-
-	UPROPERTY(meta = (BindWidget))
-
-	UTextBlock* ClearOrDieText;
+	TObjectPtr<UTextBlock> ClearOrDieText;
 
 	FTimerHandle GameOverFadeInTimer;
 
