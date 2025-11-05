@@ -99,6 +99,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Notify|Sound")
 	void OnPlayDodgeSoundNotify();
 
+	UFUNCTION(BlueprintCallable, Category = "Notify|Sound")
+	void OnPlayHitSoundNotify();
+
+	UFUNCTION(BlueprintCallable, Category = "Notify|Sound")
+	void OnPlayDieSoundNotify();
+
 	UFUNCTION(BlueprintPure, Category = "Targeting")
 	bool GetIsTargeting() const;
 
@@ -157,6 +163,8 @@ public:
 	void AddHealth(float Amount);
 
 	void FindTargetActor();
+
+	APSWeaponBase* GetEquippedRightWeapon() const;
 
 protected:
 	virtual void BeginPlay() override;
@@ -323,6 +331,12 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sound")
 	TObjectPtr<USoundBase> DodgeSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sound")
+	TObjectPtr<USoundBase> HitSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sound")
+	TObjectPtr<USoundBase> DieSound;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Healing")
 	int32 HealingPotionCount;

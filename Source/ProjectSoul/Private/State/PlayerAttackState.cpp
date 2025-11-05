@@ -6,6 +6,7 @@
 #include "State/PlayerDieState.h"
 #include "StateMachine/PlayerStateMachine.h"
 #include "Character/PSCharacter.h"
+#include "Weapon/PSWeaponBase.h"
 
 void UPlayerAttackState::OnEnter()
 {
@@ -37,6 +38,8 @@ void UPlayerAttackState::OnExit()
 {
 	if (APSCharacter* Character = GetPlayerCharacter())
 	{
+		Character->GetEquippedRightWeapon()->DisableWeaponCollision();
+
 		if (UAnimInstance* AnimInst = Character->GetMesh()->GetAnimInstance())
 		{
 			if (AnimInst->IsAnyMontagePlaying())
