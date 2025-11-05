@@ -3,10 +3,8 @@
 #include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
 
-
 APSBossRoomDoor::APSBossRoomDoor()
 {
- 	
 	PrimaryActorTick.bCanEverTick = false;
 
 	Scene = CreateDefaultSubobject<USceneComponent>(TEXT("Scene"));
@@ -48,7 +46,6 @@ void APSBossRoomDoor::BeginPlay()
 
 	LeftOpenRot = LeftClosedRot + FRotator(0.0f, -90.0f, 0.0f);
 	RightOpenRot = RightClosedRot + FRotator(0.0f, 90.0f, 0.0f);
-
 }
 
 void APSBossRoomDoor::OpenDoor()
@@ -113,7 +110,3 @@ bool APSBossRoomDoor::GetLocked()const
 {
 	return bIsLocked;
 }
-
-
-
-

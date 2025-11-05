@@ -12,6 +12,17 @@ class PROJECTSOUL_API APSGameStateBase : public AGameStateBase
 public:
     APSGameStateBase();
 
+    UFUNCTION(BlueprintCallable, Category = "Game")
+    void AddScore(int32 Amount);
+    
+    UFUNCTION(BlueprintCallable, Category = "Game")
+	void DecreaseEnemyCount();
+
+	int32 GetRemainingEnemies() const;
+
+	void SetRemainingEnemies(int32 Count);
+
+public:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Game")
     bool bIsGamePlaying;
 
@@ -26,8 +37,4 @@ public:
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Game")
     int32 RemainingEnemies;
-
-public:
-    UFUNCTION(BlueprintCallable, Category = "Game")
-    void AddScore(int32 Amount);
 };
