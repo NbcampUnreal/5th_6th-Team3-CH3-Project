@@ -22,25 +22,24 @@ void APSGameModeBase::BeginPlay()
 {
     Super::BeginPlay();
 
-    StartGame();
-
     TArray<AActor*> FoundEnemies;
     UGameplayStatics::GetAllActorsOfClass(GetWorld(), APSEnemy::StaticClass(), FoundEnemies);
 
     APSGameStateBase* PSState = GetGameState<APSGameStateBase>();
     if (PSState)
     {
-        PSState->SetRemainingEnemies(FoundEnemies.Num() - 1); // Ingore the boss
+        PSState->SetRemainingEnemies(FoundEnemies.Num() - 1); // Ignore the boss
         UE_LOG(LogTemp, Warning, TEXT("Enemy Count: %d"), PSState->RemainingEnemies);
     }
 
-
+    StartGame();
 
     if (UPSAudioManagerSubsystem* Audio = GetGameInstance()->GetSubsystem<UPSAudioManagerSubsystem>())
     {
         Audio->PlayBGM("Default", 0.4f);
     }
 }
+
 
 void APSGameModeBase::StartGame()
 {
