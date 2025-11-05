@@ -185,6 +185,11 @@ void UPSPlayerHUDWidget::ShowBossStatusWidget(AActor* BossMonster, bool bIsAreaI
 			{
 				Boss->OnHit.AddDynamic(this, &UPSPlayerHUDWidget::OnUpdateBossHPBar);
 			}
+
+			if (!Boss->OnHit.IsAlreadyBound(this, &UPSPlayerHUDWidget::ShowHitWidget))
+			{
+				Boss->OnHit.AddDynamic(this, &UPSPlayerHUDWidget::ShowHitWidget);
+			}
 		}
 	}
 	else
