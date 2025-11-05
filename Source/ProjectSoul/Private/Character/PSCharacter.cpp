@@ -226,6 +226,11 @@ void APSCharacter::StartSprint(const FInputActionValue& Value)
 		return;
 	}
 
+	if (GetCharacterMovement()->GetCurrentAcceleration().IsZero())
+	{
+		return;
+	}
+
 	if (StateMachine)
 	{
 		StateMachine->GetCurrentState()->StartSprint();
@@ -455,7 +460,7 @@ void APSCharacter::OnTargetDie(AActor* DeadTarget)
 			EnemyDeadTimer,
 			this,
 			&APSCharacter::TargetUnlock,
-			1.0f,
+			0.5f,
 			false
 		);
 	}

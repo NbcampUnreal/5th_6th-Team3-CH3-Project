@@ -198,5 +198,6 @@ void APSGameModeBase::StopPlayerInput()
     if (APlayerController* PC = (UGameplayStatics::GetPlayerController(this, 0)))
     {
         PC->SetCinematicMode(true, false, false, true, true);
+        PC->FlushPressedKeys();
     }
 }

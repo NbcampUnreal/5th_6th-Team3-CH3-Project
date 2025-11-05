@@ -106,8 +106,11 @@ void UPlayerTargetingState::Unlock()
 		{
 			Character->SetIsTargeting(false);
 
-			Character->GetCurrentTarget()->ShowHealthWidget(false);
-			Character->SetCurrentTarget(nullptr);
+			if (Character->GetCurrentTarget())
+			{
+				Character->GetCurrentTarget()->ShowHealthWidget(false);
+				Character->SetCurrentTarget(nullptr);
+			}
 
 			PSM->ChangeState(PSM->GetFreeLookState());
 		}
