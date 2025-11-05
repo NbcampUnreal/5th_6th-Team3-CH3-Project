@@ -15,7 +15,7 @@ bool UPSMonsterKillQuest::ClearCondition()
 	APSGameStateBase* GameStateBase = Cast<APSGameStateBase>(GetWorld()->GetGameState());
 	if (GameStateBase)
 	{
-		if (GameStateBase->RemainingEnemies <= 1)
+		if (GameStateBase->RemainingEnemies <= 0)
 		{
 			bIsClear = true;
 
@@ -30,7 +30,7 @@ FString UPSMonsterKillQuest::QuestTextUpdate()
 	APSGameStateBase* GameStateBase = Cast<APSGameStateBase>(GetWorld()->GetGameState());
 	if (GameStateBase) 
 	{
-		FString QuestText = FString::Printf(TEXT("Remaining Monsters : %d"), GameStateBase->RemainingEnemies-1);
+		FString QuestText = FString::Printf(TEXT("Remaining Monsters : %d"), GameStateBase->RemainingEnemies);
 		return QuestText;
 	}
 	return "";

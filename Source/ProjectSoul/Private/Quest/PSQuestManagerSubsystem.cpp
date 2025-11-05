@@ -14,7 +14,7 @@ void UPSQuestManagerSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
     Super::Initialize(Collection);
     //StartQuests
-    UPSQuestBase* MonsterKillQuest = NewObject<UPSMonsterKillQuest>(this);
+    UPSQuestBase* MonsterKillQuest = NewObject<UPSMonsterKillQuest>(GetGameInstance());
 
     if (MonsterKillQuest)
     {
@@ -45,21 +45,34 @@ void UPSQuestManagerSubsystem::QuestInit()
 void UPSQuestManagerSubsystem::UpdateQuest(TMap<FName, UPSQuestTextWidget*> QuestWidget)
 {
     UE_LOG(LogTemp, Warning, TEXT("UPSQuestManagerSubsystem : UpdateTextQuest call"));
-    for (int i = ActiveQuests.Num() - 1; i >= 0; i--)
+    for (int i = 0; i < ActiveQuests.Num(); i++)
     {
         CheckQuest = ActiveQuests[i];
+        if (!IsValid(CheckQuest))
+        {
+            ActiveQuests.RemoveAt(i);
+            continue;
+        }
+
         if (CheckQuest->ClearCondition())
         {
-            QuestWidget[CheckQuest->GetQuestName()]->RemoveFromParent();
-            QuestWidget.Remove(CheckQuest->GetQuestName());
-
+            if (QuestWidget[CheckQuest->GetQuestName()])
+            {
+                QuestWidget[CheckQuest->GetQuestName()]->RemoveFromParent();
+                QuestWidget.Remove(CheckQuest->GetQuestName());
+            }
+            
             if (CheckQuest->GetNextQuest() != nullptr)
             {
                 ActiveQuests.Add(CheckQuest->GetNextQuest());
             }
 
-            ActiveQuests.Remove(ActiveQuests[i]);
-        }
+            if (ActiveQuests[i])
+            {
+                ActiveQuests.Remove(ActiveQuests[i]);
+            }
+        }     
     }
+
 }
 
