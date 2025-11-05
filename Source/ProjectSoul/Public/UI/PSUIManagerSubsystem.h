@@ -29,8 +29,6 @@ private:
 
 	void ShowPlayerHUD();
 
-	void ShowLoadingUI();
-
 private:
 	UPROPERTY(EditAnywhere, Category = "Widget")
 	TSubclassOf<UUserWidget> MainMenuWidgetClass;

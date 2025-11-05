@@ -22,8 +22,6 @@ void APSGameModeBase::BeginPlay()
 {
     Super::BeginPlay();
 
-    StartGame();
-
     TArray<AActor*> FoundEnemies;
     UGameplayStatics::GetAllActorsOfClass(GetWorld(), APSEnemy::StaticClass(), FoundEnemies);
 
@@ -48,6 +46,8 @@ void APSGameModeBase::BeginPlay()
     {
         Audio->PlayBGM("Default", 0.4f);
     }
+
+    StartGame();
 }
 
 void APSGameModeBase::StartGame()
