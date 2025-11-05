@@ -57,11 +57,6 @@ void UPSPlayerHUDWidget::NativePreConstruct()
 		if (Enemy)
 		{
 			Enemy->OnHit.AddDynamic(this, &UPSPlayerHUDWidget::ShowHitWidget);
-			
-			if (APSBossEnemy* Boss = Cast<APSBossEnemy>(Enemy))
-			{
-				Boss->OnHit.AddDynamic(this, &UPSPlayerHUDWidget::OnUpdateBossHPBar);
-			}
 		}
 	}
 
@@ -181,6 +176,14 @@ void UPSPlayerHUDWidget::ShowBossStatusWidget(AActor* BossMonster, bool bIsAreaI
 		{
 			BossName->SetText(FText::FromString(FString::Printf(TEXT("%s"), *BossMonster->GetName())));
 			BossHPBar->SetPercent(1.0f);
+		}
+
+		if (APSBossEnemy* Boss = Cast<APSBossEnemy>(BossMonster))
+		{
+			if (!Boss->OnHit.IsAlreadyBound(this, &UPSPlayerHUDWidget::OnUpdateBossHPBar))
+			{
+				Boss->OnHit.AddDynamic(this, &UPSPlayerHUDWidget::OnUpdateBossHPBar);
+			}
 		}
 	}
 	else
