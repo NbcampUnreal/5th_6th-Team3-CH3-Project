@@ -81,6 +81,11 @@ void APSGameModeBase::EndGame(bool bIsClear)
     if (bIsGameOver)
         return;
 
+    if (UPSAudioManagerSubsystem* Audio = GetGameInstance()->GetSubsystem<UPSAudioManagerSubsystem>())
+    {
+        Audio->StopBGM();
+    }
+
     bIsGamePlaying = false;
     bIsGameOver = true;
 
@@ -136,13 +141,23 @@ void APSGameModeBase::OnEnemyKilled(int32 EnemyScore)
 
 void APSGameModeBase::OnPlayerKilled()
 {
-    UE_LOG(LogTemp, Warning, TEXT("Player Dead - Game Clear"));
+    UE_LOG(LogTemp, Warning, TEXT("Player Dead - Game Over"));
+    if (UPSAudioManagerSubsystem* Audio = GetGameInstance()->GetSubsystem<UPSAudioManagerSubsystem>())
+    {
+        Audio->PlayGameOverSFX();
+    }
+
     EndGame(false);
 }
 
 void APSGameModeBase::OnBossKilled()
 {
-    UE_LOG(LogTemp, Warning, TEXT("Boss Dead - Game Over"));
+    UE_LOG(LogTemp, Warning, TEXT("Boss Dead - Game Clear"));
+    if (UPSAudioManagerSubsystem* Audio = GetGameInstance()->GetSubsystem<UPSAudioManagerSubsystem>())
+    {
+        Audio->PlayGameClearSFX();
+    }
+
     EndGame(true);
 }
 
