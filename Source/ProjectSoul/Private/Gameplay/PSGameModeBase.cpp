@@ -27,14 +27,6 @@ void APSGameModeBase::BeginPlay()
     TArray<AActor*> FoundEnemies;
     UGameplayStatics::GetAllActorsOfClass(GetWorld(), APSEnemy::StaticClass(), FoundEnemies);
 
-    for (AActor* Actor : FoundEnemies)
-    {
-        if (APSBossEnemy* Boss = Cast<APSBossEnemy>(Actor))
-        {
-            Boss->OnBossDefeated.AddDynamic(this, &APSGameModeBase::OnBossKilled);
-        }
-    }
-
     APSGameStateBase* PSState = GetGameState<APSGameStateBase>();
     if (PSState)
     {
