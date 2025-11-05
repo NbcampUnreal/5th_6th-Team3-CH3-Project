@@ -19,6 +19,20 @@ UPSAudioManagerSubsystem::UPSAudioManagerSubsystem() :
 		BossBGM = BossBGMObj.Object;
 	}
 
+	ConstructorHelpers::FObjectFinder<USoundBase> GameClearObj(TEXT("/Game/Resources/Sounds/Gameplay/GameClear.GameClear"));
+	if (GameClearObj.Succeeded())
+	{
+		UE_LOG(LogTemp, Log, TEXT("GameClearObj Loaded Successfully"));
+		GameClearSFX = GameClearObj.Object;
+	}
+
+	ConstructorHelpers::FObjectFinder<USoundBase> GameOverObj(TEXT("/Game/Resources/Sounds/Gameplay/GameOver.GameOver"));
+	if (GameOverObj.Succeeded())
+	{
+		UE_LOG(LogTemp, Log, TEXT("GameOverObj Loaded Successfully"));
+		GameOverSFX = GameOverObj.Object;
+	}
+
 	ConstructorHelpers::FObjectFinder<USoundAttenuation> AttenObj(TEXT("/Game/Audio/SA_Default.SA_Default"));
 	if (AttenObj.Succeeded())
 	{
@@ -58,6 +72,16 @@ void UPSAudioManagerSubsystem::PlaySFX(USoundBase* Sound, FVector Location, floa
 	);
 }
 
+void UPSAudioManagerSubsystem::PlaySFX2D(USoundBase* Sound, float Volume)
+{
+	if (!Sound)
+	{
+		return;
+	}
+	UE_LOG(LogTemp, Warning, TEXT("Game Finish"));
+	UGameplayStatics::PlaySound2D(GetWorld(), Sound, Volume);
+}
+
 void UPSAudioManagerSubsystem::PlayBGM(FName BGMKey, float FadeInTime)
 {
 	if (!BGMMap.Contains(BGMKey))
@@ -84,4 +108,15 @@ void UPSAudioManagerSubsystem::StopBGM(float FadeOutTime)
 	{
 		CurrentBGMComponent->FadeOut(FadeOutTime, 0.0f);
 	}
+}
+
+void UPSAudioManagerSubsystem::PlayGameOverSFX(float Volume)
+{
+	PlaySFX2D(GameOverSFX, Volume);
+}
+
+void UPSAudioManagerSubsystem::PlayGameClearSFX(float Volume)
+{
+	PlaySFX2D(GameClearSFX, Volume);
+
 }

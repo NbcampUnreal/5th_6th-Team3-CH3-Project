@@ -15,7 +15,6 @@ void UPlayerThrowState::OnEnter()
 	{
 		Character->SetIsSprinting(false);
 
-		Character->ConsumeManaForThrow();
 		Character->PlayAnimMontage(Character->GetThrowMontage());
 	}
 }
