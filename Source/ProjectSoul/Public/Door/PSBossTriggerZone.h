@@ -6,6 +6,7 @@
 
 class UBoxComponent;
 class APSBossRoomDoor;
+class APSBossEnemy;
 
 UCLASS()
 class PROJECTSOUL_API APSBossTriggerZone : public AActor
@@ -46,4 +47,15 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BossRoom")
 	bool bBossDefeated;
+	
+	UPROPERTY(EditAnywhere, Category = "Boss")
+	TSubclassOf<APSBossEnemy> BossClass;
+
+	UPROPERTY(EditAnywhere, Category = "Boss")
+	AActor* BossSpawnPoint;
+
+	UPROPERTY(EditAnywhere, Category = "Boss")
+	UAnimMontage* BossSpawnMontage; 
+
+	FTimerHandle BossSpawnTimerHandle;
 };
