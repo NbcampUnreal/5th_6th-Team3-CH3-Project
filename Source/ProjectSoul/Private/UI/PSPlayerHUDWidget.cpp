@@ -69,10 +69,6 @@ void UPSPlayerHUDWidget::NativePreConstruct()
 		{
 			Enemy->OnHit.AddDynamic(this, &UPSPlayerHUDWidget::ShowHitWidget);
 			Enemy->OnEnemyDie.AddDynamic(this, &UPSPlayerHUDWidget::QuestUpdateDelegate);
-			if (APSBossEnemy* Boss = Cast<APSBossEnemy>(Enemy))
-			{
-				Boss->OnHit.AddDynamic(this, &UPSPlayerHUDWidget::OnUpdateBossHPBar);
-			}
 		}
 	}
 
