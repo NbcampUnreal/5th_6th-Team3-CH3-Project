@@ -59,6 +59,9 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FOnBossDefeated OnBossDefeated;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Montage")
+	UAnimMontage* SpawnMontage;
+
 protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Skill")

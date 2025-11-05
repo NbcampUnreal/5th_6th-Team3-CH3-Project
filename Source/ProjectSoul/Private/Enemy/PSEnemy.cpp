@@ -89,16 +89,20 @@ void APSEnemy::BeginPlay()
 		WeaponCollisionL->RegisterComponent();
 		WeaponCollisionL->OnComponentBeginOverlap.AddDynamic(this, &APSEnemy::OnWeaponOverlap);
 	}
-	if (GetCapsuleComponent()) 
+	if (GetCapsuleComponent())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("aaaaaaaaa"));
 		GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Ignore);
 	}
 	if (GetMesh())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("bbbbbbbbbb"));
 		GetMesh()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Ignore);
 	}
+
+	if (HealthWidgetComponent)
+	{
+		HealthWidgetComponent->SetCollisionResponseToChannel(ECC_Visibility, ECR_Ignore);
+	}
+
 	DisableWeaponCollisionNotify();
 }
 
@@ -192,6 +196,11 @@ float APSEnemy::TakeDamage(
 	AController* EventInstigator,
 	AActor* DamageCauser)
 {
+	if (bIsDead)
+	{
+		return 0.0f;
+	}
+
 	float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
 	EnemyStats.Health.AdjustValue(-DamageAmount);
@@ -206,6 +215,8 @@ float APSEnemy::TakeDamage(
 
 	if (EnemyStats.Health.IsZero())
 	{
+		bIsDead = true;
+
 		BlackboardComp->SetValueAsBool(TEXT("bIsDead"), true);
 		UE_LOG(LogTemp, Warning, TEXT("Enemy Death"));
 

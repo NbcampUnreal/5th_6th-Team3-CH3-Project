@@ -39,6 +39,11 @@ public:
 protected:
     virtual void BeginPlay() override;
 
+private:
+	void StopAIController();
+
+	void StopPlayerInput();
+
 public:
     UPROPERTY(BlueprintAssignable)
     FOnGameOver OnGameOver;

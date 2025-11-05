@@ -526,16 +526,18 @@ void APSCharacter::RegenStamina()
 void APSCharacter::OnDie()
 {
 	bIsDead = true;
+	SetIsSprinting(false);
 	UE_LOG(LogTemp, Warning, TEXT("Player: Dead"));
 
 	if (StateMachine)
 	{
+		StateMachine->GetCurrentState()->Unlock();
 		StateMachine->GetCurrentState()->Die();
 	}
 
 	if (APSGameModeBase* GM = Cast<APSGameModeBase>(UGameplayStatics::GetGameMode(this)))
 	{
-		GM->EndGame(false);
+		GM->OnPlayerKilled();
 	}
 }
 
@@ -774,6 +776,7 @@ void APSCharacter::OnHitEndNotify()
 void APSCharacter::OnThrowObjectNotify()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Player: Throw Object Notify"));
+	ConsumeManaForThrow();
 
 	if (ThrowObjectClass)
 	{
@@ -802,7 +805,7 @@ void APSCharacter::OnThrowObjectNotify()
 			if (APSFireBomb* Bomb = Cast<APSFireBomb>(ThrownObject))
 			{
 				FVector LaunchDir = ActorRotation.Vector();
-				LaunchDir.Z += 0.5f;
+				LaunchDir.Z += 0.2f;
 				LaunchDir.Normalize();
 
 				Bomb->Init(LaunchDir);
@@ -891,6 +894,28 @@ void APSCharacter::OnPlayDodgeSoundNotify()
 		if (UPSAudioManagerSubsystem* Audio = GetGameInstance()->GetSubsystem<UPSAudioManagerSubsystem>())
 		{
 			Audio->PlaySFX(DodgeSound, GetActorLocation(), 0.7f);
+		}
+	}
+}
+
+void APSCharacter::OnPlayHitSoundNotify()
+{
+	if (HitSound)
+	{
+		if (UPSAudioManagerSubsystem* Audio = GetGameInstance()->GetSubsystem<UPSAudioManagerSubsystem>())
+		{
+			Audio->PlaySFX(HitSound, GetActorLocation(), 0.4f);
+		}
+	}
+}
+
+void APSCharacter::OnPlayDieSoundNotify()
+{
+	if (DieSound)
+	{
+		if (UPSAudioManagerSubsystem* Audio = GetGameInstance()->GetSubsystem<UPSAudioManagerSubsystem>())
+		{
+			Audio->PlaySFX(DieSound, GetActorLocation(), 0.5f);
 		}
 	}
 }
