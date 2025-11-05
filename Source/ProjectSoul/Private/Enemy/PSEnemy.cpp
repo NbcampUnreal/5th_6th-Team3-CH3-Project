@@ -213,6 +213,14 @@ float APSEnemy::TakeDamage(
 	AAIController* EnemyAIController = Cast<AAIController>(this->GetController());
 	UBlackboardComponent* BlackboardComp = EnemyAIController ? EnemyAIController->GetBlackboardComponent() : nullptr;
 
+	if (KillSound)
+	{
+		if (UPSAudioManagerSubsystem* Audio = GetGameInstance()->GetSubsystem<UPSAudioManagerSubsystem>())
+		{
+			Audio->PlaySFX(KillSound, GetActorLocation(), 0.7f);
+		}
+	}
+
 	if (EnemyStats.Health.IsZero())
 	{
 		bIsDead = true;
@@ -225,22 +233,15 @@ float APSEnemy::TakeDamage(
 			GM->OnEnemyKilled(Score);
 		}
 
-		if (KillSound)
-		{
-			if (UPSAudioManagerSubsystem* Audio = GetGameInstance()->GetSubsystem<UPSAudioManagerSubsystem>())
-			{
-				Audio->PlaySFX(KillSound, GetActorLocation(), 0.7f);
-			}
-		}
-
 		OnEnemyDie.Broadcast(this);
 	}
 	else
 	{
 		BlackboardComp->SetValueAsBool(TEXT("bIsHit"), true);
 	}
-	//PSPlayerHUDWidget class Function Call
+
 	OnHit.Broadcast(this, DamageAmount);
+
 	return DamageAmount;
 }
 

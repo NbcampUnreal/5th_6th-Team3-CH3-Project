@@ -164,6 +164,8 @@ public:
 
 	void FindTargetActor();
 
+	APSWeaponBase* GetEquippedRightWeapon() const;
+
 protected:
 	virtual void BeginPlay() override;
 
