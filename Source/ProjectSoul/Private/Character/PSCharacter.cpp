@@ -402,6 +402,11 @@ void APSCharacter::FindTargetActor()
 	UE_LOG(LogTemp, Warning, TEXT("Player: Found enemy: %s"), *CurrentTarget->GetName());
 }
 
+APSWeaponBase* APSCharacter::GetEquippedRightWeapon() const
+{
+	return EquippedRightWeapon;
+}
+
 void APSCharacter::RestoreAllStats()
 {
 	PlayerStats.Health.RestoreFull();
