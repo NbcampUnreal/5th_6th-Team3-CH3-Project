@@ -10,9 +10,9 @@ UPSQuestManagerSubsystem::UPSQuestManagerSubsystem()
     bIsQuestInit = false;
 }
 
-void UPSQuestManagerSubsystem::Initialize(FSubsystemCollectionBase& Collection)
+
+void UPSQuestManagerSubsystem::CreateQuest()
 {
-    Super::Initialize(Collection);
     //StartQuests
     UPSQuestBase* MonsterKillQuest = NewObject<UPSMonsterKillQuest>(GetGameInstance());
 
@@ -20,11 +20,16 @@ void UPSQuestManagerSubsystem::Initialize(FSubsystemCollectionBase& Collection)
     {
         ActiveQuests.Add(MonsterKillQuest);
     }
-
 }
-//UPSPlayerHUDWidget : QuestUpdate call
+
+//
 void UPSQuestManagerSubsystem::QuestInit()
 {
+    UE_LOG(LogTemp, Warning, TEXT("UPSQuestManagerSubsystem : QuestInit()"));
+    ActiveQuests.Empty();
+
+    CreateQuest();
+
     for (UPSQuestBase* Quest : ActiveQuests)
     {
         CheckQuest = Quest;
@@ -42,7 +47,7 @@ void UPSQuestManagerSubsystem::QuestInit()
     }
 }
 
-void UPSQuestManagerSubsystem::UpdateQuest(TMap<FName, UPSQuestTextWidget*> QuestWidget)
+void UPSQuestManagerSubsystem::UpdateQuest(TMap<FName, UPSQuestTextWidget*>* QuestWidget)
 {
     UE_LOG(LogTemp, Warning, TEXT("UPSQuestManagerSubsystem : UpdateTextQuest call"));
     for (int i = 0; i < ActiveQuests.Num(); i++)
@@ -50,29 +55,47 @@ void UPSQuestManagerSubsystem::UpdateQuest(TMap<FName, UPSQuestTextWidget*> Ques
         CheckQuest = ActiveQuests[i];
         if (!IsValid(CheckQuest))
         {
-            ActiveQuests.RemoveAt(i);
+            QuestsToRemove.Add(CheckQuest);
             continue;
         }
 
         if (CheckQuest->ClearCondition())
         {
-            if (QuestWidget[CheckQuest->GetQuestName()])
+            if (UPSQuestBase* NextQuest = CheckQuest->GetNextQuest())
             {
-                QuestWidget[CheckQuest->GetQuestName()]->RemoveFromParent();
-                QuestWidget.Remove(CheckQuest->GetQuestName());
-            }
-            
-            if (CheckQuest->GetNextQuest() != nullptr)
-            {
-                ActiveQuests.Add(CheckQuest->GetNextQuest());
+                QuestsToAdd.Add(NextQuest);
             }
 
-            if (ActiveQuests[i])
+            if (QuestWidget->Contains(CheckQuest->GetQuestName()))
             {
-                ActiveQuests.Remove(ActiveQuests[i]);
+                UPSQuestTextWidget* Widget = (*QuestWidget)[CheckQuest->GetQuestName()];
+                if (IsValid(Widget))
+                {
+                    QuestWidget->Remove(CheckQuest->GetQuestName());
+                    Widget->RemoveFromParent();
+                }
             }
+
+            QuestsToRemove.Add(CheckQuest);
         }     
     }
 
+    for (UPSQuestBase* Quest : QuestsToRemove)
+    {
+        ActiveQuests.Remove(Quest);
+    }
+
+    for (UPSQuestBase* Quest : QuestsToAdd)
+    {
+        if (IsValid(Quest))
+        {
+            ActiveQuests.Add(Quest);
+        }
+    }
+
+    QuestsToRemove.Empty();
+    QuestsToAdd.Empty();
 }
+
+
 

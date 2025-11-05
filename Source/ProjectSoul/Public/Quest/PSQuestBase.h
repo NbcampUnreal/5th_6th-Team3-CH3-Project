@@ -28,6 +28,7 @@ protected:
 protected:
 	FName QuestName;
 
+	UPROPERTY(Transient)
 	TObjectPtr<UPSQuestBase> NextQuest;
 
 	bool bIsActive;

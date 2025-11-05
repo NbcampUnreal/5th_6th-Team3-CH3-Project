@@ -17,12 +17,17 @@ public:
 	UFUNCTION()
 	void ShowCurrentWidget();
 
-	void ShowGameOverUI();
-
 	UFUNCTION()
 	void ShowLoadingUI();
 
+	UFUNCTION()
+	void QuestUIInit();
+
+	void ShowGameOverUI();
+
 	void LevelLoading(FName LevelName);
+
+
 
 private:
 	void ShowMainMenuUI();
@@ -41,7 +46,7 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<UUserWidget> PlayerHUDWidgetInstance;
-
+	
 	UPROPERTY(EditAnywhere, Category = "Widget")
 	TSubclassOf<UUserWidget> GameOverWidgetClass;
 

@@ -1,6 +1,7 @@
 #include "UI/PSUIManagerSubsystem.h"
 #include "UI/PSPlayerHUDWidget.h"
 #include "UI/PSGameOverWidget.h"
+#include "UI/PSQuestTextWidget.h"
 #include "Components/Button.h"
 #include "Blueprint/UserWidget.h"
 #include "Gameplay/PSGameModeBase.h"
@@ -50,8 +51,6 @@ void UPSUIManagerSubsystem::ShowCurrentWidget()
 	{
 		ShowPlayerHUD();
 		ShowLoadingUI();
-		//test Quest
-		Cast<UPSPlayerHUDWidget>(PlayerHUDWidgetInstance)->QuestUpdate();
 	}
 }
 
@@ -157,4 +156,30 @@ void UPSUIManagerSubsystem::ShowLoadingUI()
 		3.5f,
 		false
 	);
+}
+
+void UPSUIManagerSubsystem::QuestUIInit()
+{
+	APlayerController* PC = GetWorld()->GetFirstPlayerController();
+
+	if (!PlayerHUDWidgetInstance)
+	{
+		PlayerHUDWidgetInstance = CreateWidget(PC, PlayerHUDWidgetClass);
+	}
+
+	UPSPlayerHUDWidget* PlayerHUDWidget = Cast<UPSPlayerHUDWidget>(PlayerHUDWidgetInstance);
+	if (PlayerHUDWidget)
+	{
+		for (auto& Elem : PlayerHUDWidget->QuestMap)
+		{
+			if (IsValid(Elem.Value))
+			{
+				UPSQuestTextWidget* Widget = Elem.Value;
+				Widget->RemoveFromParent();
+			}
+		}
+
+		PlayerHUDWidget->QuestMap.Empty();
+		PlayerHUDWidget->QuestUpdate();
+	}
 }

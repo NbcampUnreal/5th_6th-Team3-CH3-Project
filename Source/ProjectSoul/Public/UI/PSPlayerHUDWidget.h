@@ -21,6 +21,7 @@ public:
 	UFUNCTION()
 	void QuestUpdateDelegate(AActor* UnUsed);
 
+	UFUNCTION()
 	void QuestUpdate();
 
 protected:
@@ -66,7 +67,7 @@ private:
 	void DeleteQuestText();
 
 public:
-	
+	TMap<FName, UPSQuestTextWidget*> QuestMap;
 
 private:
 	UPROPERTY(meta = (BindWidget))
@@ -120,8 +121,6 @@ private:
 	TSubclassOf<UUserWidget> MonsterHitWidgetClass;
 
 	TSubclassOf<UUserWidget> QuestTextWidgetClass;
-
-	TMap<FName, UPSQuestTextWidget*> QuestMap;
 
 	FTimerHandle LockOnPositionHandle;
 	AActor* LockOnTarget;

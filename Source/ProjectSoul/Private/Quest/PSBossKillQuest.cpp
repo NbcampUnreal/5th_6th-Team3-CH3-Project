@@ -14,7 +14,7 @@ bool UPSBossKillQuest::ClearCondition()
 	APSGameStateBase* GameStateBase = Cast<APSGameStateBase>(GetWorld()->GetGameState());
 	if (GameStateBase)
 	{
-		if (false)
+		if (GameStateBase->RemainingEnemies <= 0)
 		{
 			bIsClear = true;
 

@@ -55,7 +55,9 @@ void UPSPlayerHUDWidget::NativePreConstruct()
 
 		PotionCountText->SetText(FText::FromString(FString::Printf(TEXT("x%d"), PSCharacter->GetHealingPotionCount())));
 		PSCharacter->OnPotionCountChanged.AddDynamic(this, &UPSPlayerHUDWidget::OnUpdatePotionCount);
-	}
+	
+	
+}
 
 	TArray<AActor*> FoundEnemies;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APSEnemy::StaticClass(), FoundEnemies);
@@ -260,29 +262,26 @@ void UPSPlayerHUDWidget::QuestUpdateDelegate(AActor* UnUsed)
 {
 	QuestUpdate();
 }
-//UPSUIManagerSubsystem test
+
+
 void UPSPlayerHUDWidget::QuestUpdate()
 {
 	UPSQuestManagerSubsystem* QuestManagerSubsystem = GetGameInstance()->GetSubsystem<UPSQuestManagerSubsystem>();
-	if (QuestManagerSubsystem->bIsQuestInit == false)
-	{
-		QuestManagerSubsystem->QuestInit();
-		QuestManagerSubsystem->bIsQuestInit = true;
-	}
-	QuestManagerSubsystem->UpdateQuest(QuestMap);
 
-	for (int i = 0; i < QuestManagerSubsystem->ActiveQuests.Num(); i++)
+	QuestManagerSubsystem->UpdateQuest(&QuestMap);
+
+	for (UPSQuestBase* Quest : QuestManagerSubsystem->ActiveQuests)
 	{
-		FName QuestName = QuestManagerSubsystem->ActiveQuests[i]->GetQuestName();
+		FName QuestName = Quest->GetQuestName();
 		if (QuestMap.Find(QuestName) == nullptr)
 		{
 			CreateQuestText(QuestName);
 		}
 
-		if (QuestMap.Num() > 0)
+		UTextBlock* TextBlock = Cast<UTextBlock>(QuestMap[QuestName]->GetWidgetFromName(TEXT("QuestText")));
+		if (IsValid(TextBlock))
 		{
-			UTextBlock* TextBlock = Cast<UTextBlock>(QuestMap[QuestName]->GetWidgetFromName(TEXT("QuestText")));
-			TextBlock->SetText(FText::FromString(QuestManagerSubsystem->ActiveQuests[i]->QuestTextUpdate()));
+			TextBlock->SetText(FText::FromString(Quest->QuestTextUpdate()));
 		}
 	}
 }
@@ -305,5 +304,5 @@ void UPSPlayerHUDWidget::CreateQuestText(FName QuestName)
 
 void UPSPlayerHUDWidget::DeleteQuestText()
 {
-
+	
 }

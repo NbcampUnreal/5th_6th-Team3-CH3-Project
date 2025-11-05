@@ -15,18 +15,24 @@ class PROJECTSOUL_API UPSQuestManagerSubsystem : public UGameInstanceSubsystem
 public:
 	UPSQuestManagerSubsystem();
 	
+	UFUNCTION()
 	void QuestInit();
 
-	void UpdateQuest(TMap<FName, UPSQuestTextWidget*> QuestWidget);
+	void UpdateQuest(TMap<FName, UPSQuestTextWidget*>* QuestWidget);
+
+	
 
 private:
-	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
+	void CreateQuest();
 
 public:
 	UPROPERTY()
 	TArray<UPSQuestBase*> ActiveQuests;
 	UPROPERTY()
 	TObjectPtr<UPSQuestBase> CheckQuest;
+
+	TArray<UPSQuestBase*> QuestsToRemove;
+	TArray<UPSQuestBase*> QuestsToAdd;
 
 	bool bIsQuestInit;
 };

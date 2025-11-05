@@ -9,15 +9,17 @@
 void UPSGameOverWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
-
-	GameOverFadeInTime = 3.0f;
 	
+	GameOverFadeInTime = 3.0f;
+
 	MainMenuButton->OnClicked.AddDynamic(this, &UPSGameOverWidget::MainMenuButtonClick);
 	ReStartButton->OnClicked.AddDynamic(this, &UPSGameOverWidget::RestartButtonClick);
 }
 
 void UPSGameOverWidget::NativePreConstruct()
 {
+	Super::NativePreConstruct();
+
 	UpdateUI();
 }
 
