@@ -46,6 +46,7 @@ void UPSPlayerHUDWidget::NativePreConstruct()
 		PSCharacter->OnEnemyTarget.AddDynamic(this, &UPSPlayerHUDWidget::ShowLockOnWidget);
 
 		PotionCountText->SetText(FText::FromString(FString::Printf(TEXT("x%d"), PSCharacter->GetHealingPotionCount())));
+		PotionImage->SetOpacity(1.0f);
 		PSCharacter->OnPotionCountChanged.AddDynamic(this, &UPSPlayerHUDWidget::OnUpdatePotionCount);
 	}
 
