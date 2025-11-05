@@ -29,15 +29,6 @@ void APSBossTriggerZone::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (BossActor)
-	{
-		APSBossEnemy* Boss = Cast<APSBossEnemy>(BossActor);
-		if (Boss)
-		{
-			Boss->OnBossDefeated.AddDynamic(this, &APSBossTriggerZone::OnBossDefeated);
-		}
-	}
-
 	if (APSGameModeBase* GameMode = Cast<APSGameModeBase>(UGameplayStatics::GetGameMode(GetWorld())))
 	{
 		GameMode->OnAllEnemiesDead.AddDynamic(this, &APSBossTriggerZone::OpenDoor);
@@ -83,6 +74,10 @@ void APSBossTriggerZone::OnPlayerEnter(
 			{
 				UE_LOG(LogTemp, Warning, TEXT("Boss spawned and playing summon animation."));
 				SpawnedBoss->SetActorEnableCollision(false);
+				if (APSGameModeBase* GameMode = Cast<APSGameModeBase>(UGameplayStatics::GetGameMode(GetWorld())))
+				{
+					SpawnedBoss->OnBossDefeated.AddDynamic(GameMode, &APSGameModeBase::OnBossKilled);
+				}
 				if (AAIController* AI = Cast<AAIController>(SpawnedBoss->GetController()))
 				{
 					if (AI->GetBrainComponent())
@@ -101,7 +96,7 @@ void APSBossTriggerZone::OnPlayerEnter(
 						TimerHandle,
 						[SpawnedBoss]()
 						{
-							UE_LOG(LogTemp, Warning, TEXT("Boss summon animation ended ¡æ activating boss."));
+							UE_LOG(LogTemp, Warning, TEXT("Boss summon animation ended activating boss."));
 							SpawnedBoss->SetActorEnableCollision(true);
 							if (AAIController* AI = Cast<AAIController>(SpawnedBoss->GetController()))
 							{

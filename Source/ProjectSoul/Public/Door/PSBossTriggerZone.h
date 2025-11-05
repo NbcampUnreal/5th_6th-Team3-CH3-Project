@@ -58,7 +58,4 @@ protected:
 	UAnimMontage* BossSpawnMontage; 
 
 	FTimerHandle BossSpawnTimerHandle;
-
-	void SpawnBossAfterMontage();
-
 };

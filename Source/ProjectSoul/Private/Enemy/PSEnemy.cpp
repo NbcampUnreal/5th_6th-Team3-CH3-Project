@@ -99,6 +99,10 @@ void APSEnemy::BeginPlay()
 		UE_LOG(LogTemp, Warning, TEXT("bbbbbbbbbb"));
 		GetMesh()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Ignore);
 	}
+	if (HealthWidgetComponent)
+	{
+		HealthWidgetComponent->SetCollisionResponseToChannel(ECC_Visibility, ECR_Ignore);
+	}
 	DisableWeaponCollisionNotify();
 }
 
