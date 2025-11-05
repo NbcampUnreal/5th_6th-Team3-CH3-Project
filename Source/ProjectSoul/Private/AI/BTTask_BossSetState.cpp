@@ -9,7 +9,7 @@
 #include "State/EnemyDieState.h"
 #include "State/EnemyInvestigateState.h"
 #include "State/EnemyReturnState.h"
-#include "State/EnemyHitState.h"
+#include "State/BossEnemyHitState.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
 UBTTask_BossSetState::UBTTask_BossSetState()

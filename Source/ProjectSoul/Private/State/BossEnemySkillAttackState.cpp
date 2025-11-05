@@ -63,7 +63,7 @@ void UBossEnemySkillAttackState::OnMontageEnded(UAnimMontage* Montage, bool bInt
         return;
     }
     BlackboardComp->SetValueAsBool(TEXT("bCollSkill"), true);
-
+    BlackboardComp->SetValueAsBool(TEXT("bInAttackRange"), false);
     Enemy->GetWorldTimerManager().SetTimer(
         CoolTimerHandle,
         FTimerDelegate::CreateLambda([BlackboardComp]()

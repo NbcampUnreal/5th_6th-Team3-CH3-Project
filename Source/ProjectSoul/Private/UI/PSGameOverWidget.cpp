@@ -33,10 +33,12 @@ void UPSGameOverWidget::UpdateUI()
 	{
 		if (GameState->bIsGameClear) 
 		{
+			ClearOrDieText->SetColorAndOpacity(FSlateColor(FLinearColor::White));
 			ClearOrDieText->SetText(FText::FromString(FString::Printf(TEXT("Game Clear"))));
 		}
 		else
 		{
+			ClearOrDieText->SetColorAndOpacity(FSlateColor(FLinearColor::Red));
 			ClearOrDieText->SetText(FText::FromString(FString::Printf(TEXT("YOU DIED"))));
 		}
 	}

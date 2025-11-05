@@ -39,16 +39,12 @@ UPSUIManagerSubsystem::UPSUIManagerSubsystem()
 	}
 }
 //GameModeBase::StartGame call
-void UPSUIManagerSubsystem::ShowCurrentWidget(bool bIsGameOver)
+void UPSUIManagerSubsystem::ShowCurrentWidget()
 {
 	FString CurrentMapName = GetWorld()->GetMapName();
 	if (CurrentMapName.Contains("MenuLevel"))
 	{
 		ShowMainMenuUI();
-	}
-	else if ( bIsGameOver )
-	{
-		ShowGameOverUI();
 	}
 	else 
 	{

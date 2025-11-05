@@ -45,6 +45,12 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Door|Component")
 	UBoxComponent* DoorBlocker;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Door|Effects")
+	USoundBase* DoorOpenSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Door|Effects")
+	USoundBase* DoorCloseSound;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Door")
 	FRotator LeftOpenRot;
 

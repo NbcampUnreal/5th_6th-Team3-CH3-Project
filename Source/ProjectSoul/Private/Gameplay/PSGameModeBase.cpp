@@ -1,6 +1,7 @@
 #include "Gameplay/PSGameModeBase.h"
 #include "Gameplay/PSGameStateBase.h"
 #include "Enemy/PSEnemy.h"
+#include "Enemy/PSBossEnemy.h"
 #include "Enemy/PSEnemyAIcontroller.h"
 #include "EngineUtils.h" 
 #include "Kismet/GameplayStatics.h"
@@ -26,16 +27,26 @@ void APSGameModeBase::BeginPlay()
     TArray<AActor*> FoundEnemies;
     UGameplayStatics::GetAllActorsOfClass(GetWorld(), APSEnemy::StaticClass(), FoundEnemies);
 
+    for (AActor* Actor : FoundEnemies)
+    {
+        if (APSBossEnemy* Boss = Cast<APSBossEnemy>(Actor))
+        {
+            Boss->OnBossDefeated.AddDynamic(this, &APSGameModeBase::OnBossKilled);
+        }
+    }
+
     APSGameStateBase* PSState = GetGameState<APSGameStateBase>();
     if (PSState)
     {
-        PSState->RemainingEnemies = FoundEnemies.Num();
+        PSState->SetRemainingEnemies(FoundEnemies.Num() - 1); // Ingore the boss
         UE_LOG(LogTemp, Warning, TEXT("Enemy Count: %d"), PSState->RemainingEnemies);
     }
 
+
+
     if (UPSAudioManagerSubsystem* Audio = GetGameInstance()->GetSubsystem<UPSAudioManagerSubsystem>())
     {
-        Audio->PlayBGM(0.4f);
+        Audio->PlayBGM("Default", 0.4f);
     }
 }
 
@@ -53,14 +64,14 @@ void APSGameModeBase::StartGame()
     }
 
     UE_LOG(LogTemp, Warning, TEXT("Game Start"));
+
     if (UGameInstance* GameInstance = GetGameInstance())
     {
         if (UPSUIManagerSubsystem* UIManager = GameInstance->GetSubsystem<UPSUIManagerSubsystem>())
         {
-            OnGameOver.AddDynamic(UIManager, &UPSUIManagerSubsystem::ShowCurrentWidget);
+            UIManager->ShowCurrentWidget();
         }
     }
-    OnGameOver.Broadcast(bIsGameOver);
 }
 
 void APSGameModeBase::EndGame(bool bIsClear)
@@ -89,8 +100,14 @@ void APSGameModeBase::EndGame(bool bIsClear)
         }
     }
     UE_LOG(LogTemp, Warning, TEXT("Game Over | Result: %s"), bIsClear ? TEXT("CLEAR") : TEXT("FAIL"));
-    OnGameOver.Broadcast(bIsGameOver);
-
+    
+    if (UGameInstance* GameInstance = GetGameInstance())
+    {
+        if (UPSUIManagerSubsystem* UIManager = GameInstance->GetSubsystem<UPSUIManagerSubsystem>())
+        {
+            UIManager->ShowGameOverUI();
+        }
+    }
 }
 
 void APSGameModeBase::RestartGame()
@@ -114,25 +131,31 @@ void APSGameModeBase::OnEnemyKilled(int32 EnemyScore)
     APSGameStateBase* PSState = GetGameState<APSGameStateBase>();
     if (PSState)
     {
-        PSState->RemainingEnemies--;
+        PSState->DecreaseEnemyCount();
         UE_LOG(LogTemp, Warning, TEXT("Enemy Dead | Remaining: %d"), PSState->RemainingEnemies);
     }
 
-    CheckClearCondition();
+    CheckCondition();
 }
 
 void APSGameModeBase::OnPlayerKilled()
 {
-    UE_LOG(LogTemp, Warning, TEXT("Player Dead - Game Over"));
+    UE_LOG(LogTemp, Warning, TEXT("Player Dead - Game Clear"));
     EndGame(false);
 }
 
-void APSGameModeBase::CheckClearCondition()
+void APSGameModeBase::OnBossKilled()
+{
+    UE_LOG(LogTemp, Warning, TEXT("Boss Dead - Game Over"));
+    EndGame(true);
+}
+
+void APSGameModeBase::CheckCondition()
 {
     APSGameStateBase* PSState = GetGameState<APSGameStateBase>();
-    if (PSState && PSState->RemainingEnemies <= 0)
+    if (PSState && PSState->GetRemainingEnemies() <= 0)
     {
-        UE_LOG(LogTemp, Warning, TEXT("All Enemies Dead - Mission Clear!"));
-        EndGame(true);
+        UE_LOG(LogTemp, Warning, TEXT("All Enemies Dead - Spawn Boss"));
+        OnAllEnemiesDead.Broadcast();
     }
 }

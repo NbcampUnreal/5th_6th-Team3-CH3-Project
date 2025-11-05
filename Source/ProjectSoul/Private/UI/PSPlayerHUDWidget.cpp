@@ -23,6 +23,7 @@ void UPSPlayerHUDWidget::NativeOnInitialized()
 
 	SizeBoxMultiplier = 3.0f;
 	HiddenBossStatusWidget();
+
 	//RunTime Load
 	UClass* BP_MonsterHitWidgetClass = LoadClass<UUserWidget>(nullptr, TEXT("/Game/Blueprints/UI/WBP_PSMonsterHitWidget.WBP_PSMonsterHitWidget_C"));
 	if (BP_MonsterHitWidgetClass)
@@ -51,6 +52,9 @@ void UPSPlayerHUDWidget::NativePreConstruct()
 		PSCharacter->OnStaminaChanged.AddDynamic(this, &UPSPlayerHUDWidget::OnUpdateStaminaBar);
 
 		PSCharacter->OnEnemyTarget.AddDynamic(this, &UPSPlayerHUDWidget::ShowLockOnWidget);
+
+		PotionCountText->SetText(FText::FromString(FString::Printf(TEXT("x%d"), PSCharacter->GetHealingPotionCount())));
+		PSCharacter->OnPotionCountChanged.AddDynamic(this, &UPSPlayerHUDWidget::OnUpdatePotionCount);
 	}
 
 	TArray<AActor*> FoundEnemies;
@@ -77,7 +81,7 @@ void UPSPlayerHUDWidget::NativePreConstruct()
 		}
 	}
 }
-//player Delegate add
+
 void UPSPlayerHUDWidget::OnUpdateHPBar(float CurrentValue, float MaxValue)
 {
 	if (HPBar)
@@ -97,7 +101,7 @@ void UPSPlayerHUDWidget::OnUpdateHPBar(float CurrentValue, float MaxValue)
 		HPBarBackImageContainer->SetWidthOverride(NewWidth + 10);
 	}
 }
-//player Delegate add
+
 void UPSPlayerHUDWidget::OnUpdateMPBar(float CurrentValue, float MaxValue)
 {
 	if (MPBar)
@@ -117,7 +121,7 @@ void UPSPlayerHUDWidget::OnUpdateMPBar(float CurrentValue, float MaxValue)
 		MPBarBackImageContainer->SetWidthOverride(NewWidth + 10);
 	}
 }
-//player Delegate add
+
 void UPSPlayerHUDWidget::OnUpdateStaminaBar(float CurrentValue, float MaxValue)
 {
 	if (StaminaBar)
@@ -136,7 +140,7 @@ void UPSPlayerHUDWidget::OnUpdateStaminaBar(float CurrentValue, float MaxValue)
 		StaminaBarBackImageContainer->SetWidthOverride(NewWidth + 10);
 	}
 }
-//player Delegate add
+
 void UPSPlayerHUDWidget::ShowLockOnWidget(AActor* CurrentTarget)
 {
 	if (CurrentTarget)
@@ -167,7 +171,7 @@ void UPSPlayerHUDWidget::HiddenLockOnWidget()
 	LockOnTarget = nullptr;
 }
 
-//Enemy Delegate add
+
 void UPSPlayerHUDWidget::ShowHitWidget(AActor* LockOnMonster, float Damage)
 {
 	APlayerController* PC = GetWorld()->GetFirstPlayerController();
@@ -197,13 +201,23 @@ void UPSPlayerHUDWidget::HiddenBossStatusWidget()
 {
 	BossStatsVerticalBox->SetVisibility(ESlateVisibility::Hidden);
 }
-//Enemy Delegate add
+
 void UPSPlayerHUDWidget::OnUpdateBossHPBar(AActor* Monster, float Damage)
 {
 	APSEnemy* BossMonster = Cast<APSEnemy>(Monster);
 	if (BossHPBar)
 	{
 		BossHPBar->SetPercent(BossMonster->GetEnemyStats().GetHealthPercent());
+	}
+}
+
+void UPSPlayerHUDWidget::OnUpdatePotionCount(int32 CurrentPotionCount)
+{
+	PotionCountText->SetText(FText::FromString(FString::Printf(TEXT("x%d"), CurrentPotionCount)));
+
+	if (CurrentPotionCount <= 0)
+	{
+		PotionImage->SetOpacity(0.4f);
 	}
 }
 

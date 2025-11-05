@@ -40,5 +40,5 @@ protected:
 	UStaticMeshComponent* MeshComp;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Damage")
-	float Damage = 30.f;
+	float Damage = 5.f;
 };

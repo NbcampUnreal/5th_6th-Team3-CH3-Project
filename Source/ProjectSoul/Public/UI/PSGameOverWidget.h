@@ -42,7 +42,6 @@ private:
 	TObjectPtr<UTextBlock> TotalScoreText;
 
 	UPROPERTY(meta = (BindWidget))
-
 	TObjectPtr<UTextBlock> ClearOrDieText;
 
 	FTimerHandle GameOverFadeInTimer;

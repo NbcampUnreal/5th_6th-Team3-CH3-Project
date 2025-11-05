@@ -1,11 +1,10 @@
 #include "Door/PSBossRoomDoor.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/BoxComponent.h"
-
+#include "Kismet/GameplayStatics.h"
 
 APSBossRoomDoor::APSBossRoomDoor()
 {
- 	
 	PrimaryActorTick.bCanEverTick = false;
 
 	Scene = CreateDefaultSubobject<USceneComponent>(TEXT("Scene"));
@@ -47,7 +46,6 @@ void APSBossRoomDoor::BeginPlay()
 
 	LeftOpenRot = LeftClosedRot + FRotator(0.0f, -90.0f, 0.0f);
 	RightOpenRot = RightClosedRot + FRotator(0.0f, 90.0f, 0.0f);
-
 }
 
 void APSBossRoomDoor::OpenDoor()
@@ -65,16 +63,40 @@ void APSBossRoomDoor::OpenDoor()
 
 	DoorBlocker->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	bIsLocked = false;
+
+	if (DoorOpenSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(
+			GetWorld(),
+			DoorOpenSound,
+			GetActorLocation()
+		);
+	}
 }
 
 void APSBossRoomDoor::CloseDoor()
 {
+	if (bIsLocked)
+	{
+		return;
+	}
+
 	UE_LOG(LogTemp, Warning, TEXT("Door Close"));
 	LeftDoor->SetRelativeRotation(LeftClosedRot);
 	RightDoor->SetRelativeRotation(RightClosedRot);
 
 	DoorBlocker->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	bIsLocked = true;
+
+
+	if (DoorCloseSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(
+			GetWorld(),
+			DoorCloseSound,
+			GetActorLocation()
+		);
+	}
 }
 
 void APSBossRoomDoor::SetLocked(bool bLocked)
@@ -88,7 +110,3 @@ bool APSBossRoomDoor::GetLocked()const
 {
 	return bIsLocked;
 }
-
-
-
-

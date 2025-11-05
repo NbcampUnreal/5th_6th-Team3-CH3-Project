@@ -18,6 +18,10 @@ public:
 
 	virtual void Look(const FVector2D& Value) override;
 
+	virtual void CanDodge() override;
+
+	virtual void Dodge() override;
+
 	virtual void Attack() override;
 
 	virtual void Hit() override;
@@ -28,11 +32,12 @@ public:
 
 	void StartNextCombo();
 
-	UFUNCTION(BlueprintCallable)
 	void AttackEnd();
 
 private:
 	int32 CurrentComboIndex = 0;
 	bool bCanNextCombo = false;
 	bool bDoNextCombo = false;
+
+	bool bCanDodge;
 };

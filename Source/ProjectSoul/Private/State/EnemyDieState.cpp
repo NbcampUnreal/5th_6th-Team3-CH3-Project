@@ -52,7 +52,7 @@ void UEnemyDieState::OnEnter()
                         });
                 }
             },
-            0.8f,
+            0.5f,
             false
         );
     }
