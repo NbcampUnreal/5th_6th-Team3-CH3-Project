@@ -28,8 +28,8 @@ private:
 
 private:
 	UPROPERTY(meta = (BindWidget))
-	UButton* StartButton;
+	TObjectPtr<UButton> StartButton;
 
 	UPROPERTY(meta = (BindWidget))
-	UButton* EndButton;
+	TObjectPtr<UButton> EndButton;
 };

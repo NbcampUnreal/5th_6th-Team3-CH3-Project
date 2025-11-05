@@ -32,17 +32,17 @@ private :
 
 public:
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
-	UButton* MainMenuButton;
+	TObjectPtr<UButton> MainMenuButton;
 
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
-	UButton* ReStartButton;
+	TObjectPtr<UButton> ReStartButton;
 
 private:
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* TotalScoreText;
+	TObjectPtr<UTextBlock> TotalScoreText;
 
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* ClearOrDieText;
+	TObjectPtr<UTextBlock> ClearOrDieText;
 
 	FTimerHandle GameOverFadeInTimer;
 

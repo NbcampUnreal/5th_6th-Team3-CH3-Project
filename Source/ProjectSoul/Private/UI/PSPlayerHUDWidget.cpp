@@ -1,6 +1,7 @@
 #include "UI/PSPlayerHUDWidget.h"
 #include "UI/PSMonsterHitWidget.h"
 #include "UI/PSTriggerActor.h"
+#include "UI/PSQuestTextWidget.h"
 #include "Components/ProgressBar.h"
 #include "Components/SizeBox.h"
 #include "Components/Image.h"
@@ -10,9 +11,11 @@
 #include "Character/PSCharacter.h"
 #include "Enemy/PSEnemy.h"
 #include "Enemy/PSBossEnemy.h"
+#include "Gameplay/PSGameStateBase.h"
+#include "Quest/PSQuestManagerSubsystem.h"
+#include "Quest/PSQuestBase.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Kismet/GameplayStatics.h"
-
 
 void UPSPlayerHUDWidget::NativeOnInitialized()
 {
@@ -22,10 +25,15 @@ void UPSPlayerHUDWidget::NativeOnInitialized()
 	HiddenBossStatusWidget();
 
 	//RunTime Load
-	UClass* WidgetClass = LoadClass<UUserWidget>(nullptr, TEXT("/Game/Blueprints/UI/WBP_PSMonsterHitWidget.WBP_PSMonsterHitWidget_C"));
-	if (WidgetClass)
+	UClass* BP_MonsterHitWidgetClass = LoadClass<UUserWidget>(nullptr, TEXT("/Game/Blueprints/UI/WBP_PSMonsterHitWidget.WBP_PSMonsterHitWidget_C"));
+	if (BP_MonsterHitWidgetClass)
 	{
-		MonsterHitWidgetClass = WidgetClass;
+		MonsterHitWidgetClass = BP_MonsterHitWidgetClass;
+	}
+	UClass* BP_QuestTextWidgetClass = LoadClass<UUserWidget>(nullptr, TEXT("/Game/Blueprints/UI/WBP_PSQuestTextWidget.WBP_PSQuestTextWidget_C"));
+	if (BP_QuestTextWidgetClass)
+	{
+		QuestTextWidgetClass = BP_QuestTextWidgetClass;
 	}
 }
 
@@ -48,7 +56,9 @@ void UPSPlayerHUDWidget::NativePreConstruct()
 		PotionCountText->SetText(FText::FromString(FString::Printf(TEXT("x%d"), PSCharacter->GetHealingPotionCount())));
 		PotionImage->SetOpacity(1.0f);
 		PSCharacter->OnPotionCountChanged.AddDynamic(this, &UPSPlayerHUDWidget::OnUpdatePotionCount);
-	}
+	
+	
+}
 
 	TArray<AActor*> FoundEnemies;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APSEnemy::StaticClass(), FoundEnemies);
@@ -58,6 +68,7 @@ void UPSPlayerHUDWidget::NativePreConstruct()
 		if (Enemy)
 		{
 			Enemy->OnHit.AddDynamic(this, &UPSPlayerHUDWidget::ShowHitWidget);
+			Enemy->OnEnemyDie.AddDynamic(this, &UPSPlayerHUDWidget::QuestUpdateDelegate);
 		}
 	}
 
@@ -254,4 +265,54 @@ APSCharacter* UPSPlayerHUDWidget::GetCharacter()
 	}
 
 	return nullptr;
+}
+
+//APSEnemy : TakeDamage : OnEnemyDie Deldgate call
+void UPSPlayerHUDWidget::QuestUpdateDelegate(AActor* UnUsed)
+{
+	QuestUpdate();
+}
+
+
+void UPSPlayerHUDWidget::QuestUpdate()
+{
+	UPSQuestManagerSubsystem* QuestManagerSubsystem = GetGameInstance()->GetSubsystem<UPSQuestManagerSubsystem>();
+
+	QuestManagerSubsystem->UpdateQuest(&QuestMap);
+
+	for (UPSQuestBase* Quest : QuestManagerSubsystem->ActiveQuests)
+	{
+		FName QuestName = Quest->GetQuestName();
+		if (QuestMap.Find(QuestName) == nullptr)
+		{
+			CreateQuestText(QuestName);
+		}
+
+		UTextBlock* TextBlock = Cast<UTextBlock>(QuestMap[QuestName]->GetWidgetFromName(TEXT("QuestText")));
+		if (IsValid(TextBlock))
+		{
+			TextBlock->SetText(FText::FromString(Quest->QuestTextUpdate()));
+		}
+	}
+}
+
+void UPSPlayerHUDWidget::CreateQuestText(FName QuestName)
+{
+	if (UPSQuestTextWidget* QuestTextWidget = CreateWidget<UPSQuestTextWidget>(this, QuestTextWidgetClass))
+	{
+		if (QuestTextWidget)
+		{
+			UVerticalBox* QuestsBox = Cast<UVerticalBox>(GetWidgetFromName(TEXT("QuestBox")));
+			if (QuestsBox)
+			{
+				QuestsBox->AddChild(QuestTextWidget);
+				QuestMap.Add(QuestName,QuestTextWidget);
+			}
+		}
+	}
+}
+
+void UPSPlayerHUDWidget::DeleteQuestText()
+{
+	
 }
