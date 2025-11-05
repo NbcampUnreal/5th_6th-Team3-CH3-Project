@@ -2,6 +2,7 @@
 #include "Components/BoxComponent.h"
 #include "Door/PSBossRoomDoor.h"
 #include "Enemy/PSBossEnemy.h"
+#include "Enemy/PSEnemyAIController.h"
 #include "Character/PSCharacter.h"
 #include "Gameplay/PSAudioManagerSubsystem.h"
 #include "Gameplay/PSGameModeBase.h"
@@ -27,15 +28,6 @@ APSBossTriggerZone::APSBossTriggerZone()
 void APSBossTriggerZone::BeginPlay()
 {
 	Super::BeginPlay();
-
-	if (BossActor)
-	{
-		APSBossEnemy* Boss = Cast<APSBossEnemy>(BossActor);
-		if (Boss)
-		{
-			Boss->OnBossDefeated.AddDynamic(this, &APSBossTriggerZone::OnBossDefeated);
-		}
-	}
 
 	if (APSGameModeBase* GameMode = Cast<APSGameModeBase>(UGameplayStatics::GetGameMode(GetWorld())))
 	{
@@ -65,6 +57,71 @@ void APSBossTriggerZone::OnPlayerEnter(
 			}
 
 			TriggerBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		}
+		if (BossClass && BossSpawnPoint)
+		{
+			FActorSpawnParameters SpawnParams;
+			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
+			APSBossEnemy* SpawnedBoss = GetWorld()->SpawnActor<APSBossEnemy>(
+				BossClass,
+				BossSpawnPoint->GetActorLocation(),
+				BossSpawnPoint->GetActorRotation(),
+				SpawnParams
+			);
+
+			if (SpawnedBoss)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Boss spawned and playing summon animation."));
+				SpawnedBoss->SetActorEnableCollision(false);
+				if (APSGameModeBase* GameMode = Cast<APSGameModeBase>(UGameplayStatics::GetGameMode(GetWorld())))
+				{
+					SpawnedBoss->OnBossDefeated.AddDynamic(GameMode, &APSGameModeBase::OnBossKilled);
+				}
+				if (AAIController* AI = Cast<AAIController>(SpawnedBoss->GetController()))
+				{
+					if (AI->GetBrainComponent())
+					{
+						AI->GetBrainComponent()->StopLogic(TEXT("Waiting for summon animation"));
+					}
+				}
+
+				UAnimInstance* Anim = SpawnedBoss->GetMesh()->GetAnimInstance();
+				if (Anim && SpawnedBoss->SpawnMontage)
+				{
+					float Duration = Anim->Montage_Play(SpawnedBoss->SpawnMontage);
+
+					FTimerHandle TimerHandle;
+					GetWorld()->GetTimerManager().SetTimer(
+						TimerHandle,
+						[SpawnedBoss]()
+						{
+							UE_LOG(LogTemp, Warning, TEXT("Boss summon animation ended activating boss."));
+							SpawnedBoss->SetActorEnableCollision(true);
+							if (AAIController* AI = Cast<AAIController>(SpawnedBoss->GetController()))
+							{
+								if (AI->GetBrainComponent())
+								{
+									AI->GetBrainComponent()->StartLogic();
+								}
+							}
+						},
+						Duration,
+						false
+					);
+				}
+				else
+				{
+					SpawnedBoss->SetActorEnableCollision(true);
+					if (AAIController* AI = Cast<AAIController>(SpawnedBoss->GetController()))
+					{
+						if (AI->GetBrainComponent())
+						{
+							AI->GetBrainComponent()->StartLogic();
+						}
+					}
+				}
+			}
 		}
 	}
 }

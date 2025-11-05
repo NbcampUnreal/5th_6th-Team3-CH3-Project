@@ -89,13 +89,18 @@ void APSEnemy::BeginPlay()
 		WeaponCollisionL->RegisterComponent();
 		WeaponCollisionL->OnComponentBeginOverlap.AddDynamic(this, &APSEnemy::OnWeaponOverlap);
 	}
-	if (GetCapsuleComponent()) 
+	if (GetCapsuleComponent())
 	{
 		GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Ignore);
 	}
 	if (GetMesh())
 	{
 		GetMesh()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Ignore);
+	}
+
+	if (HealthWidgetComponent)
+	{
+		HealthWidgetComponent->SetCollisionResponseToChannel(ECC_Visibility, ECR_Ignore);
 	}
 
 	DisableWeaponCollisionNotify();
