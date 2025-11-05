@@ -30,7 +30,7 @@ void APSGameModeBase::BeginPlay()
     APSGameStateBase* PSState = GetGameState<APSGameStateBase>();
     if (PSState)
     {
-        PSState->SetRemainingEnemies(FoundEnemies.Num() - 1); // Ignore the boss
+        PSState->SetRemainingEnemies(FoundEnemies.Num());
         UE_LOG(LogTemp, Warning, TEXT("Enemy Count: %d"), PSState->RemainingEnemies);
     }
 
