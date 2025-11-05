@@ -12,6 +12,8 @@
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
 #include "UI/PSUIManagerSubsystem.h"
+#include "Quest/PSQuestManagerSubsystem.h"
+#include "Gameplay/PSAudioManagerSubsystem.h"
 #include "Character/PSCharacter.h"
 
 APSGameModeBase::APSGameModeBase()
@@ -40,6 +42,8 @@ void APSGameModeBase::BeginPlay()
     {
         Audio->PlayBGM("Default", 0.4f);
     }
+
+    StartGame();
 }
 
 
@@ -60,8 +64,21 @@ void APSGameModeBase::StartGame()
 
     if (UGameInstance* GameInstance = GetGameInstance())
     {
+        FString CurrentMapName = GetWorld()->GetMapName();
+        if (CurrentMapName.Contains("Demonstration"))
+        {
+            if (UPSQuestManagerSubsystem* QuestManager = GameInstance->GetSubsystem<UPSQuestManagerSubsystem>())
+            {
+                QuestManager->QuestInit();
+            }
+        }
+        
         if (UPSUIManagerSubsystem* UIManager = GameInstance->GetSubsystem<UPSUIManagerSubsystem>())
         {
+            if (CurrentMapName.Contains("Demonstration"))
+            {
+                UIManager->QuestUIInit();
+            }
             UIManager->ShowCurrentWidget();
         }
     }

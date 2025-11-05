@@ -17,44 +17,49 @@ public:
 	UFUNCTION()
 	void ShowCurrentWidget();
 
+	UFUNCTION()
+	void ShowLoadingUI();
+
+	UFUNCTION()
+	void QuestUIInit();
+
 	void ShowGameOverUI();
 
 	void LevelLoading(FName LevelName);
 
-private:
-	UFUNCTION()
-	void OpenLevel();
 
+
+private:
 	void ShowMainMenuUI();
 
 	void ShowPlayerHUD();
-
-	void ShowLoadingUI();
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Widget")
 	TSubclassOf<UUserWidget> MainMenuWidgetClass;
 
 	UPROPERTY()
-	UUserWidget* MainMenuWidgetInstance;
+	TObjectPtr<UUserWidget> MainMenuWidgetInstance;
 
 	UPROPERTY(EditAnywhere, Category = "Widget")
 	TSubclassOf<UUserWidget> PlayerHUDWidgetClass;
 
 	UPROPERTY()
-	UUserWidget* PlayerHUDWidgetInstance;
-
+	TObjectPtr<UUserWidget> PlayerHUDWidgetInstance;
+	
 	UPROPERTY(EditAnywhere, Category = "Widget")
 	TSubclassOf<UUserWidget> GameOverWidgetClass;
 
 	UPROPERTY()
-	UUserWidget* GameOverWidgetInstance;
+	TObjectPtr<UUserWidget> GameOverWidgetInstance;
 
 	UPROPERTY(EditAnywhere, Category = "Widget")
 	TSubclassOf<UUserWidget> LoadingWidgetClass;
 
 	UPROPERTY()
-	UUserWidget* LoadingWidgetInstance;
+	TObjectPtr<UUserWidget> LoadingWidgetInstance;
+
+
 
 	FName OpenLevelName;
 };
