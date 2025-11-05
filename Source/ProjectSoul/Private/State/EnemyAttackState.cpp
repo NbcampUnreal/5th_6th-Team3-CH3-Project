@@ -45,6 +45,7 @@ void UEnemyAttackState::OnExit()
     {
         return;
     }
+    Cast<APSEnemy>(Enemy)->DisableWeaponCollisionNotify();
     AAIController* EnemyAIController = Cast<AAIController>(Enemy->GetController());
     UBlackboardComponent* BlackboardComp = EnemyAIController ? EnemyAIController->GetBlackboardComponent() : nullptr;
     if (EnemyAIController == nullptr || BlackboardComp == nullptr)

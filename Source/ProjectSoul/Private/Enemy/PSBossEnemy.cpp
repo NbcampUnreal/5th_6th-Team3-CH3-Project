@@ -131,7 +131,7 @@ void APSBossEnemy::Skill2Attack()
 	if (Projectile)
 	{
 		Projectile->SetHomingTarget(Target);
-		Projectile->SetLifeSpan(4.5f);
+		Projectile->SetLifeSpan(3.5f);
 		UE_LOG(LogTemp, Warning, TEXT("Skill2 Homing Projectile Spawned."));
 	}
 }

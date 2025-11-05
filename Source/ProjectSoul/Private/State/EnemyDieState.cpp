@@ -40,6 +40,7 @@ void UEnemyDieState::OnEnter()
                         Mesh->SetSimulatePhysics(true);
                         Mesh->SetAllBodiesBelowSimulatePhysics(TEXT("pelvis"), true);
                         Mesh->SetCollisionProfileName(TEXT("Ragdoll"));
+                        Mesh->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
                     }
 
                     UE_LOG(LogTemp, Warning, TEXT(" Ragdoll Activated"));

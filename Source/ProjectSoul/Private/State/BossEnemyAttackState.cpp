@@ -55,6 +55,9 @@ void UBossEnemyAttackState::OnEnter()
 void UBossEnemyAttackState::OnExit()
 {
     Super::OnExit();
+    ACharacter* Enemy = GetEnemyCharacter();
+    if (!Enemy) return;
+    Cast<APSEnemy>(Enemy)->DisableWeaponCollisionNotify();
 }
 
 void UBossEnemyAttackState::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
