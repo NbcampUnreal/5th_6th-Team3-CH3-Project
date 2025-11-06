@@ -128,4 +128,16 @@ private:
 	float SizeBoxMultiplier;
 	bool bLockOn;
 
+	float CurrentHP;
+	float DisplayHP;
+	float LerpSpeed;
+	FTimerHandle HPUpdateTimer;
+
+	float CurrentMP;
+	float DisplayMP;
+	FTimerHandle MPUpdateTimer;
+
+	float CurrentStamina;
+	float DisplayStamina;
+	FTimerHandle StaminaUpdateTimer;
 };
