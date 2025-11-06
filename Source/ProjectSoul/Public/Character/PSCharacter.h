@@ -341,6 +341,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Healing")
 	int32 HealingPotionCount;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Healing")
+	float HealAmount;
+
 private:
 	FTimerHandle SprintStaminaTimer;
 	float SprintStaminaTimerInterval;

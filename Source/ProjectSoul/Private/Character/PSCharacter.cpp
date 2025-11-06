@@ -822,7 +822,7 @@ void APSCharacter::OnHealingNotify()
 {
 	HealingPotionCount--;
 	OnPotionCountChanged.Broadcast(HealingPotionCount);
-	AddHealth(50.f);
+	AddHealth(HealAmount);
 }
 
 void APSCharacter::OnHealEndNotify()
