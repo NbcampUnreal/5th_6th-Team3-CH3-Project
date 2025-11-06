@@ -34,7 +34,7 @@ void APSBossEnemy::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 	if (EndPlayReason == EEndPlayReason::Destroyed)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Boss Die."));
+		UE_LOG(LogTemp, Log, TEXT("Boss Die."));
 		OnBossDefeated.Broadcast();
 	}
 }
@@ -64,11 +64,8 @@ UAnimMontage* APSBossEnemy::GetSkill2Montage() const
 	return Skill_2_Montage;
 }
 
-
 void APSBossEnemy::Skill1Attack()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Enemy : Skill1"));
-
 	AAIController* EnemyAIController = Cast<AAIController>(GetController());
 	UBlackboardComponent* BlackboardComp = EnemyAIController ? EnemyAIController->GetBlackboardComponent() : nullptr;
 	AActor* Target = Cast<AActor>(BlackboardComp ? BlackboardComp->GetValueAsObject(TEXT("TargetActor")) : nullptr);
@@ -98,19 +95,20 @@ void APSBossEnemy::Skill1Attack()
 		Projectile->ProjectileMovement->MaxSpeed = 1500.f;
 		Projectile->ProjectileMovement->Velocity = FVector(0.f, 0.f, -1500.f);
 		Projectile->SetLifeSpan(3.0f);
-
-		UE_LOG(LogTemp, Warning, TEXT("Skill1 Falling Projectile Spawned."));
 	}
 }
 
 
 void APSBossEnemy::Skill2Attack()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Enemy : Skill2"));
 	AAIController* EnemyAIController = Cast<AAIController>(this->GetController());
 	UBlackboardComponent* BlackboardComp = EnemyAIController ? EnemyAIController->GetBlackboardComponent() : nullptr;
 	AActor* Target = Cast<AActor>(BlackboardComp->GetValueAsObject(TEXT("TargetActor")));
-	if (!Target || !ProjectileClass2) return;
+
+	if (!Target || !ProjectileClass2)
+	{
+		return;
+	}
 
 	FVector SocketLocation = GetMesh()->GetSocketLocation(TEXT("hand_l"));
 	FRotator SocketRotation = GetMesh()->GetSocketRotation(TEXT("hand_l"));
@@ -126,13 +124,13 @@ void APSBossEnemy::Skill2Attack()
 		ProjectileClass2, 
 		SpawnLocation, 
 		SpawnRotation, 
-		Params);
+		Params
+	);
 
 	if (Projectile)
 	{
 		Projectile->SetHomingTarget(Target);
 		Projectile->SetLifeSpan(3.5f);
-		UE_LOG(LogTemp, Warning, TEXT("Skill2 Homing Projectile Spawned."));
 	}
 }
 

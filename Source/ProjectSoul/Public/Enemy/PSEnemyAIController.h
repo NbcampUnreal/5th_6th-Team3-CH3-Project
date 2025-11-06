@@ -14,6 +14,7 @@ UCLASS()
 class PROJECTSOUL_API APSEnemyAIController : public AAIController
 {
 	GENERATED_BODY()
+
 public:
 	APSEnemyAIController();
 
@@ -27,35 +28,34 @@ public:
 
 	UBlackboardComponent* GetBlackboardComp() const;
 
-	UAIPerceptionComponent* GetAIPerception() const { return AIPerception; }
+	UAIPerceptionComponent* GetAIPerception() const;
 
-	UAISenseConfig_Sight* GetSightConfig() const { return SightConfig; }
-
-protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI")
-	UAIPerceptionComponent* AIPerception;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI")
-	UAISenseConfig_Sight* SightConfig;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI")
-	UBlackboardComponent* BlackboardComp;
-
-	UPROPERTY(EditDefaultsOnly, Category = "AI")
-	UBehaviorTree* BehaviorTreeAsset;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attack")
-	float AttackRange;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attack")
-	float SkillAttackRange;
+	UAISenseConfig_Sight* GetSightConfig() const;
 
 protected:
 	virtual void OnPossess(APawn* InPawn) override;
 
 	virtual void BeginPlay() override;
 
-
 	UFUNCTION()
 	void OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus);
+
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI")
+	TObjectPtr<UAIPerceptionComponent> AIPerception;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI")
+	TObjectPtr<UAISenseConfig_Sight> SightConfig;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI")
+	TObjectPtr<UBlackboardComponent> BlackboardComp;
+
+	UPROPERTY(EditDefaultsOnly, Category = "AI")
+	TObjectPtr<UBehaviorTree> BehaviorTreeAsset;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attack")
+	float AttackRange;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attack")
+	float SkillAttackRange;
 };
