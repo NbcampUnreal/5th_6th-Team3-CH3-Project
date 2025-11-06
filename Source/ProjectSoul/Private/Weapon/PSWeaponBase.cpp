@@ -72,8 +72,6 @@ void APSWeaponBase::OnWeaponOverlap(
         this,
         UDamageType::StaticClass()
     );
-
-    UE_LOG(LogTemp, Warning, TEXT("%s Damaged: %f"), *OtherActor->GetName(), AttackPower);
 }
 
 USoundBase* APSWeaponBase::GetAttackSound() const
@@ -89,7 +87,7 @@ void APSWeaponBase::EnableWeaponCollision()
 void APSWeaponBase::DisableWeaponCollision()
 {
     WeaponCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-    DamagedActors.Empty(); // Initialize the list
+    DamagedActors.Empty();
 }
 
 void APSWeaponBase::Attack(AActor* Target)

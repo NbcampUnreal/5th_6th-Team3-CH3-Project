@@ -4,14 +4,12 @@
 #include "Weapon/PSWeaponBase.h"
 #include "PSWeaponSword.generated.h"
 
-
 UCLASS()
 class PROJECTSOUL_API APSWeaponSword : public APSWeaponBase
 {
 	GENERATED_BODY()
 
 public:
-
 	APSWeaponSword();
 
 	virtual void EnableWeaponCollision() override;
