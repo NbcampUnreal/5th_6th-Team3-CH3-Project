@@ -24,18 +24,6 @@ void UPSPlayerHUDWidget::NativeOnInitialized()
 	LerpSpeed = 6.0f;
 	SizeBoxMultiplier = 3.0f;
 	HiddenBossStatusWidget();
-
-	UClass* BP_MonsterHitWidgetClass = LoadClass<UUserWidget>(nullptr, TEXT("/Game/Blueprints/UI/WBP_PSMonsterHitWidget.WBP_PSMonsterHitWidget_C"));
-	if (BP_MonsterHitWidgetClass)
-	{
-		MonsterHitWidgetClass = BP_MonsterHitWidgetClass;
-	}
-
-	UClass* BP_QuestTextWidgetClass = LoadClass<UUserWidget>(nullptr, TEXT("/Game/Blueprints/UI/WBP_PSQuestTextWidget.WBP_PSQuestTextWidget_C"));
-	if (BP_QuestTextWidgetClass)
-	{
-		QuestTextWidgetClass = BP_QuestTextWidgetClass;
-	}
 }
 
 void UPSPlayerHUDWidget::NativePreConstruct()

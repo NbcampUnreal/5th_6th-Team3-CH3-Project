@@ -7,7 +7,7 @@
 class USoundBase;
 class UAudioComponent;
 
-UCLASS(EditInlineNew, BlueprintType, Blueprintable)
+UCLASS(Blueprintable)
 class PROJECTSOUL_API UPSAudioManagerSubsystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
