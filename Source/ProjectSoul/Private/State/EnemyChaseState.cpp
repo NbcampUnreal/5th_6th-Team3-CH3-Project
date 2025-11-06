@@ -37,7 +37,6 @@ void UEnemyChaseState::OnEnter()
     {
         return;
     }
-    EnemyAIController->SetFocus(Target);
     EPathFollowingRequestResult::Type Result = EnemyAIController->MoveToActor(Target, 100.0f);
 }
 
