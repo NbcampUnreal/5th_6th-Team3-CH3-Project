@@ -6,15 +6,24 @@
 void UEnemyIdleState::OnEnter()
 {
     Super::OnEnter();
-    UE_LOG(LogTemp, Warning, TEXT("Enemy : Idle state."));
+
     ACharacter* Enemy = GetEnemyCharacter();
-    if (!Enemy) return;
+    if (!Enemy)
+    {
+        return;
+    }
 
     AAIController* EnemyAIController = Cast<AAIController>(Enemy->GetController());
-    if (!EnemyAIController) return;
+    if (!EnemyAIController)
+    {
+        return;
+    }
 
     UBlackboardComponent* BlackboardComp = EnemyAIController->GetBlackboardComponent();
-    if (!BlackboardComp) return;
+    if (!BlackboardComp)
+    {
+        return;
+    }
 
     FRotator SpawnRot = BlackboardComp->GetValueAsRotator(TEXT("SpawnRotation"));
 

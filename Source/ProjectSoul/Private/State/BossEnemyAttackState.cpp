@@ -6,9 +6,13 @@
 void UBossEnemyAttackState::OnEnter()
 {
     Super::OnEnter();
-    UE_LOG(LogTemp, Warning, TEXT("Enemy : BossAttack state."));
+
     ACharacter* Enemy = GetEnemyCharacter();
-    if (!Enemy) return;
+    if (!Enemy)
+    {
+        return;
+    }
+
     AAIController* EnemyAIController = Cast<AAIController>(Enemy->GetController());
     UBlackboardComponent* BlackboardComp = EnemyAIController ? EnemyAIController->GetBlackboardComponent() : nullptr;
 
@@ -16,9 +20,11 @@ void UBossEnemyAttackState::OnEnter()
     {
         return;
     }
+
     Cast<APSEnemyAIController>(EnemyAIController)->SetSightAngle(180.0f);
+
     BlackboardComp->SetValueAsBool(TEXT("bIsAttacking"), true);
-    UAnimInstance* Anim = Enemy->GetMesh()->GetAnimInstance();
+
     AActor* Target = Cast<AActor>(BlackboardComp->GetValueAsObject(TEXT("TargetActor")));
     if (Target)
     {
@@ -30,6 +36,7 @@ void UBossEnemyAttackState::OnEnter()
         Enemy->SetActorRotation(LookRot);
         EnemyAIController->SetControlRotation(LookRot);
     }
+
     int32 RandIndex = FMath::RandRange(0, 2);
     UAnimMontage* Montage1 = Cast<APSEnemy>(Enemy)->GetAttackMontage();
     UAnimMontage* Montage2 = Cast<APSBossEnemy>(Enemy)->GetAttack1Montage();
@@ -47,6 +54,8 @@ void UBossEnemyAttackState::OnEnter()
     {
         MontageToPlay = Montage3;
     }
+
+    UAnimInstance* Anim = Enemy->GetMesh()->GetAnimInstance();
     Anim->Montage_Play(MontageToPlay);
     EndDelegate.BindUObject(this, &UBossEnemyAttackState::OnMontageEnded);
     Anim->Montage_SetEndDelegate(EndDelegate, MontageToPlay);
@@ -55,15 +64,24 @@ void UBossEnemyAttackState::OnEnter()
 void UBossEnemyAttackState::OnExit()
 {
     Super::OnExit();
+
     ACharacter* Enemy = GetEnemyCharacter();
-    if (!Enemy) return;
+    if (!Enemy)
+    {
+        return;
+    }
+
     Cast<APSEnemy>(Enemy)->DisableWeaponCollisionNotify();
 }
 
 void UBossEnemyAttackState::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
     ACharacter* Enemy = GetEnemyCharacter();
-    if (!Enemy) return;
+    if (!Enemy)
+    {
+        return;
+    }
+
     AAIController* EnemyAIController = Cast<AAIController>(Enemy->GetController());
     UBlackboardComponent* BlackboardComp = EnemyAIController ? EnemyAIController->GetBlackboardComponent() : nullptr;
 
@@ -71,7 +89,7 @@ void UBossEnemyAttackState::OnMontageEnded(UAnimMontage* Montage, bool bInterrup
     {
         return;
     }
-    UE_LOG(LogTemp, Warning, TEXT("BossEnemy : Attack Montage Ended"));
+
     BlackboardComp->SetValueAsBool(TEXT("bIsAttacking"), false);
     BlackboardComp->SetValueAsBool(TEXT("bInAttackRange"), false);
 }

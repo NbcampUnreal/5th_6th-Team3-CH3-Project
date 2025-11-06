@@ -7,23 +7,30 @@
 void UEnemyInvestigateState::OnEnter()
 {
     Super::OnEnter();
-    UE_LOG(LogTemp, Warning, TEXT("Enemy : Investigate state."));
+
     ACharacter* Enemy = GetEnemyCharacter();
-    if (!Enemy) return;
+    if (!Enemy)
+    {
+        return;
+    }
+
     Cast<APSEnemy>(Enemy)->SetMovementSpeed(Cast<APSEnemy>(Enemy)->GetWalkSpeed());
+
     AAIController* EnemyAIController = Cast<AAIController>(Enemy->GetController());
     UBlackboardComponent* BlackboardComp = EnemyAIController ? EnemyAIController->GetBlackboardComponent() : nullptr;
-
     if (EnemyAIController == nullptr || BlackboardComp == nullptr)
     {
         return;
     }
+
     Cast<APSEnemyAIController>(EnemyAIController)->SetSightAngle(100.0f);
+
     FVector TargetLastKnownLocation = BlackboardComp->GetValueAsVector(TEXT("TargetLastKnownLocation"));
     if (TargetLastKnownLocation.IsNearlyZero())
     {
         return;
     }
+
     EnemyAIController->MoveToLocation(
         TargetLastKnownLocation,
         100.0f,
@@ -32,6 +39,7 @@ void UEnemyInvestigateState::OnEnter()
         true,
         false
     );
+
     if (UPathFollowingComponent* PFC = EnemyAIController->GetPathFollowingComponent())
     {
         PFC->OnRequestFinished.AddUObject(this, &UEnemyInvestigateState::HandleMoveFinished);
@@ -41,10 +49,18 @@ void UEnemyInvestigateState::OnEnter()
 void UEnemyInvestigateState::OnExit()
 {
     Super::OnExit();
+
     ACharacter* Enemy = GetEnemyCharacter();
-    if (!Enemy) return;
+    if (!Enemy)
+    {
+        return;
+    }
+
     AAIController* EnemyAIController = Cast<AAIController>(Enemy->GetController());
-    if (!EnemyAIController) return;
+    if (!EnemyAIController)
+    {
+        return;
+    }
 
     if (UPathFollowingComponent* PFC = EnemyAIController->GetPathFollowingComponent())
     {
@@ -58,15 +74,23 @@ void UEnemyInvestigateState::HandleMoveFinished(FAIRequestID RequestID, const FP
 {
     if (Result.IsSuccess())
     {
-        UE_LOG(LogTemp, Warning, TEXT("Enemy : success Investigate"));
         ACharacter* Enemy = GetEnemyCharacter();
-        if (!Enemy) return;
+        if (!Enemy)
+        {
+            return;
+        }
 
         AAIController* EnemyAIController = Cast<AAIController>(Enemy->GetController());
-        if (!EnemyAIController) return;
+        if (!EnemyAIController)
+        {
+            return;
+        }
 
         UBlackboardComponent* BlackboardComp = EnemyAIController->GetBlackboardComponent();
-        if (!BlackboardComp) return;
+        if (!BlackboardComp)
+        {
+            return;
+        }
 
         BlackboardComp->SetValueAsBool(TEXT("bIsInvestigating"), false);
         BlackboardComp->SetValueAsBool(TEXT("bIsReturning"), true);

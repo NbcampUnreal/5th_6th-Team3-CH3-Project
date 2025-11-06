@@ -11,6 +11,7 @@ UCLASS()
 class PROJECTSOUL_API UEnemyStateBase : public UStateBase
 {
 	GENERATED_BODY()
+
 public:
 	virtual void OnEnter() override;
 
