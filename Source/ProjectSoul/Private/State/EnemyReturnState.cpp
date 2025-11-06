@@ -24,7 +24,6 @@ void UEnemyReturnState::OnEnter()
     {
         return;
     }
-    EnemyAIController->SetFocalPoint(SpawnPointLocation);
 
     EnemyAIController->MoveToLocation(
         SpawnPointLocation,
@@ -50,7 +49,6 @@ void UEnemyReturnState::OnExit()
     if (!EnemyAIController) return;
 
     EnemyAIController->StopMovement();
-    EnemyAIController->ClearFocus(EAIFocusPriority::Gameplay);
 
     if (UPathFollowingComponent* PFC = EnemyAIController->GetPathFollowingComponent())
     {

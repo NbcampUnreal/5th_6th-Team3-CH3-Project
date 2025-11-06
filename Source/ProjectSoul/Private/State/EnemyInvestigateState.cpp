@@ -24,8 +24,6 @@ void UEnemyInvestigateState::OnEnter()
     {
         return;
     }
-    EnemyAIController->SetFocalPoint(TargetLastKnownLocation);
-
     EnemyAIController->MoveToLocation(
         TargetLastKnownLocation,
         100.0f,
@@ -54,7 +52,6 @@ void UEnemyInvestigateState::OnExit()
     }
 
     EnemyAIController->StopMovement();
-    EnemyAIController->ClearFocus(EAIFocusPriority::Gameplay);
 }
 
 void UEnemyInvestigateState::HandleMoveFinished(FAIRequestID RequestID, const FPathFollowingResult& Result)
