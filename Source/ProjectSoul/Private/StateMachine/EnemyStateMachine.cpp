@@ -77,7 +77,6 @@ void UEnemyStateMachine::ChangeState(UStateBase* NewState)
 			UAnimMontage* Montage = Cast<APSEnemy>(Enemy)->GetHitMontage();
 			if (Anim && Anim->Montage_IsPlaying(Montage))
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Blocked: Hit montage still playing."));
 				return;
 			}
 		}
