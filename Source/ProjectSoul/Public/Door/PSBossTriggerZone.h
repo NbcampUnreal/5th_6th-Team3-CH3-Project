@@ -37,13 +37,13 @@ protected:
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "BossRoom|Component")
-	UBoxComponent* TriggerBox;
+	TObjectPtr<UBoxComponent> TriggerBox;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BossRoom")
-	APSBossRoomDoor* BossDoor;
+	TObjectPtr<APSBossRoomDoor> BossDoor;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BossRoom")
-	AActor* BossActor;
+	TObjectPtr<AActor> BossActor;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BossRoom")
 	bool bBossDefeated;
@@ -52,10 +52,10 @@ protected:
 	TSubclassOf<APSBossEnemy> BossClass;
 
 	UPROPERTY(EditAnywhere, Category = "Boss")
-	AActor* BossSpawnPoint;
+	TObjectPtr<AActor> BossSpawnPoint;
 
 	UPROPERTY(EditAnywhere, Category = "Boss")
-	UAnimMontage* BossSpawnMontage; 
+	TObjectPtr<UAnimMontage> BossSpawnMontage;
 
 	FTimerHandle BossSpawnTimerHandle;
 };

@@ -12,7 +12,6 @@ class PROJECTSOUL_API APSBossRoomDoor : public AActor
 	GENERATED_BODY()
 	
 public:	
-
 	APSBossRoomDoor();
 
 	UFUNCTION(BlueprintCallable, Category = "Door")
@@ -28,28 +27,26 @@ public:
 	bool GetLocked()const;
 
 protected:
-
 	virtual void BeginPlay() override;
 
 protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Door|Component")
+	TObjectPtr<USceneComponent> Scene;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Door|Component")
-	USceneComponent* Scene;
+	TObjectPtr<UStaticMeshComponent> LeftDoor;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Door|Component")
-	UStaticMeshComponent* LeftDoor;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Door|Component")
-	UStaticMeshComponent* RightDoor;
+	TObjectPtr<UStaticMeshComponent> RightDoor;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Door|Component")
-	UBoxComponent* DoorBlocker;
+	TObjectPtr<UBoxComponent> DoorBlocker;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Door|Effects")
-	USoundBase* DoorOpenSound;
+	TObjectPtr<USoundBase> DoorOpenSound;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Door|Effects")
-	USoundBase* DoorCloseSound;
+	TObjectPtr<USoundBase> DoorCloseSound;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Door")
 	FRotator LeftOpenRot;
@@ -62,6 +59,4 @@ protected:
 
 	FRotator LeftClosedRot;
 	FRotator RightClosedRot;
-
-	
 };
