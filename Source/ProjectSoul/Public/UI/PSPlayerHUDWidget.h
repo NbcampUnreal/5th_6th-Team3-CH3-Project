@@ -136,8 +136,4 @@ private:
 	float CurrentMP;
 	float DisplayMP;
 	FTimerHandle MPUpdateTimer;
-
-	float CurrentStamina;
-	float DisplayStamina;
-	FTimerHandle StaminaUpdateTimer;
 };
