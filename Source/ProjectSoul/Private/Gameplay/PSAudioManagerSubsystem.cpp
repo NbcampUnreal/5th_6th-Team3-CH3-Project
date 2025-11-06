@@ -8,36 +8,51 @@ UPSAudioManagerSubsystem::UPSAudioManagerSubsystem() :
 	ConstructorHelpers::FObjectFinder<USoundBase> DefaultBGMObj(TEXT("/Game/Resources/Sounds/Background/CavesAndDungeons/CUE/The_Labyrinth_Loop_B_Cue.The_Labyrinth_Loop_B_Cue"));
 	if (DefaultBGMObj.Succeeded())
 	{
-		UE_LOG(LogTemp, Log, TEXT("DefaultBGMObj Loaded Successfully"));
 		DefaultBGM = DefaultBGMObj.Object;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to load DefaultBGM"));
 	}
 
 	ConstructorHelpers::FObjectFinder<USoundBase> BossBGMObj(TEXT("/Game/Resources/Sounds/Background/Starter_Pack_v_2_0/Cues/The_Adventurer_Preparing_Full_Cue.The_Adventurer_Preparing_Full_Cue"));
 	if (BossBGMObj.Succeeded())
 	{
-		UE_LOG(LogTemp, Log, TEXT("BossBGMObj Loaded Successfully"));
 		BossBGM = BossBGMObj.Object;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to load BossBGM"));
 	}
 
 	ConstructorHelpers::FObjectFinder<USoundBase> GameClearObj(TEXT("/Game/Resources/Sounds/Gameplay/GameClear.GameClear"));
 	if (GameClearObj.Succeeded())
 	{
-		UE_LOG(LogTemp, Log, TEXT("GameClearObj Loaded Successfully"));
 		GameClearSFX = GameClearObj.Object;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to load GameClearSFX"));
 	}
 
 	ConstructorHelpers::FObjectFinder<USoundBase> GameOverObj(TEXT("/Game/Resources/Sounds/Gameplay/GameOver.GameOver"));
 	if (GameOverObj.Succeeded())
 	{
-		UE_LOG(LogTemp, Log, TEXT("GameOverObj Loaded Successfully"));
 		GameOverSFX = GameOverObj.Object;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to load GameOverSFX"));
 	}
 
 	ConstructorHelpers::FObjectFinder<USoundAttenuation> AttenObj(TEXT("/Game/Audio/SA_Default.SA_Default"));
 	if (AttenObj.Succeeded())
 	{
-		UE_LOG(LogTemp, Log, TEXT("Sound Attenuation Loaded Successfully"));
 		DefaultAttenuation = AttenObj.Object;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to load DefaultAttenuation"));
 	}
 }
 
@@ -78,7 +93,7 @@ void UPSAudioManagerSubsystem::PlaySFX2D(USoundBase* Sound, float Volume)
 	{
 		return;
 	}
-	UE_LOG(LogTemp, Warning, TEXT("Game Finish"));
+
 	UGameplayStatics::PlaySound2D(GetWorld(), Sound, Volume);
 }
 
