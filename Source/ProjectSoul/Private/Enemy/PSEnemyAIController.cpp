@@ -16,17 +16,23 @@ APSEnemyAIController::APSEnemyAIController()
 	SetPerceptionComponent(*AIPerception);
 
 	SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("SightConfig"));
-	SightConfig->SightRadius = 1000.0f;
-	SightConfig->LoseSightRadius = 1500.0f;
-	SightConfig->PeripheralVisionAngleDegrees = 100.0f;
-	SightConfig->SetMaxAge(3.0f);
-	SightConfig->AutoSuccessRangeFromLastSeenLocation = 0.0f;
-	SightConfig->DetectionByAffiliation.bDetectEnemies = true;
-	SightConfig->DetectionByAffiliation.bDetectNeutrals = true;
-	SightConfig->DetectionByAffiliation.bDetectFriendlies = true;
+	if (SightConfig)
+	{
+		SightConfig->SightRadius = 1000.0f;
+		SightConfig->LoseSightRadius = 1500.0f;
+		SightConfig->PeripheralVisionAngleDegrees = 100.0f;
+		SightConfig->SetMaxAge(3.0f);
+		SightConfig->AutoSuccessRangeFromLastSeenLocation = 0.0f;
+		SightConfig->DetectionByAffiliation.bDetectEnemies = true;
+		SightConfig->DetectionByAffiliation.bDetectNeutrals = true;
+		SightConfig->DetectionByAffiliation.bDetectFriendlies = true;
+	}
 
-	AIPerception->ConfigureSense(*SightConfig);
-	AIPerception->SetDominantSense(SightConfig->GetSenseImplementation());
+	if (AIPerception && SightConfig)
+	{
+		AIPerception->ConfigureSense(*SightConfig);
+		AIPerception->SetDominantSense(SightConfig->GetSenseImplementation());
+	}
 
 	BlackboardComp = CreateDefaultSubobject<UBlackboardComponent>(TEXT("Blackboard"));
 }
@@ -34,6 +40,7 @@ APSEnemyAIController::APSEnemyAIController()
 void APSEnemyAIController::BeginPlay()
 {
 	Super::BeginPlay();
+
 	if (BlackboardComp)
 	{
 		BlackboardComp->SetValueAsBool(TEXT("bCanSeeTarget"), false);
@@ -41,6 +48,7 @@ void APSEnemyAIController::BeginPlay()
 		BlackboardComp->SetValueAsBool(TEXT("bInAttackRange"), false);
 		BlackboardComp->SetValueAsBool(TEXT("bIsReturning"), false);
 		BlackboardComp->SetValueAsBool(TEXT("bIsAttacking"), false);
+
 		APawn* ControlledPawn = GetPawn();
 		if (ControlledPawn)
 		{
@@ -64,7 +72,6 @@ void APSEnemyAIController::BeginPlay()
 void APSEnemyAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
-
 }
 
 void APSEnemyAIController::OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
@@ -74,6 +81,7 @@ void APSEnemyAIController::OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimul
 	{
 		return;
 	}
+
 	if (Stimulus.WasSuccessfullySensed())
 	{
 		BlackboardComp->SetValueAsObject(TEXT("TargetActor"), Actor);
@@ -96,14 +104,23 @@ void APSEnemyAIController::SetSightAngle(float NewAngle)
 	if (SightConfig)
 	{
 		SightConfig->PeripheralVisionAngleDegrees = NewAngle;
-		GetPerceptionComponent()->RequestStimuliListenerUpdate();//now change
-		UE_LOG(LogTemp, Warning, TEXT("Sight angle changed to %.1f"), NewAngle);
+		GetPerceptionComponent()->RequestStimuliListenerUpdate();
 	}
 }
 
 UBlackboardComponent* APSEnemyAIController::GetBlackboardComp() const
 {
 	return BlackboardComp;
+}
+
+UAIPerceptionComponent* APSEnemyAIController::GetAIPerception() const
+{
+	return AIPerception;
+}
+
+UAISenseConfig_Sight* APSEnemyAIController::GetSightConfig() const
+{
+	return SightConfig;
 }
 
 void APSEnemyAIController::StartBehaviorTree()

@@ -7,8 +7,6 @@
 
 void UPlayerThrowState::OnEnter()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Player: Enter Throw State"));
-
 	bCanDodge = false;
 
 	if (APSCharacter* Character = GetPlayerCharacter())
@@ -35,8 +33,6 @@ void UPlayerThrowState::OnExit()
 			}
 		}
 	}
-
-	UE_LOG(LogTemp, Warning, TEXT("Player: Exit Throw State"));
 }
 
 void UPlayerThrowState::Look(const FVector2D& Value)
@@ -81,8 +77,6 @@ void UPlayerThrowState::Die()
 
 void UPlayerThrowState::ThrowEnd()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Player: Call Throw End"));
-
 	if (UPlayerStateMachine* PSM = GetPlayerStateMachine())
 	{
 		PSM->ChangeState(PSM->GetPrevState());

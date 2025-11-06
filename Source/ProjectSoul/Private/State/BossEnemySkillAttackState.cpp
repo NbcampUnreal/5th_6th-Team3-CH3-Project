@@ -6,9 +6,13 @@
 void UBossEnemySkillAttackState::OnEnter()
 {
 	Super::OnEnter();
-    UE_LOG(LogTemp, Warning, TEXT("Enemy : Boss Skill state."));
+
     ACharacter* Enemy = GetEnemyCharacter();
-    if (!Enemy) return;
+    if (!Enemy)
+    {
+        return;
+    }
+
     AAIController* EnemyAIController = Cast<AAIController>(Enemy->GetController());
     UBlackboardComponent* BlackboardComp = EnemyAIController ? EnemyAIController->GetBlackboardComponent() : nullptr;
 
@@ -16,8 +20,9 @@ void UBossEnemySkillAttackState::OnEnter()
     {
         return;
     }
+
     Cast<APSEnemyAIController>(EnemyAIController)->SetSightAngle(180.0f);
-    UAnimInstance* Anim = Enemy->GetMesh()->GetAnimInstance();
+
     AActor* Target = Cast<AActor>(BlackboardComp->GetValueAsObject(TEXT("TargetActor")));
     if (Target)
     {
@@ -29,6 +34,7 @@ void UBossEnemySkillAttackState::OnEnter()
         Enemy->SetActorRotation(LookRot);
         EnemyAIController->SetControlRotation(LookRot);
     }
+
     int32 RandIndex = FMath::RandRange(0, 1);
     UAnimMontage* Montage1 = Cast<APSBossEnemy>(Enemy)->GetSkill1Montage();
     UAnimMontage* Montage2 = Cast<APSBossEnemy>(Enemy)->GetSkill2Montage();
@@ -41,6 +47,8 @@ void UBossEnemySkillAttackState::OnEnter()
     {
         MontageToPlay = Montage2;
     }
+
+    UAnimInstance* Anim = Enemy->GetMesh()->GetAnimInstance();
     Anim->Montage_Play(MontageToPlay);
     EndDelegate.BindUObject(this, &UBossEnemySkillAttackState::OnMontageEnded);
     Anim->Montage_SetEndDelegate(EndDelegate, MontageToPlay);
@@ -54,25 +62,28 @@ void UBossEnemySkillAttackState::OnExit()
 void UBossEnemySkillAttackState::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
     ACharacter* Enemy = GetEnemyCharacter();
-    if (!Enemy) return;
+    if (!Enemy)
+    {
+        return;
+    }
+
     AAIController* EnemyAIController = Cast<AAIController>(Enemy->GetController());
     UBlackboardComponent* BlackboardComp = EnemyAIController ? EnemyAIController->GetBlackboardComponent() : nullptr;
-
     if (EnemyAIController == nullptr || BlackboardComp == nullptr)
     {
         return;
     }
+
     BlackboardComp->SetValueAsBool(TEXT("bCollSkill"), true);
     BlackboardComp->SetValueAsBool(TEXT("bInAttackRange"), false);
+
     Enemy->GetWorldTimerManager().SetTimer(
         CoolTimerHandle,
         FTimerDelegate::CreateLambda([BlackboardComp]()
             {
                 BlackboardComp->SetValueAsBool(TEXT("bCollSkill"), false);
-                UE_LOG(LogTemp, Warning, TEXT("Boss Skill cooldown finished."));
             }),
         5.f,
         false
     );
-
 }

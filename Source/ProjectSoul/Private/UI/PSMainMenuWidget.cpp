@@ -4,7 +4,6 @@
 #include "Components/Button.h"
 #include "Kismet/GameplayStatics.h"
 
-
 void UPSMainMenuWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();

@@ -7,8 +7,6 @@
 
 void UPlayerDodgeState::OnEnter()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Player: Enter Dodge State"));
-
 	if (APSCharacter* Character = GetPlayerCharacter())
 	{
 		Character->SetIsSprinting(false);
@@ -43,8 +41,6 @@ void UPlayerDodgeState::OnExit()
 			}
 		}
 	}
-
-	UE_LOG(LogTemp, Warning, TEXT("Player: Exit Dodge State"));
 }
 
 void UPlayerDodgeState::Look(const FVector2D& Value)
@@ -65,8 +61,6 @@ void UPlayerDodgeState::Die()
 
 void UPlayerDodgeState::DodgeEnd()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Player: Call Dodge End"));
-
 	if (UPlayerStateMachine* PSM = GetPlayerStateMachine())
 	{
 		PSM->ChangeState(PSM->GetPrevState());

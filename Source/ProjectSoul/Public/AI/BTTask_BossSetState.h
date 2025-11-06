@@ -17,7 +17,6 @@ enum class EBossEnemyStateType : uint8
 	Hit
 };
 
-
 UCLASS()
 class PROJECTSOUL_API UBTTask_BossSetState : public UBTTaskNode
 {

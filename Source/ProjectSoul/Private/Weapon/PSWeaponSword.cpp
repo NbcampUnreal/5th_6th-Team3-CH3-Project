@@ -11,11 +11,9 @@ APSWeaponSword::APSWeaponSword()
 void APSWeaponSword::EnableWeaponCollision()
 {
 	Super::EnableWeaponCollision();
-	UE_LOG(LogTemp, Log, TEXT("Sword collision enabled"));
 }
 
 void APSWeaponSword::DisableWeaponCollision()
 {
 	Super::DisableWeaponCollision();
-	UE_LOG(LogTemp, Log, TEXT("Sword collision disabled"));
 }

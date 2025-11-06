@@ -18,8 +18,6 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-private:
-
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	TObjectPtr<UInputMappingContext> InputMappingContext;
