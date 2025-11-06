@@ -13,12 +13,20 @@ void UPSGameOverWidget::NativeOnInitialized()
 	GameOverFadeInTime = 3.0f;
 
 	MainMenuButton->OnClicked.AddDynamic(this, &UPSGameOverWidget::MainMenuButtonClick);
+	MainMenuButton->OnHovered.AddDynamic(this, &UPSGameOverWidget::MainMenuButtonHovered);
+	MainMenuButton->OnUnhovered.AddDynamic(this, &UPSGameOverWidget::MainMenuButtonUnHovered);
+
 	ReStartButton->OnClicked.AddDynamic(this, &UPSGameOverWidget::RestartButtonClick);
+	ReStartButton->OnHovered.AddDynamic(this, &UPSGameOverWidget::RestartButtonHovered);
+	ReStartButton->OnUnhovered.AddDynamic(this, &UPSGameOverWidget::RestartButtonUnHovered);
 }
 
 void UPSGameOverWidget::NativePreConstruct()
 {
 	Super::NativePreConstruct();
+
+	MainMenuButtonText->SetColorAndOpacity(FColor::White);
+	ReStartButtonText->SetColorAndOpacity(FColor::White);
 
 	UpdateUI();
 }
@@ -78,11 +86,29 @@ void UPSGameOverWidget::WidgetFadeIn()
 void UPSGameOverWidget::MainMenuButtonClick()
 {
 	GetGameInstance()->GetSubsystem<UPSUIManagerSubsystem>()->LevelLoading("MenuLevel");
-	RemoveFromParent();
 }
 
 void UPSGameOverWidget::RestartButtonClick()
 {
 	GetGameInstance()->GetSubsystem<UPSUIManagerSubsystem>()->LevelLoading("Demonstration");
-	RemoveFromParent();
+}
+
+void UPSGameOverWidget::MainMenuButtonHovered()
+{
+	MainMenuButtonText->SetColorAndOpacity(FColor::Yellow);
+}
+
+void UPSGameOverWidget::MainMenuButtonUnHovered()
+{
+	MainMenuButtonText->SetColorAndOpacity(FColor::White);
+}
+
+void UPSGameOverWidget::RestartButtonHovered()
+{
+	ReStartButtonText->SetColorAndOpacity(FColor::Yellow);
+}
+
+void UPSGameOverWidget::RestartButtonUnHovered()
+{
+	ReStartButtonText->SetColorAndOpacity(FColor::White);
 }

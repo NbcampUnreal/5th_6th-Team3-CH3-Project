@@ -10,8 +10,6 @@
 
 void UPlayerAttackState::OnEnter()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Player: Enter Attack State"));
-
 	bCanNextCombo = false;
 	bDoNextCombo = false;
 	bCanDodge = false;
@@ -52,8 +50,6 @@ void UPlayerAttackState::OnExit()
 			}
 		}
 	}
-
-	UE_LOG(LogTemp, Warning, TEXT("Player: Exit Attack State"));
 }
 
 void UPlayerAttackState::Look(const FVector2D& Value)
@@ -116,7 +112,6 @@ void UPlayerAttackState::StartNextCombo()
 	{
 		if (UPlayerStateMachine* PSM = GetPlayerStateMachine())
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Player: Start Next Combo"));
 			CurrentComboIndex++;
 			PSM->ChangeState(this);
 		}
@@ -125,8 +120,6 @@ void UPlayerAttackState::StartNextCombo()
 
 void UPlayerAttackState::AttackEnd()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Player: Call Attack End"));
-	
 	if (UPlayerStateMachine* PSM = GetPlayerStateMachine())
 	{
 		CurrentComboIndex = 0;

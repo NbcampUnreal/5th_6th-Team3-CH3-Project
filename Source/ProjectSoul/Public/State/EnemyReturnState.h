@@ -17,5 +17,4 @@ public:
 	virtual void OnExit() override;
 
 	void HandleMoveFinished(FAIRequestID RequestID, const FPathFollowingResult& Result);
-
 };

@@ -7,8 +7,6 @@
 
 void UPlayerHealState::OnEnter()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Player: Enter Heal State"));
-
 	bCanDodge = false;
 
 	if (APSCharacter* Character = GetPlayerCharacter())
@@ -39,8 +37,6 @@ void UPlayerHealState::OnExit()
 			}
 		}
 	}
-
-	UE_LOG(LogTemp, Warning, TEXT("Player: Exit Heal State"));
 }
 
 void UPlayerHealState::Look(const FVector2D& Value)

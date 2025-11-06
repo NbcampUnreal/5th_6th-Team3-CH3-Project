@@ -5,7 +5,6 @@
 
 APSPlayerController::APSPlayerController()
 {
-
 }
 
 void APSPlayerController::BeginPlay()

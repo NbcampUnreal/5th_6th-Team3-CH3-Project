@@ -21,15 +21,21 @@ EBTNodeResult::Type UBTTask_BossSetState::ExecuteTask(UBehaviorTreeComponent& Ow
 {
 	AAIController* AICon = OwnerComp.GetAIOwner();
 	if (!AICon)
+	{
 		return EBTNodeResult::Failed;
+	}
 
 	APSBossEnemy* EnemyChar = Cast<APSBossEnemy>(AICon->GetPawn());
 	if (!EnemyChar)
+	{
 		return EBTNodeResult::Failed;
+	}
 
 	UBossEnemyStateMachine* StateMachine = Cast<UBossEnemyStateMachine>(EnemyChar->GetStateMachine());
 	if (!StateMachine)
+	{
 		return EBTNodeResult::Failed;
+	}
 
 	switch (TargetState)
 	{

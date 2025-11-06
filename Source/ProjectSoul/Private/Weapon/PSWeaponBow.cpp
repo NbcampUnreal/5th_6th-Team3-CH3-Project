@@ -49,8 +49,6 @@ void APSWeaponBow::Attack(AActor* Target)
 		Arrow->Damage = AttackPower;
 
 		Arrow->SetOwner(this);
-
-		UE_LOG(LogTemp, Warning, TEXT("Bow fired arrow toward %s"), Target ? *Target->GetName() : TEXT("Direction"));
 	}
 }
 

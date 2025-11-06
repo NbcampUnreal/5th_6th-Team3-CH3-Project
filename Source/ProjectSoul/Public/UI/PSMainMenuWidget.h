@@ -12,10 +12,10 @@ class PROJECTSOUL_API UPSMainMenuWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
-public:
-
 protected:
 	virtual void NativeOnInitialized() override;
+
+	virtual void NativePreConstruct() override;
 
 private:
 	UFUNCTION()
@@ -24,12 +24,28 @@ private:
 	UFUNCTION()
 	void EndButtonClick();
 
-	
+	UFUNCTION()
+	void StartButtonHovered();
 
+	UFUNCTION()
+	void StartButtonUnHovered();
+
+	UFUNCTION()
+	void EndButtonHovered();
+
+	UFUNCTION()
+	void EndButtonUnHovered();
+	
 private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> StartButton;
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> EndButton;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> StartButtonText;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> EndButtonText;
 };

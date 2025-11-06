@@ -38,20 +38,19 @@ void APSHealingPotion::BeginPlay()
 		PotionCollision->OnComponentBeginOverlap.AddDynamic(this, &APSHealingPotion::OnPotionOverlap);
 	}
 }
+
 void APSHealingPotion::OnPotionOverlap(
 	UPrimitiveComponent* OverlappedComp,
 	AActor* OtherActor,
 	UPrimitiveComponent* OtherComp,
 	int32 OtherBodyIndex,
 	bool bFromSweep,
-	const FHitResult& SweepResult)
+	const FHitResult& SweepResult
+)
 {
-	UE_LOG(LogTemp, Log, TEXT("Healing Potion overlap"));
-	
 	APSCharacter* Player = Cast<APSCharacter>(OtherActor);
 	if (Player)
 	{
-		UE_LOG(LogTemp, Log, TEXT("Healing Potion cast"));
 		UseItem(Player);
 	}
 	
@@ -59,10 +58,8 @@ void APSHealingPotion::OnPotionOverlap(
 
 void APSHealingPotion::UseItem(APSCharacter* Player)
 {
-	UE_LOG(LogTemp, Log, TEXT("Healing Potion UseItem"));
 	if (!Player)
 	{
-		UE_LOG(LogTemp, Log, TEXT("Healing Potion return"));
 		return;
 	}
 

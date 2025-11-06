@@ -30,10 +30,8 @@ FString UPSBossKillQuest::QuestTextUpdate()
 	FString QuestText = FString::Printf(TEXT("Boss Kill"));
 	return QuestText;
 }
-//UPSQuestManagerSubsystem : QuestInit() call
+
 bool UPSBossKillQuest::SetNextQuest()
 {
-
 	return false;
 }
-

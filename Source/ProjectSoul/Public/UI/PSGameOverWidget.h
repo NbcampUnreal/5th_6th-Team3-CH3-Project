@@ -26,18 +26,34 @@ protected:
 	UFUNCTION()
 	void RestartButtonClick();
 
+	UFUNCTION()
+	void MainMenuButtonHovered();
+
+	UFUNCTION()
+	void MainMenuButtonUnHovered();
+
+	UFUNCTION()
+	void RestartButtonHovered();
+
+	UFUNCTION()
+	void RestartButtonUnHovered();
+
 private :
 	void UpdateUI();
 
-
-public:
-	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+private:
+	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> MainMenuButton;
 
-	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> ReStartButton;
 
-private:
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> MainMenuButtonText;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> ReStartButtonText;
+
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> TotalScoreText;
 

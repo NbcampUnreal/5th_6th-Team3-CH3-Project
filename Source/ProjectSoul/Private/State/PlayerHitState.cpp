@@ -6,8 +6,6 @@
 
 void UPlayerHitState::OnEnter()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Player: Enter Hit State"));
-
 	bCanDodge = false;
 
 	if (APSCharacter* Character = GetPlayerCharacter())
@@ -34,8 +32,6 @@ void UPlayerHitState::OnExit()
 			}
 		}
 	}
-
-	UE_LOG(LogTemp, Warning, TEXT("Player: Exit Hit State"));
 }
 
 void UPlayerHitState::Look(const FVector2D& Value)
@@ -72,8 +68,6 @@ void UPlayerHitState::Die()
 
 void UPlayerHitState::HitEnd()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Player: Call Hit End"));
-
 	if (UPlayerStateMachine* PSM = GetPlayerStateMachine())
 	{
 		PSM->ChangeState(PSM->GetPrevState());

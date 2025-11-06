@@ -21,20 +21,9 @@ void UPSPlayerHUDWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 
+	LerpSpeed = 6.0f;
 	SizeBoxMultiplier = 3.0f;
 	HiddenBossStatusWidget();
-
-	//RunTime Load
-	UClass* BP_MonsterHitWidgetClass = LoadClass<UUserWidget>(nullptr, TEXT("/Game/Blueprints/UI/WBP_PSMonsterHitWidget.WBP_PSMonsterHitWidget_C"));
-	if (BP_MonsterHitWidgetClass)
-	{
-		MonsterHitWidgetClass = BP_MonsterHitWidgetClass;
-	}
-	UClass* BP_QuestTextWidgetClass = LoadClass<UUserWidget>(nullptr, TEXT("/Game/Blueprints/UI/WBP_PSQuestTextWidget.WBP_PSQuestTextWidget_C"));
-	if (BP_QuestTextWidgetClass)
-	{
-		QuestTextWidgetClass = BP_QuestTextWidgetClass;
-	}
 }
 
 void UPSPlayerHUDWidget::NativePreConstruct()
@@ -56,9 +45,10 @@ void UPSPlayerHUDWidget::NativePreConstruct()
 		PotionCountText->SetText(FText::FromString(FString::Printf(TEXT("x%d"), PSCharacter->GetHealingPotionCount())));
 		PotionImage->SetOpacity(1.0f);
 		PSCharacter->OnPotionCountChanged.AddDynamic(this, &UPSPlayerHUDWidget::OnUpdatePotionCount);
-	
-	
-}
+		
+		CurrentHP = PSCharacter->GetHealthPercent();
+		DisplayHP = PSCharacter->GetHealthPercent();
+	}
 
 	TArray<AActor*> FoundEnemies;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APSEnemy::StaticClass(), FoundEnemies);
@@ -83,10 +73,31 @@ void UPSPlayerHUDWidget::NativePreConstruct()
 
 void UPSPlayerHUDWidget::OnUpdateHPBar(float CurrentValue, float MaxValue)
 {
-	if (HPBar)
+	CurrentHP = CurrentValue / MaxValue;
+
+	if (GetWorld()->GetTimerManager().IsTimerActive(HPUpdateTimer))
 	{
-		HPBar->SetPercent(CurrentValue / MaxValue);
+		GetWorld()->GetTimerManager().ClearTimer(HPUpdateTimer);
 	}
+
+	GetWorld()->GetTimerManager().SetTimer(
+		HPUpdateTimer,
+		[this]()
+		{
+			DisplayHP = FMath::FInterpTo(DisplayHP, CurrentHP, 0.02f, LerpSpeed);
+			if (HPBar)
+			{
+				HPBar->SetPercent(DisplayHP);
+			}
+
+			if (FMath::IsNearlyEqual(DisplayHP, CurrentHP, 0.001f))
+			{
+				GetWorld()->GetTimerManager().ClearTimer(HPUpdateTimer);
+			}
+		},
+		0.02f,
+		true
+	);
 
 	if (HPBarContainer)
 	{
@@ -103,10 +114,31 @@ void UPSPlayerHUDWidget::OnUpdateHPBar(float CurrentValue, float MaxValue)
 
 void UPSPlayerHUDWidget::OnUpdateMPBar(float CurrentValue, float MaxValue)
 {
-	if (MPBar)
+	CurrentMP = CurrentValue / MaxValue;
+
+	if (GetWorld()->GetTimerManager().IsTimerActive(MPUpdateTimer))
 	{
-		MPBar->SetPercent(CurrentValue / MaxValue);
+		GetWorld()->GetTimerManager().ClearTimer(MPUpdateTimer);
 	}
+
+	GetWorld()->GetTimerManager().SetTimer(
+		MPUpdateTimer,
+		[this]()
+		{
+			DisplayMP = FMath::FInterpTo(DisplayMP, CurrentMP, 0.02f, LerpSpeed);
+			if (MPBar)
+			{
+				MPBar->SetPercent(DisplayMP);
+			}
+
+			if (FMath::IsNearlyEqual(DisplayMP, CurrentMP, 0.001f))
+			{
+				GetWorld()->GetTimerManager().ClearTimer(MPUpdateTimer);
+			}
+		},
+		0.02f,
+		true
+	);
 
 	if (MPBarContainer)
 	{
@@ -127,6 +159,7 @@ void UPSPlayerHUDWidget::OnUpdateStaminaBar(float CurrentValue, float MaxValue)
 	{
 		StaminaBar->SetPercent(CurrentValue / MaxValue);
 	}
+
 	if (StaminaBarContainer)
 	{
 		float NewWidth = MaxValue * SizeBoxMultiplier;
@@ -267,12 +300,10 @@ APSCharacter* UPSPlayerHUDWidget::GetCharacter()
 	return nullptr;
 }
 
-//APSEnemy : TakeDamage : OnEnemyDie Deldgate call
 void UPSPlayerHUDWidget::QuestUpdateDelegate(AActor* UnUsed)
 {
 	QuestUpdate();
 }
-
 
 void UPSPlayerHUDWidget::QuestUpdate()
 {

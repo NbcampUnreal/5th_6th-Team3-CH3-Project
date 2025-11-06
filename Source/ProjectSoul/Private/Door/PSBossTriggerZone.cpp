@@ -58,9 +58,11 @@ void APSBossTriggerZone::OnPlayerEnter(
 
 			TriggerBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		}
+
 		if (BossClass && BossSpawnPoint)
 		{
 			FActorSpawnParameters SpawnParams;
+			SpawnParams.Name = "Sevarog";
 			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
 			APSBossEnemy* SpawnedBoss = GetWorld()->SpawnActor<APSBossEnemy>(
@@ -72,7 +74,6 @@ void APSBossTriggerZone::OnPlayerEnter(
 
 			if (SpawnedBoss)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Boss spawned and playing summon animation."));
 				SpawnedBoss->SetActorEnableCollision(false);
 				if (APSGameModeBase* GameMode = Cast<APSGameModeBase>(UGameplayStatics::GetGameMode(GetWorld())))
 				{
@@ -96,7 +97,6 @@ void APSBossTriggerZone::OnPlayerEnter(
 						TimerHandle,
 						[SpawnedBoss]()
 						{
-							UE_LOG(LogTemp, Warning, TEXT("Boss summon animation ended activating boss."));
 							SpawnedBoss->SetActorEnableCollision(true);
 							if (AAIController* AI = Cast<AAIController>(SpawnedBoss->GetController()))
 							{
@@ -113,6 +113,7 @@ void APSBossTriggerZone::OnPlayerEnter(
 				else
 				{
 					SpawnedBoss->SetActorEnableCollision(true);
+
 					if (AAIController* AI = Cast<AAIController>(SpawnedBoss->GetController()))
 					{
 						if (AI->GetBrainComponent())

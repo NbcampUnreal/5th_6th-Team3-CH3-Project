@@ -41,8 +41,6 @@ void APSFireBomb::OnHit(
 	const FHitResult& Hit
 )
 {
-	UE_LOG(LogTemp, Warning, TEXT("Bomb: On hit"));
-
 	if (!OtherActor || OtherActor == this || OtherActor == GetOwner())
 	{
 		return;

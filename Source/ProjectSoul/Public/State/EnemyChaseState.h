@@ -8,6 +8,7 @@ UCLASS()
 class PROJECTSOUL_API UEnemyChaseState : public UEnemyStateBase
 {
 	GENERATED_BODY()
+
 public:
 	virtual void OnEnter() override;
 

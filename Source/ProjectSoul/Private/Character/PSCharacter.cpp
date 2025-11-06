@@ -226,6 +226,11 @@ void APSCharacter::StartSprint(const FInputActionValue& Value)
 		return;
 	}
 
+	if (GetCharacterMovement()->GetCurrentAcceleration().IsZero())
+	{
+		return;
+	}
+
 	if (StateMachine)
 	{
 		StateMachine->GetCurrentState()->StartSprint();
@@ -299,7 +304,6 @@ void APSCharacter::Heal(const FInputActionValue& Value)
 {
 	if (!RemainHealingPotion())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Player: No Potion Remaining."));
 		return;
 	}
 
@@ -320,15 +324,8 @@ float APSCharacter::TakeDamage(
 	AController* EventInstigator,
 	AActor* DamageCauser)
 {
-	if (bIsDead)
+	if (bIsDead || bIsInvulnerable)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Player: Already dead - No damage taken."));
-		return 0.0f;
-	}
-
-	if (bIsInvulnerable)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Player: Invulnerable - No damage taken."));
 		return 0.0f;
 	}
 
@@ -336,9 +333,6 @@ float APSCharacter::TakeDamage(
 
 	PlayerStats.Health.AdjustValue(-DamageAmount);
 	OnHPChanged.Broadcast(PlayerStats.Health.GetCurrent(), PlayerStats.Health.GetMax());
-
-	UE_LOG(LogTemp, Warning, TEXT("Player: take damage %.0f from %s"), DamageAmount, *DamageCauser->GetName());
-	UE_LOG(LogTemp, Warning, TEXT("Player: Remain Health: %.0f / %.0f"), PlayerStats.Health.GetCurrent(), PlayerStats.Health.GetMax());
 
 	if (PlayerStats.Health.IsZero())
 	{
@@ -394,12 +388,10 @@ void APSCharacter::FindTargetActor()
 	if (!ClosestEnemy)
 	{
 		CurrentTarget = nullptr;
-		UE_LOG(LogTemp, Warning, TEXT("Player: Not found enemy."));
 		return;
 	}
 
 	SetCurrentTarget(ClosestEnemy);
-	UE_LOG(LogTemp, Warning, TEXT("Player: Found enemy: %s"), *CurrentTarget->GetName());
 }
 
 APSWeaponBase* APSCharacter::GetEquippedRightWeapon() const
@@ -455,7 +447,7 @@ void APSCharacter::OnTargetDie(AActor* DeadTarget)
 			EnemyDeadTimer,
 			this,
 			&APSCharacter::TargetUnlock,
-			1.0f,
+			0.5f,
 			false
 		);
 	}
@@ -532,7 +524,6 @@ void APSCharacter::OnDie()
 {
 	bIsDead = true;
 	SetIsSprinting(false);
-	UE_LOG(LogTemp, Warning, TEXT("Player: Dead"));
 
 	if (StateMachine)
 	{
@@ -651,7 +642,6 @@ void APSCharacter::SetCurrentTarget(APSEnemy* NewTarget)
 	CurrentTarget = NewTarget;
 	if (CurrentTarget)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Bind OnEnemyDie Event"));
 		CurrentTarget->OnEnemyDie.AddDynamic(this, &APSCharacter::OnTargetDie);
 	}
 
@@ -780,7 +770,6 @@ void APSCharacter::OnHitEndNotify()
 
 void APSCharacter::OnThrowObjectNotify()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Player: Throw Object Notify"));
 	ConsumeManaForThrow();
 
 	if (ThrowObjectClass)
@@ -805,8 +794,6 @@ void APSCharacter::OnThrowObjectNotify()
 
 		if (ThrownObject)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Player: Spawned throw object: %s"), *ThrownObject->GetName());
-
 			if (APSFireBomb* Bomb = Cast<APSFireBomb>(ThrownObject))
 			{
 				FVector LaunchDir = ActorRotation.Vector();
@@ -833,11 +820,9 @@ void APSCharacter::OnThrowEndNotify()
 
 void APSCharacter::OnHealingNotify()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Player: %.1f Healing"), 50.f);
-
 	HealingPotionCount--;
 	OnPotionCountChanged.Broadcast(HealingPotionCount);
-	AddHealth(50.f);
+	AddHealth(HealAmount);
 }
 
 void APSCharacter::OnHealEndNotify()

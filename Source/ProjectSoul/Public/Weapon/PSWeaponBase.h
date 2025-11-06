@@ -30,19 +30,20 @@ public:
         UPrimitiveComponent* OtherComp,
         int32 OtherBodyIndex,
         bool bFromSweep,
-        const FHitResult& SweepResult);
+        const FHitResult& SweepResult
+    );
 
     USoundBase* GetAttackSound() const;
 
 protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon|Component")
-    USceneComponent* Scene;
+    TObjectPtr<USceneComponent> Scene;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon|Component")
-    UBoxComponent* WeaponCollision;
+    TObjectPtr<UBoxComponent> WeaponCollision;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon|Component")
-    UStaticMeshComponent* StaticMesh;
+    TObjectPtr<UStaticMeshComponent> StaticMesh;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon")
     FName ItemType;

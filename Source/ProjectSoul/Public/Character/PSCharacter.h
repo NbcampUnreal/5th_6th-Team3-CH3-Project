@@ -144,6 +144,8 @@ public:
 
 	int32 GetHealingPotionCount() const;
 
+	APSWeaponBase* GetEquippedRightWeapon() const;
+
 	void SetCurrentTarget(APSEnemy* NewTarget);
 
 	void SetIsTargeting(bool Value);
@@ -163,8 +165,6 @@ public:
 	void AddHealth(float Amount);
 
 	void FindTargetActor();
-
-	APSWeaponBase* GetEquippedRightWeapon() const;
 
 protected:
 	virtual void BeginPlay() override;
@@ -340,6 +340,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Healing")
 	int32 HealingPotionCount;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Healing")
+	float HealAmount;
 
 private:
 	FTimerHandle SprintStaminaTimer;
