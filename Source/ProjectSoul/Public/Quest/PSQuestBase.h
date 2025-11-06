@@ -12,18 +12,15 @@ class PROJECTSOUL_API UPSQuestBase : public UObject
 public:
 	UPSQuestBase();
 
-	FName GetQuestName();
-
 	virtual bool ClearCondition();
 
 	virtual FString QuestTextUpdate();
 
 	virtual bool SetNextQuest();
 
-	UPSQuestBase* GetNextQuest();
+	FName GetQuestName();
 
-protected:
-	
+	UPSQuestBase* GetNextQuest();
 
 protected:
 	FName QuestName;

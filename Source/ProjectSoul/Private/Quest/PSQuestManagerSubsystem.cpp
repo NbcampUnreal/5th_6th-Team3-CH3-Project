@@ -10,10 +10,8 @@ UPSQuestManagerSubsystem::UPSQuestManagerSubsystem()
     bIsQuestInit = false;
 }
 
-
 void UPSQuestManagerSubsystem::CreateQuest()
 {
-    //StartQuests
     UPSQuestBase* MonsterKillQuest = NewObject<UPSMonsterKillQuest>(GetGameInstance());
 
     if (MonsterKillQuest)
@@ -22,10 +20,8 @@ void UPSQuestManagerSubsystem::CreateQuest()
     }
 }
 
-//
 void UPSQuestManagerSubsystem::QuestInit()
 {
-    UE_LOG(LogTemp, Warning, TEXT("UPSQuestManagerSubsystem : QuestInit()"));
     ActiveQuests.Empty();
 
     CreateQuest();
@@ -49,7 +45,6 @@ void UPSQuestManagerSubsystem::QuestInit()
 
 void UPSQuestManagerSubsystem::UpdateQuest(TMap<FName, UPSQuestTextWidget*>* QuestWidget)
 {
-    UE_LOG(LogTemp, Warning, TEXT("UPSQuestManagerSubsystem : UpdateTextQuest call"));
     for (int i = 0; i < ActiveQuests.Num(); i++)
     {
         CheckQuest = ActiveQuests[i];
@@ -96,6 +91,3 @@ void UPSQuestManagerSubsystem::UpdateQuest(TMap<FName, UPSQuestTextWidget*>* Que
     QuestsToRemove.Empty();
     QuestsToAdd.Empty();
 }
-
-
-
