@@ -40,7 +40,6 @@ void APSBossRoomDoor::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//문 회전 로직
 	LeftClosedRot = LeftDoor->GetRelativeRotation();
 	RightClosedRot = RightDoor->GetRelativeRotation();
 
@@ -52,12 +51,9 @@ void APSBossRoomDoor::OpenDoor()
 {
 	if (bIsLocked)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Door Locked!"));
-
 		return;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("Door Open"));
 	LeftDoor->SetRelativeRotation(LeftOpenRot);
 	RightDoor->SetRelativeRotation(RightOpenRot);
 
@@ -81,13 +77,11 @@ void APSBossRoomDoor::CloseDoor()
 		return;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("Door Close"));
 	LeftDoor->SetRelativeRotation(LeftClosedRot);
 	RightDoor->SetRelativeRotation(RightClosedRot);
 
 	DoorBlocker->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	bIsLocked = true;
-
 
 	if (DoorCloseSound)
 	{
@@ -102,7 +96,6 @@ void APSBossRoomDoor::CloseDoor()
 void APSBossRoomDoor::SetLocked(bool bLocked)
 {
 	bIsLocked = bLocked;
-
 	DoorBlocker->SetCollisionEnabled(bIsLocked ? ECollisionEnabled::QueryAndPhysics : ECollisionEnabled::NoCollision);
 }
 

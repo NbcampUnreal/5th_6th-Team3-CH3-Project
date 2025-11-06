@@ -17,8 +17,4 @@ public:
 	virtual FString QuestTextUpdate() override;
 
 	virtual bool SetNextQuest() override;
-	
-protected:
-	
-
 };

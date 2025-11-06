@@ -33,9 +33,10 @@ FString UPSMonsterKillQuest::QuestTextUpdate()
 		FString QuestText = FString::Printf(TEXT("Remaining Monsters : %d"), GameStateBase->RemainingEnemies);
 		return QuestText;
 	}
+
 	return "";
 }
-//UPSQuestManagerSubsystem : QuestInit() call
+
 bool UPSMonsterKillQuest::SetNextQuest()
 {
 	UPSQuestBase* KillQuest = NewObject<UPSBossKillQuest>(GetWorld()->GetGameInstance());

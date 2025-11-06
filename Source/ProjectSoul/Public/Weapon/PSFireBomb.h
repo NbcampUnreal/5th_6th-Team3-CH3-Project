@@ -19,35 +19,34 @@ public:
 
 	UFUNCTION()
 	void OnHit(
-		UPrimitiveComponent* HitComp, AActor* OtherActor,
-		UPrimitiveComponent* OtherComp, FVector NormalImpulse,
-		const FHitResult& Hit);
+		UPrimitiveComponent* HitComp,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		FVector NormalImpulse,
+		const FHitResult& Hit
+	);
 
 	void Init(const FVector& Direction);
 
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon|Component")
-	UStaticMeshComponent* StaticMesh;
+	TObjectPtr<UStaticMeshComponent> StaticMesh;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon|Component")
-	USphereComponent* FireBombCollision;
+	TObjectPtr<USphereComponent> FireBombCollision;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon|Component")
-	UProjectileMovementComponent* ProjectileMovement;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon|FireBomb")
-	TSubclassOf<UDamageType> DamageType;
+	TObjectPtr<UProjectileMovementComponent> ProjectileMovement;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon|Effects")
-	UParticleSystem* ExplosionParticle;
+	TObjectPtr<UParticleSystem> ExplosionParticle;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon|Effects")
-	USoundBase* ExplosionSound;
+	TObjectPtr<USoundBase> ExplosionSound;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon|FireBomb")
 	float FireBombDamage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon|FireBomb")
 	float BombRadius;
-
 };

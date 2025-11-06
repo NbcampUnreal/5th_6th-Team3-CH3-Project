@@ -2,7 +2,6 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 
-
 APSArrow::APSArrow()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -21,7 +20,7 @@ APSArrow::APSArrow()
 		ProjectileMovement->InitialSpeed = 1500.0f;
 		ProjectileMovement->MaxSpeed = 2000.0f;
 		ProjectileMovement->bRotationFollowsVelocity = true;
-		ProjectileMovement->ProjectileGravityScale = 1.0f; //Gravity
+		ProjectileMovement->ProjectileGravityScale = 1.0f;
 	}
 }
 
@@ -40,8 +39,6 @@ void APSArrow::OnHit(
 	UPrimitiveComponent* OtherComp, FVector NormalImpulse,
 	const FHitResult& Hit)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Arrow hit: %s"), OtherActor ? *OtherActor->GetName() : TEXT("None"));
-
 	if (!OtherActor || OtherActor == this || OtherActor == GetOwner())
 	{
 		return;
@@ -59,7 +56,6 @@ void APSArrow::OnHit(
 		UGameplayStatics::ApplyDamage(OtherActor, Damage, nullptr, this, nullptr);	
 		Destroy();
 	}
-	
 }
 
 

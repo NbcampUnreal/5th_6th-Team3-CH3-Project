@@ -10,11 +10,9 @@ APSWeaponShield::APSWeaponShield()
 void APSWeaponShield::StartBlock()
 {
 	bIsBlocking = true;
-	UE_LOG(LogTemp, Warning, TEXT("Blocking Started"));
 }
 
 void APSWeaponShield::EndBlock()
 {
 	bIsBlocking = false;
-	UE_LOG(LogTemp, Warning, TEXT("Blocking Ended"));
 }

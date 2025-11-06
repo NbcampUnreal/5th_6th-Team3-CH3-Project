@@ -14,5 +14,4 @@ class PROJECTSOUL_API UPSLoadingWidget : public UUserWidget
 	
 protected:
 	virtual void NativePreConstruct() override;
-
 };

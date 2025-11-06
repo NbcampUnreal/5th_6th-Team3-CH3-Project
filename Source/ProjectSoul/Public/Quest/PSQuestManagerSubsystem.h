@@ -20,14 +20,13 @@ public:
 
 	void UpdateQuest(TMap<FName, UPSQuestTextWidget*>* QuestWidget);
 
-	
-
 private:
 	void CreateQuest();
 
 public:
 	UPROPERTY()
 	TArray<UPSQuestBase*> ActiveQuests;
+
 	UPROPERTY()
 	TObjectPtr<UPSQuestBase> CheckQuest;
 

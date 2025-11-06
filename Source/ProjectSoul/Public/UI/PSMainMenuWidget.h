@@ -12,8 +12,6 @@ class PROJECTSOUL_API UPSMainMenuWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
-public:
-
 protected:
 	virtual void NativeOnInitialized() override;
 

@@ -11,10 +11,8 @@
 #include "Components/WidgetComponent.h"
 #include "Components/ProgressBar.h"
 #include "Components/CapsuleComponent.h"
-#include "UI/PSMonsterWidget.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/BoxComponent.h"
-#include "Kismet/GameplayStatics.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
 
@@ -33,18 +31,22 @@ APSEnemy::APSEnemy()
 		HealthWidgetComponent->SetupAttachment(GetMesh());
 		HealthWidgetComponent->SetWidgetSpace(EWidgetSpace::Screen);
 	}
+
 	UCharacterMovementComponent* EnemyMovement = GetCharacterMovement();
 	EnemyMovement->MaxWalkSpeed = WalkSpeed;
 	EnemyMovement->bOrientRotationToMovement = true;
 
 	EnemyStats.Health = FStat();
 	EnemyStats.Stamina = FStat();
+
 	WeaponCollisionL = CreateDefaultSubobject<UBoxComponent>(TEXT("WeaponL"));
 	WeaponCollisionR = CreateDefaultSubobject<UBoxComponent>(TEXT("WeaponR"));
+
 	if (WeaponCollisionL)
 	{
 		WeaponCollisionL->SetupAttachment(GetMesh());
 	}
+
 	if (WeaponCollisionR)
 	{
 		WeaponCollisionR->SetupAttachment(GetMesh());
@@ -54,11 +56,13 @@ APSEnemy::APSEnemy()
 void APSEnemy::BeginPlay()
 {
 	Super::BeginPlay();
+
 	StateMachine = CreateStateMachine();
 	if (StateMachine)
 	{
 		StateMachine->Initialize(this);
 	}
+
 	if (!AttachSocketNameL.IsNone())
 	{
 		WeaponCollisionL->AttachToComponent(
@@ -67,6 +71,7 @@ void APSEnemy::BeginPlay()
 			AttachSocketNameL
 		);
 	}
+
 	if (!AttachSocketNameR.IsNone())
 	{
 		WeaponCollisionR->AttachToComponent(
@@ -75,6 +80,7 @@ void APSEnemy::BeginPlay()
 			AttachSocketNameR
 		);
 	}
+
 	if (WeaponCollisionR)
 	{
 		WeaponCollisionR->SetRelativeLocation(WeaponR_RelativeLocation);
@@ -82,6 +88,7 @@ void APSEnemy::BeginPlay()
 		WeaponCollisionR->RegisterComponent();
 		WeaponCollisionR->OnComponentBeginOverlap.AddDynamic(this, &APSEnemy::OnWeaponOverlap);
 	}
+
 	if (WeaponCollisionL)
 	{
 		WeaponCollisionL->SetRelativeLocation(WeaponL_RelativeLocation);
@@ -89,10 +96,12 @@ void APSEnemy::BeginPlay()
 		WeaponCollisionL->RegisterComponent();
 		WeaponCollisionL->OnComponentBeginOverlap.AddDynamic(this, &APSEnemy::OnWeaponOverlap);
 	}
+
 	if (GetCapsuleComponent())
 	{
 		GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Ignore);
 	}
+
 	if (GetMesh())
 	{
 		GetMesh()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Ignore);
@@ -155,6 +164,7 @@ void APSEnemy::OnWeaponOverlap(
 	{
 		return;
 	}
+
 	AAIController* EnemyAIController = Cast<AAIController>(this->GetController());
 	UBlackboardComponent* BlackboardComp = EnemyAIController ? EnemyAIController->GetBlackboardComponent() : nullptr;
 
@@ -162,7 +172,9 @@ void APSEnemy::OnWeaponOverlap(
 	{
 		return;
 	}
+
 	DamagedActors.Add(OtherActor);
+
 	UGameplayStatics::ApplyDamage(
 		OtherActor,
 		Attack,        
@@ -194,7 +206,8 @@ float APSEnemy::TakeDamage(
 	float DamageAmount,
 	FDamageEvent const& DamageEvent,
 	AController* EventInstigator,
-	AActor* DamageCauser)
+	AActor* DamageCauser
+)
 {
 	if (bIsDead)
 	{
@@ -206,9 +219,6 @@ float APSEnemy::TakeDamage(
 	EnemyStats.Health.AdjustValue(-DamageAmount);
 	UpdateHealthWidget();
 	ShowHitHealthWidget();
-
-	UE_LOG(LogTemp, Warning, TEXT("Enemy take damage %.0f from %s"), DamageAmount, *DamageCauser->GetName());
-	UE_LOG(LogTemp, Warning, TEXT("Enemy Remain Health: %.0f / %.0f"), EnemyStats.Health.GetCurrent(), EnemyStats.Health.GetMax());
 
 	AAIController* EnemyAIController = Cast<AAIController>(this->GetController());
 	UBlackboardComponent* BlackboardComp = EnemyAIController ? EnemyAIController->GetBlackboardComponent() : nullptr;
@@ -226,7 +236,7 @@ float APSEnemy::TakeDamage(
 		bIsDead = true;
 
 		BlackboardComp->SetValueAsBool(TEXT("bIsDead"), true);
-		UE_LOG(LogTemp, Warning, TEXT("Enemy Death"));
+		UE_LOG(LogTemp, Log, TEXT("Enemy Death"));
 
 		if (APSGameModeBase* GM = Cast<APSGameModeBase>(UGameplayStatics::GetGameMode(this)))
 		{
@@ -247,7 +257,6 @@ float APSEnemy::TakeDamage(
 	return DamageAmount;
 }
 
-//PlayerTargetingState::OnEnter() Call
 void APSEnemy::ShowHealthWidget(bool bShow)
 {
 	if (HealthWidgetComponent)
@@ -277,6 +286,7 @@ void APSEnemy::HiddenHitHealthWidget()
 		HealthWidgetComponent->SetVisibility(false);
 		GetWorld()->GetTimerManager().ClearTimer(ShowMonsterHPTimer);
 	}
+
 	bIsHit = false;
 }
 
@@ -334,7 +344,7 @@ void APSEnemy::DisableWeaponCollisionNotify()
 {
 	WeaponCollisionR->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	WeaponCollisionL->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	DamagedActors.Empty(); // Initialize the list
+	DamagedActors.Empty();
 }
 
 void APSEnemy::SetIsDead(bool bIsdead)

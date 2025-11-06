@@ -6,6 +6,7 @@
 
 class UProjectileMovementComponent;
 class USphereComponent;
+
 UCLASS()
 class PROJECTSOUL_API APSBossProjectileBase : public AActor
 {
@@ -14,8 +15,6 @@ class PROJECTSOUL_API APSBossProjectileBase : public AActor
 public:	
 	APSBossProjectileBase();
 
-	void SetHomingTarget(AActor* Target);
-
 	UFUNCTION()
 	void OnProjectileOverlap(
 		UPrimitiveComponent* OverlappedComp,
@@ -23,7 +22,10 @@ public:
 		UPrimitiveComponent* OtherComp,
 		int32 OtherBodyIndex,
 		bool bFromSweep,
-		const FHitResult& SweepResult);
+		const FHitResult& SweepResult
+	);
+
+	void SetHomingTarget(AActor* Target);
 
 protected:
 	virtual void BeginPlay() override;
@@ -34,10 +36,10 @@ public:
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	USphereComponent* CollisionComp;
+	TObjectPtr<USphereComponent> CollisionComp;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	UStaticMeshComponent* MeshComp;
+	TObjectPtr<UStaticMeshComponent> MeshComp;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Damage")
 	float Damage = 5.f;

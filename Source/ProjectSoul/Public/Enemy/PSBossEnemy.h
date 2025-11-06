@@ -17,16 +17,6 @@ class PROJECTSOUL_API APSBossEnemy : public APSEnemy
 public:
 	APSBossEnemy();
 
-	void ShowHealthWidget(bool bShow);
-
-	UAnimMontage* GetAttack1Montage() const;
-
-	UAnimMontage* GetAttack2Montage() const;
-
-	UAnimMontage* GetSkill1Montage() const;
-
-	UAnimMontage* GetSkill2Montage() const;
-
 	UFUNCTION(BlueprintCallable, Category = "Notify")
 	void Skill1Attack();
 
@@ -45,6 +35,16 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Notify")
 	void OnPlayEnemySkill2SoundNotify();
 
+	void ShowHealthWidget(bool bShow);
+
+	UAnimMontage* GetAttack1Montage() const;
+
+	UAnimMontage* GetAttack2Montage() const;
+
+	UAnimMontage* GetSkill1Montage() const;
+
+	UAnimMontage* GetSkill2Montage() const;
+
 protected:
 	virtual void BeginPlay();
 
@@ -55,7 +55,6 @@ protected:
 	virtual UStateMachineBase* CreateStateMachine() override;
 
 public:
-
 	UPROPERTY(BlueprintAssignable)
 	FOnBossDefeated OnBossDefeated;
 
@@ -63,7 +62,6 @@ public:
 	UAnimMontage* SpawnMontage;
 
 protected:
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Skill")
 	TSubclassOf<APSBossProjectileBase> ProjectileClass1;
 

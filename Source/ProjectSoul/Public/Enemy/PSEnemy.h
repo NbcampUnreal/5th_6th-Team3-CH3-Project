@@ -31,21 +31,10 @@ public:
 		float DamageAmount,
 		struct FDamageEvent const& DamageEvent,
 		AController* EventInstigator,
-		AActor* DamageCauser) override;
+		AActor* DamageCauser
+	) override;
 
 	virtual UStateMachineBase* GetStateMachine();
-
-	void ShowHealthWidget(bool bShow);
-
-	void SetIsDead(bool bIsdead);
-
-	UAnimMontage* GetAttackMontage() const;
-
-	UAnimMontage* GetDieMontage() const;
-
-	UAnimMontage* GetHitMontage() const;
-
-	FEnemyStats GetEnemyStats() const;
 
 	UFUNCTION(BlueprintPure, Category = "Dead")
 	virtual bool GetIsDead() const;
@@ -63,9 +52,26 @@ public:
 	void OnPlayEnemyWalkSoundNotify();
 
 	UFUNCTION()
-	void OnWeaponOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
-		const FHitResult& SweepResult);
+	void OnWeaponOverlap(
+		UPrimitiveComponent* OverlappedComponent,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex,
+		bool bFromSweep,
+		const FHitResult& SweepResult
+	);
+
+	void ShowHealthWidget(bool bShow);
+
+	void SetIsDead(bool bIsdead);
+
+	UAnimMontage* GetAttackMontage() const;
+
+	UAnimMontage* GetDieMontage() const;
+
+	UAnimMontage* GetHitMontage() const;
+
+	FEnemyStats GetEnemyStats() const;
 
 protected:
 	virtual void BeginPlay() override;
@@ -80,7 +86,6 @@ private:
 	void ShowHitHealthWidget();
 
 	void HiddenHitHealthWidget();
-
 
 public:
 	UPROPERTY(BlueprintAssignable, Category = "Event")

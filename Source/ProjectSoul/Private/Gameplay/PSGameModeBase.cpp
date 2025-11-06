@@ -13,7 +13,6 @@
 #include "Perception/AISenseConfig_Sight.h"
 #include "UI/PSUIManagerSubsystem.h"
 #include "Quest/PSQuestManagerSubsystem.h"
-#include "Gameplay/PSAudioManagerSubsystem.h"
 #include "Character/PSCharacter.h"
 
 APSGameModeBase::APSGameModeBase()
@@ -33,7 +32,6 @@ void APSGameModeBase::BeginPlay()
     if (PSState)
     {
         PSState->SetRemainingEnemies(FoundEnemies.Num());
-        UE_LOG(LogTemp, Warning, TEXT("Enemy Count: %d"), PSState->RemainingEnemies);
     }
 
     StartGame();
@@ -59,8 +57,6 @@ void APSGameModeBase::StartGame()
         PSState->bIsGameOver = false;
         PSState->bIsGameClear = false;
     }
-
-    UE_LOG(LogTemp, Warning, TEXT("Game Start"));
 
     if (UGameInstance* GameInstance = GetGameInstance())
     {
@@ -108,8 +104,6 @@ void APSGameModeBase::EndGame(bool bIsClear)
 	StopAIController();
 	StopPlayerInput();
 
-    UE_LOG(LogTemp, Warning, TEXT("Game Over | Result: %s"), bIsClear ? TEXT("CLEAR") : TEXT("FAIL"));
-    
     if (UGameInstance* GameInstance = GetGameInstance())
     {
         if (UPSUIManagerSubsystem* UIManager = GameInstance->GetSubsystem<UPSUIManagerSubsystem>())
@@ -141,7 +135,6 @@ void APSGameModeBase::OnEnemyKilled(int32 EnemyScore)
     if (PSState)
     {
         PSState->DecreaseEnemyCount();
-        UE_LOG(LogTemp, Warning, TEXT("Enemy Dead | Remaining: %d"), PSState->RemainingEnemies);
     }
 
     CheckCondition();
@@ -174,7 +167,6 @@ void APSGameModeBase::CheckCondition()
     APSGameStateBase* PSState = GetGameState<APSGameStateBase>();
     if (PSState && PSState->GetRemainingEnemies() <= 0)
     {
-        UE_LOG(LogTemp, Warning, TEXT("All Enemies Dead - Spawn Boss"));
         OnAllEnemiesDead.Broadcast();
     }
 }
@@ -198,5 +190,6 @@ void APSGameModeBase::StopPlayerInput()
     if (APlayerController* PC = (UGameplayStatics::GetPlayerController(this, 0)))
     {
         PC->SetCinematicMode(true, false, false, true, true);
+        PC->FlushPressedKeys();
     }
 }

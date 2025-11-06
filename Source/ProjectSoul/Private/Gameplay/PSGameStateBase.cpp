@@ -12,8 +12,6 @@ APSGameStateBase::APSGameStateBase()
 void APSGameStateBase::AddScore(int32 Amount)
 {
     CurrentScore += Amount;
-
-    UE_LOG(LogTemp, Warning, TEXT("Add Score: +%d (Current Score: %d)"), Amount, CurrentScore);
 }
 
 void APSGameStateBase::DecreaseEnemyCount()
@@ -21,7 +19,6 @@ void APSGameStateBase::DecreaseEnemyCount()
     if (RemainingEnemies > 0)
     {
         RemainingEnemies--;
-        UE_LOG(LogTemp, Warning, TEXT("Remaining Enemies: %d"), RemainingEnemies);
 	}
 }
 

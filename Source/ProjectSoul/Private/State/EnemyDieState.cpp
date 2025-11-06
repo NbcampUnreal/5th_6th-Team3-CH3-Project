@@ -7,14 +7,20 @@
 void UEnemyDieState::OnEnter()
 {
     Super::OnEnter();
-    UE_LOG(LogTemp, Warning, TEXT("Enemy : Die state."));
+
     APSEnemy* Enemy = Cast<APSEnemy>(GetEnemyCharacter());
-    if (!Enemy) return;
+    if (!Enemy)
+    {
+        return;
+    }
+
     Enemy->SetIsDead(true);
 
     AAIController* AIController = Cast<AAIController>(Enemy->GetController());
     if (AIController)
+    {
         AIController->StopMovement();
+    }
 
     UAnimInstance* Anim = Enemy->GetMesh()->GetAnimInstance();
     Anim->StopAllMontages(0.1f);
@@ -42,15 +48,13 @@ void UEnemyDieState::OnEnter()
                         Mesh->SetCollisionProfileName(TEXT("Ragdoll"));
                         Mesh->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
                     }
-
-                    UE_LOG(LogTemp, Warning, TEXT(" Ragdoll Activated"));
                 }
+
                 if (IsValid(World) && IsValid(Enemy))
                 {
-                    World->GetTimerManager().SetTimerForNextTick([Enemy]()
-                        {
-                            Enemy->SetLifeSpan(3.0f);
-                        });
+                    World->GetTimerManager().SetTimerForNextTick([Enemy]() {
+                        Enemy->SetLifeSpan(3.0f);
+                    });
                 }
             },
             0.5f,
@@ -63,4 +67,3 @@ void UEnemyDieState::OnExit()
 {
     Super::OnExit();
 }
-

@@ -6,23 +6,27 @@
 APSBossProjectileBase::APSBossProjectileBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
+
 	CollisionComp = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComp"));
+	if (CollisionComp)
+	{
+		CollisionComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
+
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
-	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
 	if (MeshComp)
 	{
 		MeshComp->SetupAttachment(CollisionComp);
 		MeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
-	if (CollisionComp)
-	{
-		CollisionComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	}
+
+	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
 }
 
 void APSBossProjectileBase::BeginPlay()
 {
 	Super::BeginPlay();
+
 	if (CollisionComp)
 	{
 		CollisionComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
@@ -34,6 +38,7 @@ void APSBossProjectileBase::BeginPlay()
 		CollisionComp->OnComponentBeginOverlap.AddDynamic(this, &APSBossProjectileBase::OnProjectileOverlap);
 		RootComponent = CollisionComp;
 	}
+
 	if (ProjectileMovement)
 	{
 		ProjectileMovement->UpdatedComponent = CollisionComp;
@@ -50,19 +55,23 @@ void APSBossProjectileBase::OnProjectileOverlap(
 	UPrimitiveComponent* OtherComp,
 	int32 OtherBodyIndex,
 	bool bFromSweep,
-	const FHitResult& SweepResult)
+	const FHitResult& SweepResult
+)
 {
-	if (!OtherActor || OtherActor == GetOwner()) return;
+	if (!OtherActor || OtherActor == GetOwner())
+	{
+		return;
+	}
 
 	if (OtherActor->ActorHasTag(TEXT("Player")))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Hit Player!"));
 		UGameplayStatics::ApplyDamage(
 			OtherActor,
 			Damage,
 			nullptr,
 			this,
-			UDamageType::StaticClass());
+			UDamageType::StaticClass()
+		);
 	}
 }
 
