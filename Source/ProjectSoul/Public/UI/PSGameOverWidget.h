@@ -41,7 +41,6 @@ protected:
 private :
 	void UpdateUI();
 
-
 private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> MainMenuButton;

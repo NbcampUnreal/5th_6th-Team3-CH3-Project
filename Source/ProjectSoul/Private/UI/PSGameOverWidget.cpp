@@ -112,4 +112,3 @@ void UPSGameOverWidget::RestartButtonUnHovered()
 {
 	ReStartButtonText->SetColorAndOpacity(FColor::White);
 }
-

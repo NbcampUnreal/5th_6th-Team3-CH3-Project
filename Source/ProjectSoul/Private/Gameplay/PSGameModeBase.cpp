@@ -34,8 +34,6 @@ void APSGameModeBase::BeginPlay()
         PSState->SetRemainingEnemies(FoundEnemies.Num());
     }
 
-    StartGame();
-
     if (UPSAudioManagerSubsystem* Audio = GetGameInstance()->GetSubsystem<UPSAudioManagerSubsystem>())
     {
         Audio->PlayBGM("Default", 0.4f);

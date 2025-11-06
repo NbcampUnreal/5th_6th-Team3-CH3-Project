@@ -69,6 +69,13 @@ private:
 public:
 	TMap<FName, UPSQuestTextWidget*> QuestMap;
 
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Widget Class")
+	TSubclassOf<UUserWidget> MonsterHitWidgetClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Widget Class")
+	TSubclassOf<UUserWidget> QuestTextWidgetClass;
+
 private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<USizeBox> HPBarContainer;
@@ -118,9 +125,7 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> PotionCountText;
 
-	TSubclassOf<UUserWidget> MonsterHitWidgetClass;
-
-	TSubclassOf<UUserWidget> QuestTextWidgetClass;
+	
 
 	FTimerHandle LockOnPositionHandle;
 	AActor* LockOnTarget;
@@ -136,8 +141,4 @@ private:
 	float CurrentMP;
 	float DisplayMP;
 	FTimerHandle MPUpdateTimer;
-
-	float CurrentStamina;
-	float DisplayStamina;
-	FTimerHandle StaminaUpdateTimer;
 };
