@@ -28,7 +28,8 @@ void APSTriggerActor::TriggerOn(
     UPrimitiveComponent* OtherComp, 
 	int32 OtherBodyIndex, 
 	bool bFromSweep,
-	const FHitResult& SweepResult)
+	const FHitResult& SweepResult
+)
 {
 	BossTrigger->GetOverlappingActors(TriggerOnMonsters, APSEnemy::StaticClass());
 	if (TriggerOnMonsters.Num() > 0)
@@ -46,12 +47,14 @@ void APSTriggerActor::TriggerOff(
 	UPrimitiveComponent* OverlappedComponent, 
 	AActor* OtherActor, 
 	UPrimitiveComponent* OtherComp, 
-	int32 OtherBodyIndex)
+	int32 OtherBodyIndex
+)
 {
 	for (int i = 0; i < TriggerOnMonsters.Num(); i++)
 	{
 		TriggerOnMonsters[i] = nullptr;
 	}
+
 	OnTrigger.Broadcast(nullptr, false);
 }
 

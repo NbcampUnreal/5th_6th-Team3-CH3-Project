@@ -20,5 +20,4 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Bow")
 	float LaunchSpeed;
-	
 };

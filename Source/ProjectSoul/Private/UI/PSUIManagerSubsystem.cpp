@@ -23,23 +23,26 @@ UPSUIManagerSubsystem::UPSUIManagerSubsystem()
 	{
 		MainMenuWidgetClass = MainMenuWidgetBPClass.Class;
 	}
+
 	ConstructorHelpers::FClassFinder<UUserWidget> PlayerHUDWidgetBPClass(TEXT("/Game/Blueprints/UI/WBP_PSPlayerHUDWidget.WBP_PSPlayerHUDWidget_C"));
 	if (MainMenuWidgetBPClass.Succeeded())
 	{
 		PlayerHUDWidgetClass = PlayerHUDWidgetBPClass.Class;
 	}
+
 	ConstructorHelpers::FClassFinder<UUserWidget> GameOverWidgetBPClass(TEXT("/Game/Blueprints/UI/WBP_PSGameOverWidget.WBP_PSGameOverWidget_C"));
 	if (MainMenuWidgetBPClass.Succeeded())
 	{
 		GameOverWidgetClass = GameOverWidgetBPClass.Class;
 	}
+
 	ConstructorHelpers::FClassFinder<UUserWidget> LoadingWidgetBPClass(TEXT("/Game/Blueprints/UI/WBP_PSLoadingWidget.WBP_PSLoadingWidget_C"));
 	if (LoadingWidgetBPClass.Succeeded())
 	{
 		LoadingWidgetClass = LoadingWidgetBPClass.Class;
 	}
 }
-//GameModeBase::StartGame call
+
 void UPSUIManagerSubsystem::ShowCurrentWidget()
 {
 	FString CurrentMapName = GetWorld()->GetMapName();
@@ -60,6 +63,7 @@ void UPSUIManagerSubsystem::ShowMainMenuUI()
 	{
 		PlayerHUDWidgetInstance->RemoveFromParent();
 	}
+
 	if (GameOverWidgetInstance)
 	{
 		GameOverWidgetInstance->RemoveFromParent();
@@ -71,6 +75,7 @@ void UPSUIManagerSubsystem::ShowMainMenuUI()
 	{
 		MainMenuWidgetInstance = CreateWidget(PC, MainMenuWidgetClass);
 	}
+
 	if (MainMenuWidgetInstance)
 	{
 		MainMenuWidgetInstance->AddToViewport();
@@ -85,6 +90,7 @@ void UPSUIManagerSubsystem::ShowPlayerHUD()
 	{
 		MainMenuWidgetInstance->RemoveFromParent();
 	}
+
 	if (GameOverWidgetInstance)
 	{
 		GameOverWidgetInstance->RemoveFromParent();
@@ -96,6 +102,7 @@ void UPSUIManagerSubsystem::ShowPlayerHUD()
 	{
 		PlayerHUDWidgetInstance = CreateWidget(PC, PlayerHUDWidgetClass);
 	}
+
 	if (PlayerHUDWidgetInstance)
 	{
 		PlayerHUDWidgetInstance->AddToViewport();
@@ -117,6 +124,7 @@ void UPSUIManagerSubsystem::ShowGameOverUI()
 	{
 		GameOverWidgetInstance = CreateWidget(PC, GameOverWidgetClass);
 	}
+
 	if (GameOverWidgetInstance)
 	{
 		GameOverWidgetInstance->AddToViewport();
@@ -130,11 +138,10 @@ void UPSUIManagerSubsystem::ShowGameOverUI()
 		}
 	}
 }
-//PSMainMenuWidget::StartButtonClick(), PSGameOverWidget::RestartButtonClick() call
+
 void UPSUIManagerSubsystem::LevelLoading(FName LevelName)
 {
 	OpenLevelName = LevelName;
-	UE_LOG(LogTemp, Warning, TEXT("UIManagerSubsystem : LevelLoading Start"));
 	UGameplayStatics::OpenLevel(GetWorld(), OpenLevelName);
 }
 

@@ -29,7 +29,6 @@ protected:
 private :
 	void UpdateUI();
 
-
 public:
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	TObjectPtr<UButton> MainMenuButton;

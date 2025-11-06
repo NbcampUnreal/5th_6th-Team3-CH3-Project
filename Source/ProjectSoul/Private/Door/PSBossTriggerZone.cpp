@@ -61,6 +61,7 @@ void APSBossTriggerZone::OnPlayerEnter(
 		if (BossClass && BossSpawnPoint)
 		{
 			FActorSpawnParameters SpawnParams;
+			SpawnParams.Name = "Sevarog";
 			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
 			APSBossEnemy* SpawnedBoss = GetWorld()->SpawnActor<APSBossEnemy>(

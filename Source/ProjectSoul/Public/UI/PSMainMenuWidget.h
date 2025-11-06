@@ -12,8 +12,6 @@ class PROJECTSOUL_API UPSMainMenuWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
-public:
-
 protected:
 	virtual void NativeOnInitialized() override;
 
@@ -23,8 +21,6 @@ private:
 
 	UFUNCTION()
 	void EndButtonClick();
-
-	
 
 private:
 	UPROPERTY(meta = (BindWidget))

@@ -47,7 +47,6 @@ void UPSMonsterHitWidget::UpdateHitPosition()
 	}
 }
 
-
 void UPSMonsterHitWidget::ShowHitWidget(AActor* Monster, float Damage)
 {
 	TargetMonster = Monster;
@@ -73,6 +72,7 @@ void UPSMonsterHitWidget::HiddenHitWidget()
 {
 	RemoveFromParent();
 	TargetMonster = nullptr;
+
 	GetWorld()->GetTimerManager().ClearTimer(HitPositionTimer);
 	GetWorld()->GetTimerManager().ClearTimer(HitEndTimer);
 }

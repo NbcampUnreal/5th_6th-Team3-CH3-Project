@@ -8,9 +8,4 @@ UCLASS()
 class PROJECTSOUL_API UPSUserWidgetBase : public UUserWidget
 {
 	GENERATED_BODY()
-	
-public:
-
-	
-
 };
