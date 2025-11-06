@@ -324,15 +324,8 @@ float APSCharacter::TakeDamage(
 	AController* EventInstigator,
 	AActor* DamageCauser)
 {
-	if (bIsDead)
+	if (bIsDead || bIsInvulnerable)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Player: Already dead - No damage taken."));
-		return 0.0f;
-	}
-
-	if (bIsInvulnerable)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Player: Invulnerable - No damage taken."));
 		return 0.0f;
 	}
 
