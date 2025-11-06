@@ -83,7 +83,7 @@ void UBossEnemySkillAttackState::OnMontageEnded(UAnimMontage* Montage, bool bInt
             {
                 BlackboardComp->SetValueAsBool(TEXT("bCollSkill"), false);
             }),
-        5.f,
+        7.0f,
         false
     );
 }
