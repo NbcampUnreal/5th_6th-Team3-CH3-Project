@@ -31,6 +31,9 @@
 - **플랫폼**: PC
 <br></br>
 
+## 게임 진행 흐름
+<img width="703" height="560" alt="image" src="https://github.com/user-attachments/assets/58bf2b8d-1576-4032-a0e9-6399d9ce7ed8" />
+
 ## 핵심 기능
 - **플레이어 시스템**
     - **상태 기반(State Machine) 캐릭터 구조**
