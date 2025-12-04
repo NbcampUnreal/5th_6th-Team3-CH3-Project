@@ -1,5 +1,5 @@
 # Project Soul
-<img width="1909" height="1074" alt="image" src="https://github.com/user-attachments/assets/17a998d2-4d95-4e26-b2e9-7481262074c7" />
+<img width="1899" height="1065" alt="image" src="https://github.com/user-attachments/assets/2c86e54c-5e3d-409b-bac0-e780505286c9" />
 <br></br>
 
 ## **프로젝트 개요**
@@ -96,7 +96,7 @@
   
   또한, 상태 추가 시 새로운 클래스만 추가하면 되기에 기존 코드에 미치는 영향을 최소화 할 수 있었습니다.
     
-  <img width="704" height="366" alt="image" src="https://github.com/user-attachments/assets/052fb535-1edd-4949-90fa-b558f6106aa5" />
+  <img width="793" height="429" alt="image" src="https://github.com/user-attachments/assets/71356096-5b3b-4a74-aff3-f4c574264fc1" />
   </details>
 
 - **Character Stat 관리 문제 (이민구)**
@@ -105,20 +105,20 @@
     
   이를 해결하기 위해 Stat Struct를 만들고, Struct 내부에서 값 처리, 무결성 검사를 처리하도록 설계했습니다.
   
-  <img width="904" height="697" alt="image" src="https://github.com/user-attachments/assets/ccf83f6f-6fdf-4bfa-951a-c31b39a89dac" />
-  
+  <img width="780" height="483" alt="image" src="https://github.com/user-attachments/assets/ff85ca2b-4f02-4b8e-a5aa-dd207ba3db8d" />
+
   그리고 3개의 Stat을 가지는 Player Stats Struct를 생성하여 Player는 하나의 Player Stat 구조체만 관리하면 되도록 했습니다.
 
-  <img width="608" height="576" alt="image" src="https://github.com/user-attachments/assets/e93bcc8f-001d-4b0a-a302-440a3d728924" />
+  <img width="760" height="486" alt="image" src="https://github.com/user-attachments/assets/c8c3cb9a-f520-4363-b92b-e9a6b6b377ac" />
 
-  <img width="737" height="285" alt="image" src="https://github.com/user-attachments/assets/7528545d-ac70-4900-b95b-64e9849befcc" />
+  <img width="1160" height="441" alt="image" src="https://github.com/user-attachments/assets/22738cd2-dc14-4324-96fe-1b1e3087cca1" />
   </details>
 
 - **Enemy의 Player 인식 문제 (박동엽)**
   <details> <summary><strong>펼치기</strong></summary>
   첫 번째는 AttackState중 캐릭터가 구르기를 통해 순간적으로 시야에 사라졌을때 공격 사거리내에는 있지만 플레이어를 못찾아 적이 멈추는 문제가 발생했습니다.
 
-  <img width="527" height="301" alt="image" src="https://github.com/user-attachments/assets/d0721853-29d2-47a3-bfe2-f416b7bc9a74" />
+  <img width="552" height="317" alt="image" src="https://github.com/user-attachments/assets/55282fd4-0722-464b-b509-cf8eda3db743" />
 
   이는 Hit, Chase, Attack과 같은 전투 상황에서는 시야의 범위를 360도로 올려 플레이어를 잃어버리지 않도록 하여 해결했습니다.
   </details>
@@ -131,11 +131,11 @@
   
   보스의 경우 오히려 해당 문제를 적용시켜 피격 애니메이션 재생을 막아 난이도를 더하는 장치로 사용했습니다.
     
-  <img width="768" height="408" alt="image" src="https://github.com/user-attachments/assets/c8d37bff-95bd-43aa-9a77-3955991a97de" />
+  <img width="809" height="429" alt="image" src="https://github.com/user-attachments/assets/b33e4980-4e89-4140-a624-c5c0a390331f" />
     
-  <img width="768" height="408" alt="image" src="https://github.com/user-attachments/assets/37873853-5c46-4cdf-9e93-edf5cf8cc7e5" />
-    
-  <img width="907" height="171" alt="image" src="https://github.com/user-attachments/assets/dd49d1b4-4eda-430d-815d-a0ad09df6d65" />
+  <img width="888" height="443" alt="image" src="https://github.com/user-attachments/assets/4133e145-0fc9-4158-aa77-bb2495e9e716" />
+
+  <img width="956" height="179" alt="image" src="https://github.com/user-attachments/assets/10ba2df5-6e9c-4a23-9c38-b4f4824e9abe" />
   </details>
     
 - **Enemy Count 문제 (강민용)**
@@ -156,11 +156,11 @@
   
   투영 시 사용한 ProjectWorldLocationToScreen()은 화면 해상도 기준 픽셀 좌표를 반환하는데, 좌표를 적용해야하는 Widget은 디자인 해상도 기준이라 두 해상도가 동일하지 않은 경우 의도와 다른 결과가 나오게 되었습니다.
 
-  <img width="398" height="244" alt="image" src="https://github.com/user-attachments/assets/4c9d2edf-2294-4ab2-969a-f8fa96cec457" />
+  <img width="417" height="259" alt="image" src="https://github.com/user-attachments/assets/a3e6c2c8-c38e-4718-a383-dec261376dd7" />
 
   해결방법은 UWidgetLayoutLibrary::GetViewportScale()로 현재 해상도와 디자인해상도의 스케일 비율을 구해 투영 좌표를 보정해 해결했습니다.
 
-  <img width="988" height="262" alt="image" src="https://github.com/user-attachments/assets/9b57b019-7005-4f63-bc01-ded7e7d16222" />
+  <img width="1025" height="252" alt="image" src="https://github.com/user-attachments/assets/042a3771-5ff8-464b-84f1-98b48bc76c2a" />
   </details>
     
 - **GameInstanceSubsystem와 Actor의 초기화 시점 문제 (변철우)**
@@ -184,7 +184,7 @@
         - Full Rebuild 체크, Use Pak File 체크
     - 에디터 상단의 Platforms - Windows - Packaging Project
     
-    <img width="608" height="489" alt="image" src="https://github.com/user-attachments/assets/70f6be6d-443c-4b84-8b56-a8adefa154a8" />
+    <img width="597" height="497" alt="image" src="https://github.com/user-attachments/assets/13f5eb0d-720d-4bf6-a5d4-ac78a5ea5845" />
 
     - 출력 폴더 선택
 
